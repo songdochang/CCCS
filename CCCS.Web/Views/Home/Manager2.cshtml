@@ -1,0 +1,145 @@
+﻿@model IEnumerable<CCCS.Web.Models.Home.SummaryRowModel>
+@{
+    ViewBag.Title = "Manager Home";
+}
+<style>
+    .first-last {
+        width: 50px;
+    }
+
+    .title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.9em;
+        border-bottom: solid 1px #eee;
+    }
+
+    .number {
+        padding-top: 5px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    #topBody {
+        padding: 0 15px;
+    }
+</style>
+
+@{
+    Html.RenderAction("HomeTabs");
+}
+<div class="panel topPanel">
+    <div id="topBody" class="panel-body">
+        @if (Model != null)
+        {
+            <table id="summary" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Open</div>
+                                        <div class="number">@ViewBag.NumberOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Amount Open</div>
+                                        <div class="number">@ViewBag.AmountOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default po-stat">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Federal</div>
+                                        <div class="number">@ViewBag.NumberFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default po-stat-lg">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Amount Federal</div>
+                                        <div class="number">@ViewBag.AmountFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default po-stat">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Visits</div>
+                                        <div class="number">@ViewBag.NumberSiteVisits</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default po-stat">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Last Visit</div>
+                                        <div class="number">@ViewBag.LastSiteVisit</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default po-stat">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Received in @DateTime.Today.Year</div>
+                                        <div class="number">@ViewBag.NumberReceivedProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Amount Received in @DateTime.Today.Year</div>
+                                        <div class="number">@ViewBag.AmountReceivedProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="first-last title-cell-left">@r.DCO</td>
+                            <td class="text-right"><span class="pad-right-20">@r.NumberOpenProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.AmountOpenProjects</span></td>
+                            <td class="text-right"><span class="pad-right-40">@r.NumberFederalProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.AmountFederalProjects</span></td>
+                            <td class="text-right"><span class="pad-right-40">@r.NumberSiteVisits</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.LastSiteVisit</span></td>
+                            <td class="text-right"><span class="pad-right-40">@r.NumberReceivedProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.AmountReceivedProjects</span></td>
+                            <td class="first-last"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+<div class="panel">
+    @Html.Partial("_DocumentReceivedByType")
+</div>

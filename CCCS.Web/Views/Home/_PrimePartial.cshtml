@@ -1,0 +1,126 @@
+﻿@model IEnumerable<CCCS.Web.Models.PrimeDistribution>
+<style>
+    thead {
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+
+        thead td, tfoot td {
+            text-align: center;
+        }
+
+    tfoot {
+        background-color: #ececec;
+        font-weight: bold;
+    }
+
+    .trigger {
+        border-bottom: dotted #808080;
+        padding: 0 10px;
+        cursor: pointer;
+    }
+</style>
+@{ 
+    List<string> DCOs = ViewBag.COs;
+    int cnt = DCOs.Count;
+    Dictionary<string, int> numProjects = new Dictionary<string, int>();
+    foreach(var d in DCOs)
+    {
+        numProjects.Add(d, 0);
+    }
+}
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th rowspan="2" class="col-md-4 text-left">
+                Prime Contractor
+            </th>
+            <th rowspan="2" class="col-md-1">Number of Projects</th>
+            <th colspan="@cnt" class="col-md-2 text-center">Original CO</th>
+            <th rowspan="2" class="col-md-1 text-center">Cap<br />Projects</th>
+            <th rowspan="2" class="col-md-1 text-center">Total Contract Amount</th>
+            <th rowspan="2" class="col-md-1 text-center"># Subs</th>
+            <th rowspan="2">Federal Funds</th>
+            <th rowspan="2" class="col-md-1">FY Site Visits</th>
+        </tr>
+        <tr>
+            @foreach (var d in DCOs)
+            {
+                <th class="text-center">@d</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int contractors = 0, projects = 0, cap = 0, sub = 0, federal = 0, visits = 0;
+            decimal amount = 0;
+        }
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>
+                    <a href="~/Contractor/Details1/@p.PrimeContractorID">@p.PrimeContractor</a>
+                </td>
+                <td class="text-center">
+                    @p.TotalNumberProjects
+                </td>
+                @foreach(var d in DCOs)
+                {
+                    if (p.NumberProjectsByDCO[d] > 0)
+                    {
+                        <td class="text-center">@p.NumberProjectsByDCO[d]</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    numProjects[d] += p.NumberProjectsByDCO[d];
+                }
+                <td class="text-center">@p.NumberCapProjects</td>
+                <td class="text-right">
+                    @p.TotalContractAmount.ToString("c")
+                </td>
+                <td class="text-center">
+                    @p.NumberSubs
+                </td>
+                <td class="text-center">@p.NumberFederalFunds</td>
+                <td class="text-center">@p.FySiteVisits</td>
+            </tr>
+
+            contractors++;
+            projects = projects + p.TotalNumberProjects;
+            cap = cap + p.NumberCapProjects;
+            amount = amount + p.TotalContractAmount;
+            sub = sub + p.NumberSubs;
+            federal = federal + p.NumberFederalFunds;
+            visits = visits + p.FySiteVisits;
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>@contractors<span class="mar-left-20">
+                @if (contractors > 1)
+                {
+                    @:Contractors
+                }
+                else
+                {
+                    @:Contractor
+                }
+                </span></td>
+            <td>@projects</td>
+            @foreach (var d in DCOs)
+            {
+                <td>@numProjects[d]</td>
+            }
+            <td>@cap</td>
+            <td class="text-right">@amount.ToString("c")</td>
+            <td>@sub</td>
+            <td>@federal</td>
+            <td>@visits</td>
+        </tr>
+    </tfoot>
+</table>
+
+

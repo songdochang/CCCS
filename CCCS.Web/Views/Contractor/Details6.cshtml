@@ -1,0 +1,189 @@
+﻿@model List<CCCS.Core.Domain.Contractors.Contractor>
+
+@{
+    ViewBag.Title = "Subcontractors";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    .entryRow td {
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+        .entryRow td.disabled {
+            text-align: center;
+            cursor: default;
+        }
+
+        .entryRow td:first-child {
+            text-align: left;
+        }
+
+        .entryRow td.blocked {
+            background-color: #eeeeee;
+            cursor: not-allowed;
+        }
+
+    .entryRow span {
+        color: green;
+    }
+
+    .entryRow td:first-child span {
+        color: #666;
+    }
+
+        .entryRow td:first-child span.badge {
+            color: #ffffff;
+        }
+
+    span.badge-1 {
+        background-color: #001c71;
+    }
+
+    span.badge-2 {
+        background-color: #3d7dca;
+    }
+
+    span.badge-3 {
+        background-color: #7aa4dd;
+    }
+
+    span.badge-4 {
+        background-color: #b1c9ea;
+    }
+
+    span.badge-5 {
+        background-color: #c9d7ec;
+    }
+
+    .sides {
+        border-left: solid 1px #666;
+        border-right: solid 1px #666;
+        background-color: #f7eb62;
+    }
+</style>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Contractor/Index1">Contractors</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<div class="page-header">
+    <h3>@ViewBag.CompanyName</h3>
+</div>
+@{
+    Html.RenderPartial("_ContractorDetailsTabs");
+    Html.RenderPartial("_AlertPartial");
+}
+@if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+{
+    <div class="pull-right mar-bottom-20">
+        <a href="~/Contractor/AddSubcontractor/@ViewBag.ContractorID" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Add Subcontractor</a>
+    </div>
+}
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                DCO
+            </th>
+            <th>
+                @Html.ActionLink("Company Name", "Index1", new { sortOrder = ViewBag.CompanyNameSortParm })
+            </th>
+            @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DCO)
+            </td>
+            <td>
+                @Html.ActionLink(item.CompanyName, "Details1", new { id = item.Id })
+            </td>
+            @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                    string url = VirtualPathUtility.ToAbsolute("~/Contractor/Edit/") + @item.Id + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                <td class="text-right">
+                    <a href="@url" data-toggle="tooltip" title="Edit" data-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="docModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Document Received</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Details4", "Contractor", new { id = ViewBag.ContractorID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("Column")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Year</div>
+                            <div class="col-md-2 pad-left-20">
+                                <input type="text" id="Year" name="Year" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group" id="divMonth">
+                            <div class="title-cell col-md-3 mar-top-10">Month</div>
+                            <div class="col-md-2 pad-left-20">
+                                <input type="text" id="Month" name="Month" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Date Received</div>
+                            <div class="col-md-4 pad-left-20">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("DateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="title-cell col-md-3 mar-top-10">File to upload (optional)</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-9">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="documentFiles" style="margin: 20px;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-left">
+                            <button name="submit" type="submit" class="btn btn-default" value="Reset">Reset</button>
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+﻿@using CCCS.Web.Models.ClearanceRequests
+@model IEnumerable<ClearanceRequestListModel>
+@{
+    ViewBag.Title = "Clearance Request";
+}
+
+<style>
+    th {
+        text-align: center;
+    }
+
+    .glyphicon-plus, .glyphicon-minus {
+        cursor: pointer;
+    }
+
+    tr.bg {
+        border-top: double;
+        background-color: RGB(216, 228, 188);
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L",
+            defaultDate: new Date()
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            <label class="col-md-offset-9 col-md-1 pad-top-7 text-right" >
+                Since:
+            </label>
+            <div class="col-md-2">
+                @Html.DropDownList("Month", new SelectList(ViewBag.Months, "Value", "Text", ViewBag.CurrentMonth), new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+        </div>
+    }
+</div>
+<table class="table table-condensed mar-top-20" border="1">
+    <thead>
+        @{
+            int dcos = ViewBag.COs.Count;
+            Dictionary<string, int> totals = new Dictionary<string, int>();
+        }
+        <tr>
+            <th rowspan="2"></th>
+            <th colspan="@dcos"><h4>Clearance Requests Processed<small class="mar-left-20">* Number of requests sent to department</small></h4></th>
+            <th rowspan="2">Total Clearance Requests</th>
+        </tr>
+        <tr>
+            @foreach (var d in ViewBag.COs)
+            {
+                totals.Add(d.Value, 0);
+                <th class="nc">@d.Value</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            string month = m.Month + "/" + m.Year;
+            int cnt = 0;
+            <tr>
+                <td class="title-cell col-md-2">@month</td>
+                @foreach (var d in ViewBag.COs)
+                {
+                    foreach (var v in m.Counts)
+                    {
+                        if (v.Key == d.Value)
+                        {
+                            cnt = v.Value;
+                            totals[d.Value] += cnt;
+                            break;
+                        }
+                    }
+                    if (cnt == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td class="text-center">@cnt</td>
+                    }
+                }
+                @if (m.TotalClearanceRequests == 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td class="text-center">@m.TotalClearanceRequests</td>
+                }
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td style="background-color: #ccc;"></td>
+            @{ int grandTotal = 0; }
+            @foreach (var d in ViewBag.COs)
+            {
+                grandTotal += totals[d.Value];
+                <td class="text-center">@totals[d.Value]</td>
+            }
+            <td class="text-center">@grandTotal</td>
+        </tr>
+    </tfoot>
+</table>

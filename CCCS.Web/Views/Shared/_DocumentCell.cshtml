@@ -1,0 +1,18 @@
+﻿@model CCCS.Core.Domain.Documents.DocumentCell
+
+@if (Model.Status == "Received")
+{
+    <span data-content="@Model.Name" class="glyphicon glyphicon-ok" style="color: goldenrod;"></span>
+}
+else if (Model.Status == "Approved")
+{
+    <span data-content="@Model.Name" class="glyphicon glyphicon-ok" style="color: green;"></span>
+}
+else if (Model.Status == "Rejected")
+{
+    <span data-content="@Model.Name" class="glyphicon glyphicon-ok" style="color: red;"></span>
+}
+else if (Model.Status == "Cleared")
+{
+    <span data-content="@Model.Name" class="glyphicon glyphicon-ok" style="color: blue;"></span>
+}

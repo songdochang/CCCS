@@ -1,0 +1,81 @@
+﻿@model IEnumerable<CCCS.Web.Models.Notices.MessageListModel>
+<style>
+    thead {
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+
+        thead td, tfoot td {
+            text-align: center;
+        }
+
+    tfoot {
+        background-color: #ececec;
+        font-weight: bold;
+    }
+</style>
+@{
+    string id = ViewBag.UserInitial;
+    string spanId = "chevron" + id;
+}
+<div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" href="#@id" aria-expanded="true" style="background-color: @ViewBag.Color;">
+        @id<span id="@spanId" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+    </div>
+    <div class="panel-body collapse in" id="@id">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th class="col-md-3">
+                        Project ID
+                    </th>
+                    <th class="col-md-2">
+                        Date Last Sent
+                    </th>
+                    <th class="col-md-1">
+                        Sender
+                    </th>
+                    <th>
+                        Message
+                    </th>
+                    <th class="col-md-1 text-right"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.JOC
+                        </td>
+                        <td>
+                            @item.DateSent
+                        </td>
+                        <td>
+                            @if (item.IsSent)
+                            {
+                                @item.Sender<span class="glyphicon glyphicon-arrow-right green mar-left-10"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-arrow-left red mar-right-10"></span>@item.Sender
+                            }
+                        </td>
+                        <td>
+                            @item.Text
+                        </td>
+                        <td class="text-right">
+                            <a data-toggle="modal" href="#messageModal" data-bind="@item.ProjectId">Message</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+

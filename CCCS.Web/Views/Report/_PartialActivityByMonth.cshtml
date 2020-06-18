@@ -1,0 +1,102 @@
+﻿@model System.Data.DataTable
+@using System.Data
+<style>
+    th {
+        text-align: center;
+    }
+    th:first-child {
+        width: 23%;
+    }
+     th:last-child {
+        width: 15%;
+    }
+    td {
+        text-align: right;
+    }
+</style>
+<div class="form-inline">
+    <div class="form-group col-md-6">
+        <table class="table table-condensed" border="1">
+            <thead>
+                <tr>
+                    @{ Dictionary<string, decimal> totals = new Dictionary<string, decimal>(); }
+                    @foreach (DataColumn col in Model.Columns)
+                    {
+                        totals.Add(col.ColumnName, 0.0m);
+                        <th class="co-@col.ColumnName">@col.ColumnName</th>
+                    }
+                    <th>Total</th>
+                </tr>
+            </thead>
+            @foreach (DataRow row in Model.Rows)
+            {
+                var total = 0.0m;
+                <tr>
+                    <td class="text-left">@row[0]</td>
+                    @for (int i = 1; i < Model.Columns.Count; i++)
+                    {
+                        <td class="co-@Model.Columns[i].ColumnName">
+                            @if (!String.IsNullOrEmpty(row[i].ToString()))
+                            {
+                                var val = Decimal.Parse(row[i].ToString());
+                                totals[Model.Columns[i].ColumnName] += val;
+                                total += val;
+                                var v = val.ToString("#,###");
+                                @v
+                            }
+                            else
+                            {
+                                @:0
+                        }
+                        </td>
+                    }
+                    <td>@total.ToString("#,###")</td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="form-group col-md-6">
+        <table class="table table-condensed" border="1">
+            <thead>
+                <tr>
+                    @foreach (DataColumn col in Model.Columns)
+                    {
+                        <th class="co-@col.ColumnName">@col.ColumnName</th>
+                    }
+                    <th>Total</th>
+                </tr>
+            </thead>
+            @foreach (DataRow row in Model.Rows)
+            {
+                var colTotal = 0.0m;
+                <tr>
+                    <td class="text-left">@row[0]</td>
+                    @for (int i = 1; i < Model.Columns.Count; i++)
+                    {
+                        if (!String.IsNullOrEmpty(row[i].ToString()))
+                        {
+                            var val = Decimal.Parse(row[i].ToString());
+                            colTotal += val;
+                        }
+                    }
+                    @for (int i = 1; i < Model.Columns.Count; i++)
+                    {
+                        <td class="co-@Model.Columns[i].ColumnName">
+                            @if (!String.IsNullOrEmpty(row[i].ToString()) && colTotal > 0.0m)
+                            {
+                                var val = Decimal.Parse(row[i].ToString()) / colTotal;
+                                var v = val.ToString("#,##0%");
+                                @v
+                            }
+                            else
+                            {
+                                <span>0%</span>
+                            }
+                        </td>
+                    }
+                    <td>100%</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

@@ -1,0 +1,296 @@
+﻿@model CCCS.Web.Models.Projects.ProjectModel
+@{
+    ViewBag.Title = "General";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('.dropdown-toggle').dropdown();
+
+        $("a[href$='#editModal']").on("click", function () {
+            $("#CommentID").val($(this).attr('id'));
+            $("#EditComment").val($(this).attr('data-content'));
+        });
+
+        $('#delete').click(function () {
+            return confirm("Are you sure to delete this comment?");
+        });
+    });
+</script>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = Model.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+    Html.RenderPartial("_AlertPartial");
+    Html.RenderAction("ProjectStats", new { id = Model.ProjectID });
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        General
+        <div class="pull-right">
+            @Html.ActionLink("Edit Project", "Edit", new { id = Model.ProjectID }, null)
+            @if (!User.IsInRole("DCO"))
+            {
+                <span class="mar-left-20">
+                    @Html.ActionLink("Delete Project", "Delete", new { id = Model.ProjectID }, null)
+                </span>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-3" style="margin-left: -60px;">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Unit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Unit)
+                </dd>
+
+                <dt>
+                    Department
+                </dt>
+
+                <dd>
+                    @Model.DepartmentName
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Phase)
+                </dt>
+                <dd>
+                    @Model.Phase
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.DateReceived)
+                </dt>
+                <dd>
+                    @if (Model.DateReceived != null)
+                    {
+                        var dt = ((DateTime)Model.DateReceived).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.StartDate)
+                </dt>
+                <dd>
+                    @if (Model.StartDate != null)
+                    {
+                        var dt = ((DateTime)Model.StartDate).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </dt>
+                <dd>
+                    @if (Model.EndDate != null)
+                    {
+                        var dt = ((DateTime)Model.EndDate).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-2" style="margin-left: -40px; margin-right: 20px;">
+            <dl class="dl-horizontal">
+                <dt>
+                    Fiscal Years
+                </dt>
+                <dd>
+                    @foreach(var fy in Model.FiscalYears)
+                    {
+                        @fy<br/>
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.City)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.City)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Zip)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Zip)
+                </dd>
+            </dl>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+@{
+    Html.RenderAction("PrimeContractor", new { id = Model.PrimeContractorId, projectId = Model.ProjectID });
+
+    Html.RenderAction("ContactInfo", new { id = Model.ProjectID });
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Comments
+        <div class="pull-right">
+            <a data-toggle="modal" href="#commentModal">Add Comment</a>
+        </div>
+    </div>
+    <div class="panel-body">
+        @if (Model.Comments != null && Model.Comments.Count > 0)
+        {
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="col-md-1">Type</th>
+                        <th class="col-md-2">Date</th>
+                        <th>Comment</th>
+                        <th class="col-md-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Comments)
+                    {
+                        if (item.Category == "General" || item.Category == "Worksheet")
+                        {
+                            <tr>
+                                <td>@item.CommentedBy</td>
+                                <td>@item.Category</td>
+                                <td>
+                                    @if (item.Category == "Worksheet")
+                                    {
+                                        @item.DateRegistered.ToShortDateString();
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => item.DateRegistered)
+                                    }
+                                </td>
+                                <td class="text-left">
+                                    @Html.DisplayFor(modelItem => item.CommentText)
+                                </td>
+                                <td class="text-right">
+                                    @if (item.CommentedBy == ViewBag.User)
+                                    {
+                                        if (item.Category == "Worksheet")
+                                        {
+                                            string url = VirtualPathUtility.ToAbsolute("~/Worksheet/EditBillable/") + item.EntityId + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                                            <a href="@url">Edit</a>
+                                        }
+                                        else
+                                        {
+                                            <a data-toggle="modal" href="#editModal" id="@item.CommentId" data-content="@item.CommentText">Edit</a>
+                                            <span class="mar-left-5 mar-right-5">|</span>
+                                            @Html.ActionLink("Delete", "DeleteComment", "Project", new { id = Model.ProjectID, cId = item.CommentId }, new { id = "delete" })
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Comment</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddComment", "Project", new { id = Model.ProjectID, category = "General" }))
+                {
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="control-label col-md-2">Comment</div>
+                            <div class="col-md-9">
+                                @Html.TextArea("Comment", new { @class = "form-control", cols = 90, @rows = 10 })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Edit Comment</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("EditComment", "Project", new { id = Model.ProjectID, category = "General" }))
+                {
+                    <input type="hidden" id="CommentID" name="CommentID" />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="control-label col-md-2">Comment</div>
+                            <div class="col-md-9">
+                                @Html.TextArea("EditComment", new { @class = "form-control", cols = 90, @rows = 10 })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

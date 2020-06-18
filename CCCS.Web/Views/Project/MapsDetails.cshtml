@@ -1,0 +1,81 @@
+﻿@model CCCS.Web.Models.Common.MapsDetailModel
+    @{
+    ViewBag.Title = "MapsDetails";
+    Layout = "~/Views/Shared/_LayoutSimple.cshtml";
+    }
+
+<h2>Maps Details</h2>
+<div class="form-horizontal well well-sm">
+    @using (Html.BeginForm(new { id = Model.ProjectID, returnUrl = Model.ReturnUrl }))
+    {
+    <div class="form-group">
+        <label class="control-label col-md-2">Fiscal Year</label>
+        <div class="col-md-2">
+            @Html.DropDownList("FiscalYear", new SelectList(ViewBag.FiscalYears, "Value", "Text", Model.FiscalYear), new { @class = "form-control", onchange = "this.form.submit();" })
+        </div>
+        <label class="control-label col-md-4">
+            Main Account
+        </label>
+        <div class="col-md-4 pad-top-7">
+            @Model.MainAccount
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-2">
+            Month
+        </label>
+        <div class="col-md-2">
+            @Html.DropDownList("Month", new SelectList(ViewBag.Months, "Value", "Text", Model.Month), new { @class = "form-control", onchange = "this.form.submit();" })
+        </div>
+        <label class="control-label col-md-4">
+            Maps Code
+        </label>
+        <div class="col-md-4 pad-top-7">
+            @Model.MapsCode
+        </div>
+    </div>
+    }
+    <div class="clearfix"></div>
+</div>
+
+    @if (Model.MapsDetails.Count > 0)
+    {
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ACCOUNT</th>
+            <th>BILL CODE</th>
+            <th>BILL CODE DESCRIPTION</th>
+            <th>ACTIVITY</th>
+            <th class="text-right">UNIT</th>
+            <th class="text-right">YTD UNIT</th>
+            <th class="text-right">AMOUNT</th>
+            <th class="text-right">YTD AMOUNT</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var d in Model.MapsDetails)
+        {
+        <tr>
+            <td>@d.Account</td>
+            <td>@d.BillCode</td>
+            <td>@d.BillCodeDescription</td>
+            <td>@d.Activity</td>
+            <td class="text-right">@d.BillUnit</td>
+            <td class="text-right">@d.YtdBillUnit</td>
+            <td class="text-right">@d.Amount</td>
+            <td class="text-right">@d.YtdAmount</td>
+        </tr>
+        }
+    </tbody>
+</table>
+    }
+    else
+    {
+<div class="alert alert-danger alert-dismissible" role="alert">
+    Account information is not available.
+</div>
+    }
+<div class="mar-top-50">
+    <a href="@Model.ReturnUrl" class="btn btn-default">Back to Previous Page</a>
+</div>

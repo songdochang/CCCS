@@ -1,0 +1,183 @@
+﻿@model List<CCCS.Web.Models.Projects.ProjectModel>
+@using CCCS.Core.Domain.Projects
+@using CCCS.Web.Models.Projects
+@{
+    ViewBag.Title = "Projects";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+
+    .sm {
+        width: 45px;
+    }
+
+    .md {
+        width: 60px;
+    }
+
+    .md2 {
+        width: 75px;
+        font-size: 0.9em;
+    }
+</style>
+<script>
+    $(function () {
+        $('table [role="button"]').hover(function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: RGB(242, 242, 242);");
+            $('#' + id).show();
+        }, function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: #ffffff;");
+            $('#' + id).hide();
+        });
+    })
+</script>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_AlertPartial");
+}
+@using (Html.BeginForm("Index", "Project", FormMethod.Post))
+{
+    <div class="col-md-3 pull-right mar-left-20">
+        <div class="input-group pad-bottom-10">
+            <input type="text" class="form-control" name="searchString" placeholder="Search for..." value="@ViewBag.SearchString">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+    <ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+        <li><a href="~/project/index1">Ending Soon</a></li>
+        <li><a href="~/project/index2">Open Projects</a></li>
+        <li><a href="~/project/index3">Closed Projects</a></li>
+        <li><a href="~/project/index4">Service Requests</a></li>
+        <li class="active"><a href="">Search Results</a></li>
+    </ul>
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+    if (Model != null)
+    {
+        <div class="form-inline pull-right pad-bottom-10">
+            <div class="form-group mar-left-20">
+                @Html.DropDownList("dco", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+        </div>
+        <table class="table table-condensed">
+            <thead>
+                <tr class="title-row">
+                    <th class="sm">
+                        CO
+                    </th>
+                    <th>
+                        @Html.ActionLink("Project ID", "Index", new { search = ViewBag.SearchString, sortColumn = "ProjectID", sortDirection = ViewBag.SortDirection, dco = ViewBag.CO })
+                        @if (ViewBag.SortColumn == "ProjectID")
+                        {
+                            if (ViewBag.SortDirection == "asc")
+                            {
+                                <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                            }
+                            else
+                            {
+                                <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                            }
+                        }
+                    </th>
+                    <th>
+                        @Html.ActionLink("Project Name", "Index", new { search = ViewBag.SearchString, sortColumn = "ProjectName", sortDirection = ViewBag.SortDirection, dco = ViewBag.CO })
+                        @if (ViewBag.SortColumn == "ProjectName")
+                        {
+                            if (ViewBag.SortDirection == "asc")
+                            {
+                                <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                            }
+                            else
+                            {
+                                <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                            }
+                        }
+                    </th>
+                    <th>Prime Contractor</th>
+                    <th class="sm">
+                        Phase
+                    </th>
+                    <th class="col-md-1">
+                        Account Number
+                    </th>
+                    <th class="text-right">Contract Amount</th>
+                    <th class="md text-center">Federal Funds</th>
+                    <th class="sm"></th>
+                </tr>
+            </thead>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DCO)
+                    </td>
+                    <td>
+                        <a class="trigger" href="~/Project/Details1/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+                    </td>
+                    <td>
+                        @Html.ShortString(item.ProjectName, 45)
+                    </td>
+                    <td>
+                        <a href="~/Contractor/Details1/@item.PrimeContractorId">@item.PrimeContractorName</a>
+                    </td>
+                    <td class="text-center">
+                        @item.Phase
+                    </td>
+                    <td>
+                        @{ string url = VirtualPathUtility.ToAbsolute("~/Report/HoursByUnit1") + "?unit=" + item.Unit; }
+                        <a href="@url">@item.Unit</a>
+                    </td>
+                    <td class="text-right">
+                        @if (item.ContractAmount != null)
+                        {
+                            string amount = ((decimal)item.ContractAmount).ToString("#,##0");
+                            @amount
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.FederalFunds)
+                        {
+                            <text>Yes</text>
+                        }
+                        else
+                        {
+                            <text>No</text>
+                        }
+                    </td>
+                    <td>
+                        @if (item.ProjectType == ProjectType.Capital)
+                        {
+                            <span class="badge badge-black" data-toggle="tooltip" title="Capital" data-placement="left">CP</span>
+                        }
+                        else
+                        {
+                            <span class="badge" data-toggle="tooltip" title="Non-Capital" data-placement="left">NC</span>
+                        }
+                    </td>
+                </tr>
+                            }
+        </table>
+                                }
+                            }
+<div class="clearfix"></div>
+@{
+    Html.RenderPartial("_ProjectDetails");
+}

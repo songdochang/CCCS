@@ -1,0 +1,57 @@
+﻿<style>
+    #toggler {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 500px;
+        height: 100%;
+        z-index: -1;
+    }
+
+    #effect {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 10px 20px;
+        display: none;
+        box-shadow: -3px 0 12px #808080;
+    }
+</style>
+
+<script>
+    $(function () {
+        $(".trigger").on("mouseenter mouseleave", function () {
+            var screenTop = $(document).scrollTop() + 50;
+            $('#toggler').css('top', screenTop);
+
+            var id = $(this).attr("data-bind");
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetProjectDetails", "Project")",
+                data: { id: id },
+                success: function (result) {
+                    $('#content').html(result);
+                }
+            });
+
+            $("#effect").toggle();
+        });
+
+        $(".trigger").on("mouseenter", function () {
+            $("#toggler").css('z-Index', '10');
+        });
+
+        $(".trigger").on("mouseleave", function () {
+            $("#toggler").css('z-Index', '-1');
+        });
+    });
+</script>
+
+<div id="toggler">
+    <div id="effect" class="ui-widget-content ui-corner-all">
+        <h4 class="title">Project Details</h4>
+        <p id="content">
+        </p>
+    </div>
+</div>

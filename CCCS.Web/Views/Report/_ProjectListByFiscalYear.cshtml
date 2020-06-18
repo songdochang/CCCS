@@ -1,0 +1,81 @@
+﻿@model PagedList.IPagedList<ProjectByFiscalYearModel>
+@using CCCS.Core.Domain.Projects
+@using CCCS.Web.Models.Projects
+@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+}
+
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th class="sm">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", action, new { sortOrder = ViewBag.ProjectIdSortParm, co = ViewBag.CO, fiscalYear = ViewBag.FiscalYear, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "JOC")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "JOC_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", action, new { sortOrder = ViewBag.ProjectNameSortParm, co = ViewBag.CO, fiscalYear = ViewBag.FiscalYear, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Prime Contractor", action, new { sortOrder = ViewBag.PrimeContractorSortParm, co = ViewBag.CO, fiscalYear = ViewBag.FiscalYear, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "PrimeContractor")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "PrimeContractor_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-1">Unit</th>
+            <th class="col-md-1 text-right">Contract $</th>
+        </tr>
+    </thead>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.DCO
+                </td>
+                <td>
+                    <a href="~/Project/Details1/@item.ProjectId" role="button" data-target="@item.ProjectId" aria-controls="@item.ProjectId">@item.JOC</a>
+                </td>
+                <td>
+                    @item.ProjectName
+                </td>
+                <td>
+                    <a href="~/Contractor/Details1/@item.PrimeContractorId">@item.PrimeContractorName</a>
+                </td>
+                <td class="md2">
+                    @item.Unit
+                </td>
+                <td class="text-right">
+                    @if (item.ContractAmount != null)
+                    {
+                        string amount = ((decimal)item.ContractAmount).ToString("#,##0");
+                        @amount
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>

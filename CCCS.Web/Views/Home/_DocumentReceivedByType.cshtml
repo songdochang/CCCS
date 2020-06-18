@@ -1,0 +1,48 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        CCCS.init('#document-received');
+        CCCS.document_received('@Url.RouteUrl("DocumentReceivedByType")', '#document-received-form');
+    });
+</script>
+
+@using (Html.BeginForm("DocumentReceivedByType", "Document", FormMethod.Post, new { id = "document-received-form" }))
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Documents Received by Type
+        </div>
+        <div class="panel-body">
+            <div class="form-horizontal pull-right">
+                <div class="form-group">
+                    <div class="col-md-offset-5 col-md-1 text-right pad-top-7">From</div>
+                    <div class="col-md-2">
+                        <div class='input-group date'>
+                            <input id="dt1" name="dateFrom" type="text" class="form-control dt" value="@ViewBag.Date1" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar "></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-right pad-top-7">To</div>
+                    <div class="col-md-2">
+                        <div class='input-group date'>
+                            <input id="dt2" name="dateTo" type="text" class="form-control dt" value="@ViewBag.Date2" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar "></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-right">
+                        <input type="button" value="Refresh" class="btn btn-info btn-sm" 
+                               onclick="CCCS.document_received('@Url.RouteUrl("DocumentReceivedByType")', '#document-received-form');return false;" />
+                    </div>
+                </div>
+                <div id="document-received"></div>
+            </div>
+        </div>
+    </div>
+}

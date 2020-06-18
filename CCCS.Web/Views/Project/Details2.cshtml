@@ -1,0 +1,84 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+
+@{
+    ViewBag.Title = "Notices";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('[data-toggle="tooltip"]').tooltip()
+
+    });
+</script>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = ViewBag.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+    Html.RenderPartial("_AlertPartial");
+}
+
+<div class="row">
+    @{
+        Html.RenderAction("GetDocument", "Project", new { id = ViewBag.ProjectID, type = "NTP" });
+        Html.RenderAction("GetDocument", "Project", new { id = ViewBag.ProjectID, type = "WOA" });
+        Html.RenderAction("GetDocument", "Project", new { id = ViewBag.ProjectID, type = "BL" });
+    }
+</div>
+<div class="row">
+    @{
+        Html.RenderAction("GetDocument", "Project", new { id = ViewBag.ProjectID, type = "Misc" });
+    }
+</div>
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("MapsDetails", "Document")",
+            data: { id: @ViewBag.ProjectID },
+            success: function (result) {
+                $('#details').html(result);
+            },
+            error: function (req, status, error) {
+                // do something with error
+            }
+        });
+    });
+</script>
+
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document" style="width: 1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">WebBASIS Information</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div id="details">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model CCCS.Core.Domain.Users.CreateModel
+@{
+    ViewBag.Title = "Create User";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/UserAdmin/Index">Manage Users</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>Create User</h3>
+<hr />
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm())
+    {
+        <div class="form-group">
+            @Html.Label("Employee ID", new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.TextBoxFor(x => x.EmployeeID, new { @class = "form-control col-md-2" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Name", new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Email", new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("User Initial", new { @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                @Html.TextBoxFor(x => x.UserInitial, new { @class = "form-control" })
+            </div>
+        </div>
+
+            <div class="col-md-offset-2 mar-top-50">
+                <button type="submit" class="btn btn-primary">Create</button>
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "mar-left-20" })
+            </div>
+    }
+</div>

@@ -1,0 +1,222 @@
+﻿@model CCCS.Core.Domain.Projects.Project
+
+@{
+    ViewBag.Title = "Edit Project";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Details1/@Model.Id">Project Details</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("#ContractAmount").focusout(function () {
+            var amount = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetEstimatedHours", "Project")",
+                data: { amount: amount },
+                success: function (result) {
+                    if ($('#HoursAvailable').val() != result) {
+                        $.confirm({
+                            title: 'Update Hours',
+                            text: 'Based on billing rate schedule, do you want to enter ' + result + ' hours for \'Hours Available\'?',
+                            confirm: function () {
+                                $('#HoursAvailable').val(result);
+                            }
+                        });
+                    }
+                }
+            })
+        });
+    });
+</script>
+@if (User.IsInRole("DCO"))
+{
+    <script type="text/javascript">
+        $(function () {
+            $('.no-co').attr('disabled', true);
+        });
+    </script>
+}
+<h3>@ViewBag.Title</h3>
+
+@Html.Partial("_AlertRawPartial")
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.JOC, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.JOC, new { htmlAttributes = new { @class = "form-control no-co" } })
+            </div>
+            @if (User.IsInRole("Clerical1") || User.IsInRole("Clerical2"))
+            {
+                <div class="alert-danger">
+                    @Html.LabelFor(model => model.DateClosed, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-2">
+                        <div class='input-group date' id='dtClosed'>
+                            @Html.EditorFor(model => model.DateClosed, new { htmlAttributes = new { @class = "form-control" } })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control text-box-lg no-co" } })
+                @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Prime Contractor", new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.PrimeContractorID, new SelectList(ViewBag.PrimeContractors, "Value", "Text", ViewBag.ContractorId), new { @class = "form-control no-co" })
+                @Html.ValidationMessageFor(model => model.PrimeContractorID, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DateReceived, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtReceived'>
+                    @Html.EditorFor(model => model.DateReceived, new { htmlAttributes = new { @class = "form-control no-co" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar no-co"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.DateReceived, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Unit, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.Unit, new { htmlAttributes = new { @class = "form-control no-co" } })
+                @Html.ValidationMessageFor(model => model.Unit, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.ProjectType, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-3 pad-top-10">
+                @Html.RadioButtonFor(model => model.ProjectType, "Capital", new { @class = "no-co" })@Html.Label("Capital", new { @class = "mar-left-5 mar-right-10" })
+                @Html.RadioButtonFor(model => model.ProjectType, "NonCapital", new { @class = "no-co" })@Html.Label("Non-capital", new { @class = "mar-left-5" })
+                @Html.ValidationMessageFor(model => model.ProjectType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ContractAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.ContractAmount, new { htmlAttributes = new { @class = "form-control no-co" } })
+                @Html.ValidationMessageFor(model => model.ContractAmount, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.FederalFunds, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-4">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.FederalFunds, new { htmlAttributes = new { @class = "no-co" } })
+                    @Html.ValidationMessageFor(model => model.FederalFunds, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtStart'>
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtEnd'>
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control text-box-lg no-co" } })
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control no-co" } })
+                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Zip, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.Zip, new { htmlAttributes = new { @class = "form-control no-co" } })
+                @Html.ValidationMessageFor(model => model.Zip, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DCO, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-3">
+                @Html.DropDownList("DCO", new SelectList(ViewBag.COs, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DCO, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.HoursAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.HoursAvailable, new { htmlAttributes = new { @class = "form-control no-co" } })
+                @Html.ValidationMessageFor(model => model.HoursAvailable, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Phase, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.Phase, new SelectList(ViewBag.Phases, "Value", "Text", ViewBag.Phase), new { @class = "form-control no-co" })
+                @Html.ValidationMessageFor(model => model.Phase, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DepartmentID, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-3">
+                @Html.DepartmentDropDownListFor(x => x.DepartmentID, new { @class = "form-control no-co" })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" /><span class="mar-left-20">@Html.ActionLink("Cancel", "Details1", new { id = Model.Id })</span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

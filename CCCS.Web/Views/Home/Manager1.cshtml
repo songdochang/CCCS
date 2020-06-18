@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Manager Home";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .panel-heading span {
+        cursor: pointer;
+    }
+
+    #topBody {
+        padding: 0 15px;
+    }
+
+    ul {
+        margin-left: -40px;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .panel-heading {
+        cursor: move;
+    }
+</style>
+
+@{
+    Html.RenderAction("HomeTabs");
+}
+@Html.Partial("_AlertPartial")
+@Html.Partial("_Notifications")
+
+<ul id="sortable">
+    <li>
+        @{ 
+            Html.RenderAction("ClearanceRequest", "Home");
+        }
+    </li>
+    <li>
+        @{ 
+            Html.RenderAction("SiteVisitApproval", "Home");
+        }
+    </li>
+    <li>
+        @{
+            Html.RenderAction("MissingProjectDetails", "Home");
+        }
+    </li>
+</ul>

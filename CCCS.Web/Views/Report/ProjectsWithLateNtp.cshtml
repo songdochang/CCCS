@@ -1,0 +1,145 @@
+﻿@model PagedList.IPagedList<CCCS.Web.Models.Projects.ProjectWithLateNtpModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Projects with Late NTP";
+}
+<script>
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+
+    .sm {
+        width: 45px;
+    }
+
+    .md {
+        width: 60px;
+    }
+
+    .md2 {
+        width: 75px;
+        font-size: 0.9em;
+    }
+
+    a:focus {
+        outline: none;
+    }
+
+    .active {
+        background-position: right 12px;
+    }
+
+    td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_AlertPartial");
+}
+
+<script>
+    $(function () {
+        $('table [role="button"]').hover(function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: RGB(242, 242, 242);");
+            $('#' + id).show();
+        }, function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: #ffffff;");
+            $('#' + id).hide();
+            });
+
+        $("#print").on("click", function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("PrintProjectsWithLateNTP", "Report")",
+                data: { co: $("#co").val(), dept: $("#department").val(), dateFrom: $("#dt1").val(), dateTo: $("#dt2").val() },
+                success: function (url) {
+                    if (url.substr(0, 5) == "Error") {
+                        alert(url);
+                    } else {
+                        window.open(url, '_blank');
+                    }
+                },
+                error: function(xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        });
+    })
+</script>
+
+<p>
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm("ProjectsWithLateNtp", "Report", new { sortOrder = ViewBag.SortOrder, dept = ViewBag.Dept, co = ViewBag.CO, listStyle = ViewBag.ListStyle, page = Model.PageNumber }, FormMethod.Get, null))
+        {
+            <div class="btn-group" role="group" aria-label="...">
+                @if (string.IsNullOrEmpty(ViewBag.ListStyle))
+                {
+                    <script>
+                        $(function () {
+                            $('table [role="button"]').hover(function () {
+                                var id = $(this).attr("aria-controls");
+                                $(this).parent().parent().attr("style", "background-color: RGB(242, 242, 242);");
+                                $('#' + id).show();
+                            }, function () {
+                                var id = $(this).attr("aria-controls");
+                                $(this).parent().parent().attr("style", "background-color: #ffffff;");
+                                $('#' + id).hide();
+                            });
+                        })
+                    </script>
+                    <button name="listStyle" value="" type="submit" class="btn btn-default active">List</button>
+                    <button name="listStyle" value="detail" type="submit" class="btn btn-default">Detail</button>
+                }
+                else
+                {
+                    <button name="listStyle" value="" type="submit" class="btn btn-default">List</button>
+                    <button name="listStyle" value="detail" type="submit" class="btn btn-default active">Detail</button>
+                }
+            </div>
+            <div class="form-group mar-left-20">
+                <a data-toggle="modal" href="#filterModal"><div><span class="mar-right-10 glyphicon glyphicon-filter"></span>Filter</div></a>
+            </div>
+            Html.RenderPartial("_FilterModal");
+        }
+    </div>
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+    <div class="pull-left mar-left-25">
+        <button id="print" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-print mar-right-10"></span>Print List</button>
+    </div>
+</p>
+@Html.Partial("_ProjectListWithLateNtp")
+<br />
+@{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("ProjectsWithLateNtp", new
+{
+    sortOrder = ViewBag.SortOrder,
+    dept = ViewBag.Dept,
+    co = ViewBag.CO,
+    listStyle = ViewBag.ListStyle,
+    page,
+    dateFrom = ViewBag.DateFrom,
+    dateTo = ViewBag.DateTo
+}))
+}

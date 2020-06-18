@@ -1,0 +1,206 @@
+﻿@model CCCS.Web.Models.Contract
+@{
+    ViewBag.Title = "Add Subcontractor";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Countywide Contract Compliance System</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+</head>
+<body style="padding: 20px;">
+    <style>
+        .control-label {
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        $(function () {
+            $('.date').datetimepicker({
+                format: "L"
+            });
+
+            $("#Contractors").change(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetContractorInfo", "Project")",
+                    data: { id: $(this).val() },
+                    success: function (result) {
+                        var info = result.split(';');
+                        $("#address1").html(info[0]);
+                        $("#address2").html(info[1]);
+                        $("#city").html(info[2]);
+                        $("#state").html(info[3]);
+                        $("#zip").html(info[4]);
+
+                        $("#phone").html(info[5]);
+                    },
+                    error: function (req, status, error) {
+                        // do something with error
+                    }
+                });
+            });
+
+            $('#modalform').submit(function (e) {
+                $.ajax({
+                    type: this.method,
+                    url: "@Url.Action("CreateSubcontractor", "Contractor")",
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#Contractors').append($('<option selected></option>').val(result.ContractorID).html(result.CompanyName));
+                        $("#address1").html(result.Address1);
+                        $("#address2").html(result.Address2);
+                        $("#city").html(result.City);
+                        $("#state").html(result.State);
+                        $("#zip").html(result.Zip);
+                    }
+                });
+
+                $('#contractorModal').modal('hide');
+                e.preventDefault();
+            });
+
+        });
+    </script>
+    <h3 class="mar-bottom-20">@ViewBag.Title</h3>
+    <hr />
+    @Html.Partial("_AlertPartial")
+
+    @using (Html.BeginForm("AddSubcontractor", "Contractor", new { id = ViewBag.ContractorID }))
+    {
+        <div class="modal-body">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="control-label col-md-2">Subcontractor</div>
+                    <div class="col-md-7">
+                        @Html.DropDownList("Contractors", new SelectList(ViewBag.Contractors, "Value", "Text"), new { @class = "form-control", style = "float: left;" })
+                        <div class="mar-left-20 pad-top-7" style="float: left;"><a data-toggle="modal" href="#contractorModal">Add new contractor</a></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="control-label col-md-2">Address 1</div>
+                    <div class="col-md-9 pad-top-7">
+                        <span id="address1"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="control-label col-md-2">Address 2</div>
+                    <div class="col-md-9 pad-top-7">
+                        <span id="address2"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="control-label col-md-2">City</div>
+                    <div class="col-md-2 pad-top-7">
+                        <span id="city"></span>
+                    </div>
+                    <div class="control-label col-md-1">State</div>
+                    <div class="col-md-1 pad-top-7">
+                        <span id="state"></span>
+                    </div>
+                    <div class="control-label col-md-1">Zip</div>
+                    <div class="col-md-1 pad-top-7">
+                        <span id="zip"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="control-label col-md-2">Phone</div>
+                    <div class="col-md-9 pad-top-7">
+                        <span id="phone"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-primary" value="Save" />
+                @Html.ActionLink("Cancel", "Details5", "Contractor", new { id = ViewBag.ContractorID }, new { @class = "mar-left-20" })
+            </div>
+        </div>
+    }
+
+    <!-- Modal -->
+    <div class="modal fade" id="contractorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Contractor</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "modalform" }))
+                    {
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3">Company Name</label>
+                                <div class="col-md-8">
+                                    @Html.TextBox("CompanyName", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">Address 1</label>
+                                <div class="col-md-8">
+                                    @Html.TextBox("Address1", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">Address 2</label>
+                                <div class="col-md-8">
+                                    @Html.TextBox("Address2", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">City</label>
+                                <div class="col-md-8">
+                                    @Html.TextBox("City", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">State</label>
+                                <div class="col-md-2">
+                                    @Html.TextBox("State", "CA", new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">Zip</label>
+                                <div class="col-md-3">
+                                    @Html.TextBox("Zip", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3">EIN</label>
+                                <div class="col-md-3">
+                                    @Html.TextBox("TaxId", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input name="submit" type="submit" class="btn btn-primary" value="Save" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+</html>

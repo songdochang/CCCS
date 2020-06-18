@@ -1,0 +1,33 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="col-md-10">
+            Service Request
+        </div>
+        <div class="pull-right">
+            @if (Model != null)
+            {
+                <a href="#infoModal" data-toggle="modal">View MAPS Details</a>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                @{
+                    string id = ViewBag.ProjectID.ToString();
+                    var url = VirtualPathUtility.ToAbsolute("~/Notice/ServiceRequest") + "?id=" + id + "&returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                }
+                <a href="@url" class="btn btn-primary">Open Service Request</a>
+            </div>
+            <div class="col-md-6 text-right">
+                @if (Model != null)
+                {
+                    <a href="~/Notice/EmailSR/@id" class="btn btn-default">Email Service Request</a>
+                }
+            </div>
+        </div>
+        @{ Html.RenderAction("NoticeHistory", "Project", new { id = ViewBag.ProjectID, category = "SR" }); }
+    </div>
+</div>

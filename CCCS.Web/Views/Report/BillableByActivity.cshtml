@@ -1,0 +1,10 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h3>@ViewBag.Title</h3>
+@{ Html.RenderPartial("_dateFilter1"); }
+@{
+    Html.RenderAction("PartialBillableByActivity", new { isBillable = ViewBag.IsBillable, since = ViewBag.Since, fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate });
+}
+
+

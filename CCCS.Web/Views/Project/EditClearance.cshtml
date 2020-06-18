@@ -1,0 +1,129 @@
+﻿@model CCCS.Core.Domain.Projects.Project
+
+@{
+    ViewBag.Title = "Edit Clearance";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: 'L'
+        });
+
+        $('.time').datetimepicker({
+            format: 'LT'
+        });
+    });
+</script>
+<h3>Clearance Request</h3>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ProjectID)
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DCO, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3 pad-top-7">
+                @if (!string.IsNullOrEmpty(Model.DCO))
+                {
+                    @Model.DCO
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateClearanceRequestReceived, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                <div class='input-group date' id='dReceived'>
+                    @Html.EditorFor(model => model.DateClearanceRequestReceived, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.DateClearanceRequestReceived, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeClearanceRequestReceived, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-2">
+                <div class='input-group time' id='tReceived'>
+                    @Html.EditorFor(model => model.TimeClearanceRequestReceived, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.TimeClearanceRequestReceived, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateClearanceRequestDeliveredDCO, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                <div class='input-group date' id='dDCO'>
+                    @Html.EditorFor(model => model.DateClearanceRequestDeliveredDCO, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.DateClearanceRequestDeliveredDCO, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeClearanceRequestDeliveredDCO, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-2">
+                <div class='input-group time' id='tDCO'>
+                    @Html.EditorFor(model => model.TimeClearanceRequestDeliveredDCO, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.TimeClearanceRequestDeliveredDCO, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateClearanceRequestDelieveredManager, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                <div class='input-group date' id='dtManager'>
+                    @Html.EditorFor(model => model.DateClearanceRequestDelieveredManager, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.DateClearanceRequestDelieveredManager, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateClearanceRequestSentDepartment, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                <div class='input-group date' id='dtDepartment'>
+                    @Html.EditorFor(model => model.DateClearanceRequestSentDepartment, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.DateClearanceRequestSentDepartment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <span class="mar-left-20"><a href="~/project/Details5/@Model.Id#3">Back to Project Details</a></span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

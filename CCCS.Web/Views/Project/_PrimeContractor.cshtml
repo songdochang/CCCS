@@ -1,0 +1,82 @@
+﻿@model CCCS.Core.Domain.Contractors.Contractor
+<div class="panel panel-default">
+    <style>
+        #primeContacts th, #primeContacts td {
+            text-align: left;
+        }
+    </style>
+    <div class="panel-heading">
+        Prime Contractor
+    </div>
+    <div class="panel-body">
+        @if (Model == null)
+        {
+            if (Model != null && (User.IsInRole("Clerical") || User.IsInRole("Clerical2") || User.IsInRole("Administrator") || User.IsInRole("Manager")))
+            {
+                @:Prime contractor is not selected.  Please go to @Html.ActionLink("Edit Project", "Edit", new { id = ViewBag.ProjectID }) and select a prime contractor.
+            }
+            else
+            {
+                <span>Prime contractor information is not entered.</span>
+            }
+        }
+        else
+        {
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CompanyName)
+                    </dt>
+
+                    <dd>
+                        @Html.ActionLink(Model.CompanyName, "Details1", "Contractor", new { id = Model.Id }, null)
+                    </dd>
+                </dl>
+            </div>
+            <div class="clearfix"></div>
+            if (ViewBag.ContractContacts != null && ViewBag.ContractContacts.Count > 0)
+            {
+                <table id="primeContacts" class="table mar-top-20">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2">Name</th>
+                            <th class="col-md-3">Title</th>
+                            <th>Email</th>
+                            <th class="col-md-2">Phone Number</th>
+                            <th>Extension</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CCCS.Core.Domain.Contractors.ContractorContact item in ViewBag.ContractContacts)
+                    {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </td>
+                                <td>
+                                    <a href="mailto:@item.Email" target="_top">@item.Email</a>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Extension)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="text-center">
+                    No contact information is entered.
+                </div>
+            }
+        }
+    </div>
+</div>
+

@@ -1,0 +1,148 @@
+﻿@model CCCS.Core.Domain.Contractors.Contractor
+
+@{
+    ViewBag.Title = "General";
+    Layout = "~/Views/Shared/_LayoutContractor.cshtml";
+}
+
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Contractor/Index1">Contractors</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<style>
+    th, td {
+        text-align: left;
+    }
+</style>
+<div class="page-header">
+    <h3>@Model.CompanyName
+        @if (!String.IsNullOrEmpty(Model.TaxId))
+        {
+            <small>(Tax ID: @Model.TaxId)</small>
+        }
+    </h3>
+</div>
+@{
+    Html.RenderPartial("_ContractorDetailsTabs");
+    Html.RenderAction("ContractorStats", new { id = Model.Id });
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Address
+        @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+        {
+            <div class="pull-right">
+                @Html.ActionLink("Edit Contractor", "Edit", new { id = Model.Id })
+                <span class="mar-left-20">@Html.ActionLink("Delete Contractor", "Delete", new { id = Model.Id })</span>
+            </div>
+        }
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    Address Line 1
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Address1)
+                </dd>
+
+                <dt>
+                    Address Line 2
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Address2)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.City)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.City)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.State)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.State)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Zip)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Zip)
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Contact Information
+        <div class="pull-right">
+            <a href="~/Contractor/CreateContact/@Model.Id">Add Contact Information</a>
+        </div>
+    </div>
+    <div class="panel-body">
+        @if (ViewBag.ContactInfos != null && ViewBag.ContactInfos.Count > 0)
+        {
+            <table class="table mar-top-20">
+                <thead>
+                    <tr>
+                        <th class="col-md-3">Name</th>
+                        <th class="col-md-3">Title</th>
+                        <th>Email</th>
+                        <th class="col-md-2">Phone Number</th>
+                        <th class="col-md-1">Extension</th>
+                        <th class="col-md-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (CCCS.Core.Domain.Contractors.ContractorContact item in ViewBag.ContactInfos)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Extension)
+                            </td>
+                            <td class="text-right">
+                                <a href="~/Contractor/EditContact/@item.Id" data-toggle="tooltip" title="Edit" data-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <span class="mar-left-5 mar-right-5">|</span>
+                                <a href="~/Contractor/DeleteContact/@item.Id" data-toggle="tooltip" title="Delete" data-placement="left"><span class="glyphicon glyphicon-trash"></span></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="text-center">
+                No contact information is entered.
+            </div>
+        }
+    </div>
+</div>
+@Html.Action("Comments", new { id = Model.Id})

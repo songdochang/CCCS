@@ -1,0 +1,113 @@
+﻿@model IEnumerable<CCCS.Web.Models.ClearanceRequests.ClearanceRequestExceptionListModel>
+
+@if (Model.Count() > 0)
+{
+    string selectedValue = ViewBag.CO;
+    <script type="text/javascript">
+        $(function () {
+            $("#DcoCRE").change(function () {
+                var dco = $(this).val();
+
+                if (dco == '') {
+                    $("#CRE tbody tr").show();
+                } else {
+                    $("#CRE tbody tr:not(" + dco + ")").hide();
+                    $("#CRE tbody tr." + dco).show();
+                }
+
+                var rows = $("#CRE tbody tr[style!='display: none;']").length;
+                $("#totalCRE").html(rows);
+            });
+
+            $("a[href$='#creModal']").on("click", function () {
+                $("#ClearanceRequestID").val(this.id);
+            });
+        });
+    </script>
+    if (!String.IsNullOrEmpty(selectedValue))
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+            var d = '@selectedValue';
+            $("#CRE tbody tr:not(" + d + ")").hide();
+            $("#CRE tbody tr." + d).show();
+            });
+        </script>
+    }
+    <div class="panel panel-danger">
+        <div class="panel-heading" data-toggle="collapse" href="#CRE" aria-expanded="true">
+            <label class="pull-right">List Total:<span id="totalCRE" class="mar-left-10"></span></label>
+            Clearance Request Exception<span id="chevronCRE" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="CRE">
+            <div class="pull-right">@Html.DcoDropDownList("DcoCRE", false, selectedValue, new { @class = "form-control" })</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>CO</th>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th class="col-md-1">Date Requested</th>
+                        <th class="col-md-1">Past Due Days</th>
+                        <th class="col-md-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@item.DCO">
+                            <td>@item.DCO</td>
+                            <td>@Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)</td>
+                            <td>@item.ProjectName</td>
+                            <td>
+                                @if (item.DateRequested != null)
+                                {
+                                    var dt = (DateTime)item.DateRequested;
+                                    @dt.ToString("MM-dd-yyyy")
+                                }
+                            </td>
+                            <td class="text-center">@item.PastDueDays</td>
+                            <td class="text-right">
+                                <a data-toggle="modal" href="#creModal" id="@item.ClearanceRequestID">Add Explanation</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var rows = $("#CRE tbody tr[style!='display: none;']").length;
+            $("#totalCRE").html(rows);
+        });
+    </script>
+    <div class="modal fade" id="creModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Explanation</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("AddExplanation", "ClearanceRequest", new { dco = ViewBag.CO }))
+                    {
+                    <input type="hidden" id="ClearanceRequestID" name="ClearanceRequestID" />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="control-label col-md-2">Explanation</div>
+                            <div class="col-md-9">
+                                @Html.TextArea("comment", new { @class = "form-control", cols = 90, @rows = 10 })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }

@@ -1,0 +1,16 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string id = ViewContext.RouteData.Values["id"].ToString();
+    string[] cls = { "", "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("details", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 0 0 15px 0;">
+    <li class="@cls[0]"><a href="~/contractor/details1/@id">General</a></li>
+    <li class="@cls[1]"><a href="~/contractor/details2/@id">Past Due Documents</a></li>
+    <li class="@cls[2]"><a href="~/contractor/Details3/@id">Open Projects</a></li>
+    <li class="@cls[3]"><a href="~/contractor/Details4/@id">Closed Projects</a></li>
+    <li class="@cls[4]"><a href="~/contractor/Details5/@id">Documents</a></li>
+    <li class="@cls[5]"><a href="~/contractor/Details6/@id">Subcontractors</a></li>
+</ul>
+

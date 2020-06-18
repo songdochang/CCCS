@@ -1,0 +1,40 @@
+﻿@model CCCS.Web.Models.ProjectStats
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    th, td {
+        text-align: center;
+    }
+</style>
+<div class="topPanel" style="padding-top: 5px; margin-bottom: 20px;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-1">CO</th>
+                <th>Total Contract Amount</th>
+                <th class="col-md-2">Federal Funds?</th>
+                <th>Project Type</th>
+                <th class="col-md-2">Last Site Visit</th>
+                <th class="col-md-1"># Site Visits</th>
+                <th class="col-md-1"># Subs</th>
+                <th class="col-md-1">Available Hours</th>
+                <th class="col-md-1">Remaining Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.DCO</td>
+                <td>@Model.ContractAmount</td>
+                <td>@Model.FederalFunds</td>
+                <td>@Model.ProjectType</td>
+                <td>@Model.LastSiteVisit</td>
+                <td>@Model.NumberSiteVisit</td>
+                <td>@Model.NumberSubs</td>
+                <td>@Model.AvailableHours</td>
+                <td>@Model.RemainingHours</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,206 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.DocumentReceivedModel>
+
+@if (Model.Count() > 0)
+{
+    string selectedValue = ViewBag.CO;
+    <script type="text/javascript">
+        $(function () {
+            $("#DcoDR").change(function () {
+                var dco = $(this).val();
+
+                if (dco == '') {
+                    $("#DR tbody tr").show();
+                } else {
+                    $("#DR tbody tr:not(" + dco + ")").hide();
+                    $("#DR tbody tr[data-dismiss~='" + dco + "']").hide();
+                    $("#DR tbody tr." + dco).show();
+                    $("#DR tbody tr.all").not("[data-dismiss~='" + dco + "']").show();
+                }
+
+                var rows = $("#DR tbody tr[style!='display: none;']").length;
+                $("#totalDR").html(rows);
+            });
+        });
+    </script>
+    if (!String.IsNullOrEmpty(selectedValue))
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var d = '@selectedValue';
+                $("#DR tbody tr:not(" + d + ")").hide();
+                $("#DR tbody tr[data-dismiss~='" + d + "']").hide();
+                $("#DR tbody tr." + d).show();
+                $("#DR tbody tr.all").not("[data-dismiss~='" + d + "']").show();
+           });
+        </script>
+    }
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $("a[href$='#docModal']").on("click", function () {
+                var id = $(this).attr("id");
+                var info = $(this).attr("data-content").split(';');
+                var month = info[1];
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetFiles1", "Project")",
+                    data: { id: id },
+                    success: function (result) {
+                        $("#documentFiles").html(result);
+                        $("#year").html(info[0]);
+
+                        if (month > 0) {
+                            $("#month").html(month);
+                            $("#divMonth").show();
+                        } else {
+                            $("#divMonth").hide();
+                        }
+
+                        $("#documentType").html(info[2]);
+                    },
+                    error: function (req, status, error) {
+                        // do something with error
+                    }
+                });
+            });
+
+            $("#print").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PrintDocumentReceived", "Home")",
+                    data: { dco: $('#DcoDR').val() },
+                    success: function (url) {
+                        if (url.substr(0, 5) == "Error") {
+                            alert(url);
+                        } else {
+                            window.open(url, '_blank');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    <div class="panel panel-info">
+        <div class="panel-heading" data-toggle="collapse" href="#DR" aria-expanded="true">
+            <div class="pull-right">
+                List Total:<span id="totalDR" class="mar-left-10"></span>
+            </div>
+            Document Received<span id="chevronDR" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="DR">
+            <div>
+                <div class="pull-left mar-left-10">
+                    <button id="print" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-print mar-right-10"></span>Print List</button>
+                </div>
+                <div class="pull-right">@Html.DcoDropDownList("DcoDR", false, selectedValue, new { @class = "form-control" })</div>
+            </div>
+            <div class="clearfix"></div>
+            <table class="table table-condensed table-striped mar-top-10">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Received</th>
+                        <th>Type</th>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th>Contractor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@item.DCO" data-dismiss="@item.RemovedBy">
+                            <td>
+                                @if (item.Date != null)
+                                {
+                                    DateTime dt;
+                                    if (DateTime.TryParse(item.Date, out dt))
+                                    {
+                                        @dt.ToString("MM-dd-yyyy")
+                                    }
+                                }
+                            </td>
+                            <td><a data-toggle="modal" href="#docModal" id="@item.DocumentID" data-content="@item.Year;@item.Month;@item.DocumentType">@item.DocumentType</a></td>
+                            <td>@item.Year</td>
+                            <td class="text-center">
+                                @if (item.Month > 0)
+                                {
+                                    @item.Month
+                                }
+                            </td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.JOC))
+                                {
+                                    @Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)
+                                }
+                            </td>
+                            <td>@item.ProjectName</td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.CompanyName))
+                                {
+                                    @Html.ActionLink(item.CompanyName, "Details4", "Contractor", new { id = item.ContractorID }, null)
+                                }
+                            </td>
+                            <td class="text-right">
+                                <span data-toggle="tooltip" title="Remove document from your list" data-placement="left">
+                                    @Html.ActionLink("Remove", "RemoveDocument", "Home", new { id = item.DocumentID }, new { @class = "btn btn-xs btn-default" })
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+        $(function () {
+            var rows = $("#DR tbody tr[style!='display: none;']").length;
+            $("#totalDR").html(rows);
+        });
+</script>
+<!-- Modal -->
+<div class="modal fade" id="docModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Document Received</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="title-cell col-md-3 mar-top-10">Year</div>
+                        <div class="col-md-2 pad-left-20 pad-top-10">
+                            <span id="year"></span>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divMonth">
+                        <div class="title-cell col-md-3 mar-top-10">Month</div>
+                        <div class="col-md-2 pad-left-20 pad-top-10">
+                            <span id="month"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="title-cell col-md-3 mar-top-10">Document Type</div>
+                        <div class="col-md-2 pad-left-20 pad-top-10">
+                            <span id="documentType"></span>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div id="documentFiles" style="margin: 20px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+﻿<style>
+    .title {
+        font-weight: bold;
+    }
+
+    .number {
+        font-weight: bold;
+        font-size: 1.6em;
+        padding-top: 10px;
+    }
+
+    .caption {
+        text-align: center;
+    }
+
+    a.thumbnail {
+        text-decoration: none;
+    }
+
+        a.thumbnail:hover {
+            text-decoration: none;
+            box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.6);
+        }
+</style>
+@if (ViewBag.Exceptions > 0)
+{
+    <div class="row mar-bottom-20">
+        <div class="col-xs-6 col-md-3">
+            <a href="~/ClearanceRequest/Index7" class="thumbnail">
+                <div class="caption">
+                    <div>
+                        <div class="title">
+                            <span class="glyphicon glyphicon-flag" style="color: red; margin-right: 10px;"></span>CR exceptions in last 30 days
+                        </div>
+                        <div class="number text-center">@ViewBag.Exceptions</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+}

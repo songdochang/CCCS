@@ -1,0 +1,139 @@
+﻿@model CCCS.Web.Models.InspectionUpdateModel
+
+@{
+    ViewBag.Title = "Enter Site Visit Results";
+    Layout = "~/Views/Shared/_LayoutInspection.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    });
+</script>
+@section Navbar
+{
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li><a href="~/Inspection/DCO1/@Model.DCO">Site Visit</a></li>
+        <li><a href="@ViewBag.ReturnUrl">Details</a></li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(x => x.InspectionID)
+
+        <div class="form-group">
+            @Html.Label("DCO", new { @class = "col-md-2 control-label" })
+            <div class="col-md-3 pad-top-7">
+                @Model.DCO
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Project", new { @class = "col-md-2 control-label" })
+            <div class="col-md-3 pad-top-7">
+                @Model.ProjectName
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Contractor", new { @class = "col-md-2 control-label" })
+            <div class="col-md-3 pad-top-7">
+                @Model.ContractorName
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3 pad-top-7">
+                @Model.Address
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2 pad-top-7">
+                @Model.City
+            </div>
+            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1 pad-top-7">
+                @Model.State
+            </div>
+            @Html.LabelFor(model => model.Zip, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1 pad-top-7">
+                @Model.Zip
+            </div>
+        </div>
+
+        <div class="alert alert-info" style="padding-bottom: 0px;">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOfVisit, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-2">
+                    <div class='input-group date' id='dtVisited'>
+                        @Html.EditorFor(model => model.DateOfVisit, new { htmlAttributes = new { @class = "form-control" } })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DateOfVisit, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.NumberInterviews, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.NumberInterviews, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NumberInterviews, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.RoundTripHours, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.RoundTripHours, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.MilesOneWay, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.MilesOneWay, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                @Html.LabelFor(model => model.MilesToEastern, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.MilesToEastern, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                @Html.LabelFor(model => model.RoundTripMiles, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.RoundTripMiles, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                @Html.LabelFor(model => model.RoundTripHours, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-1">
+                    @Html.EditorFor(model => model.RoundTripHours, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>*@
+
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <span class="mar-left-20"><a href="@ViewBag.ReturnUrl">Cancel</a></span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

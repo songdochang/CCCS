@@ -1,0 +1,123 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionListModel>
+@{
+    ViewBag.Title = "Site Visit";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .narrow {
+        text-align: right;
+        width: 30px;
+    }
+
+    tr.bg {
+        border-top: double;
+        font-weight: bold;
+    }
+</style>
+
+<h3>Site Visits</h3>
+@{
+    Html.RenderPartial("_InspectionTabs");
+}
+
+<table class="table table-condensed table-hover mar-top-20">
+    <thead class="title-row">
+        <tr>
+            <th class="col-md-1"></th>
+            <th>CO</th>
+            <th class="col-md-1">Date of Visit</th>
+            <th>Contractor</th>
+            <th class="text-center">PS</th>
+            <th>Project</th>
+            <th>Address</th>
+            <th>City</th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Number of Interviews">INT</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Violations?">V?</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Photos Taken?">P?</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Miles One Way">M1</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Miles to Eastern">ME</span></th>
+            <th class="narrow">
+                <span data-toggle="tooltip" data-placement="top" title="Round trip including to and from HQ">M2</span>
+            </th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Time including to and from HQ">T2</span></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @{
+                        var url = VirtualPathUtility.ToAbsolute("~/Inspection/Details/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                    }
+                    <a href="@url">Details</a>
+                </td>
+                <td>@item.DCO</td>
+                <td>
+                    @if (item.DateOfVisit != null)
+                    {
+                        @DateTime.Parse(item.DateOfVisit.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @item.CompanyName
+                </td>
+                <td class="text-center">
+                    @item.PS
+                </td>
+                <td>
+                    @Html.ActionLink(item.JOC, "Details1", "Project", new { id = item.ProjectID }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.NumberInterviews)
+                </td>
+                <td class="text-center">
+                    @if (item.Violations)
+                    {
+                        <span class="glyphicon glyphicon-flag" style="color: red;"></span>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+                <td class="text-center">
+                    @if (item.PhotosTaken)
+                    {
+                        <span class="glyphicon glyphicon-camera" style="color: green;"></span>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+                <td class="text-right">
+                    @item.MilesOneWay
+                </td>
+                <td class="text-right">
+                    @item.MilesToEastern
+                </td>
+                <td class="text-right">
+                    @item.RoundTripMiles
+                </td>
+                <td class="text-right">
+                    @item.RoundTripHours
+                </td>
+            </tr>
+            if (!String.IsNullOrEmpty(item.Comment))
+            {
+                <tr>
+                    <td colspan="2" class="text-right"><strong>Comments:</strong></td>
+                    <td colspan="13">@item.Comment</td>
+                </tr>
+                }
+            }
+    </tbody>
+</table>

@@ -1,0 +1,172 @@
+﻿@model CCCS.Core.Domain.Worksheets.Worksheet
+
+@{
+    ViewBag.Title = "Edit Billable Activity";
+    Layout = "~/Views/Shared/_LayoutWorksheet.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            @if (ViewBag.ReturnUrl.ToLower().Contains("project"))
+            {
+                <a href="@ViewBag.ReturnUrl">Project Details</a>
+            }
+            else
+            {
+                <a href="~/Worksheet/Index2">Worksheets</a>
+            }
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<style>
+    #admin {
+        padding: 5px;
+        background-color: #bce8f1;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    });
+</script>
+<h2>Edit</h2>
+
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Billable Activity</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.ProjectId)
+        @Html.HiddenFor(x => x.JOC)
+        @Html.HiddenFor(x => x.Phase)
+        @Html.HiddenFor(x => x.EventCode)
+        @Html.HiddenFor(x => x.DCO)
+
+        <div class="well well-sm">
+            <div class="form-group">
+                @Html.Label("Project ID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4 pad-top-7">
+                    @Model.JOC
+                </div>
+                <label class = "control-label col-md-2">CO</label>
+                <div class="col-md-4 pad-top-7">
+                    @Model.DCO
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Project Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 pad-top-7">
+                    @ViewBag.ProjectName
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Phase", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4 pad-top-7">
+                    @if (!string.IsNullOrEmpty(Model.Phase))
+                    {
+                        @Html.Label(Model.Phase, new { style = "font-weight: normal" })
+                    }
+                </div>
+                @Html.LabelFor(model => model.EventCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4 pad-top-7">
+                    @if (!string.IsNullOrEmpty(Model.EventCode))
+                    {
+                        @Html.Label(Model.EventCode, new { style = "font-weight: normal" })
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Contractor</label>
+            <div class="col-md-4">
+                @Html.DropDownList("Contractor", new SelectList(ViewBag.Contractors, "Value", "Text", Model.ContractorId), new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WorkDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtWork'>
+                    @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ActivityCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("ActivityCode", new SelectList(ViewBag.ActivityCodes, "Value", "Text", Model.ActivityCode), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ActivityCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextArea("Comment", new { @class = "form-control", @rows = 4 })
+                @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+                <small>* Comment entered here will appear in the 'Comments' section of the project's 'General' page.</small>
+            </div>
+            @if (ViewBag.UserRole == "Admin")
+            {
+                <div class="col-md-6" id="admin">
+                    @Html.Label("Comment Category", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-7">
+                        @Html.DropDownListFor(x => x.CommentCategoryId, new SelectList(ViewBag.CommentCategories, "Value", "Text", Model.CommentCategoryId), new { @class = "form-control" })
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Hours, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownList("Hour", new SelectList(ViewBag.Hours, "Value", "Text", Model.Hours), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Minutes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownList("Minute", new SelectList(ViewBag.Minutes, "Value", "Text", Model.Minutes), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                @if (string.IsNullOrEmpty(Model.DCO))
+                {
+                    <input type="submit" name="submitButton" value="Save" class="btn btn-primary" disabled />
+                    <input type="submit" name="submitButton "value="Save as New" class="btn btn-default mar-left-20" disabled />
+                }
+                else
+                {
+                    <input type="submit" name="submitButton" value="Save" class="btn btn-primary" />
+                    <input type="submit" name="submitButton" value="Save as New" class="btn btn-default mar-left-20" />
+                }
+                <span class="mar-left-20"><a href="@ViewBag.ReturnUrl">Cancel</a></span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,91 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+<script>
+    $(function () {
+        $('#fileNTP').change(function () {
+            $("#loading").show();
+            $("#viewLink").removeAttr('href');
+
+            var formData = new FormData();
+            formData.append('file', $('#fileNTP')[0].files[0]);
+            formData.append('id', @Model.ProjectID);
+            formData.append('type', 'NTP');
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadDocument", "Document")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        $("#alert").removeClass("alert-danger");
+                        $("#alert").addClass("alert-success");
+                        $("#alert").html(result.Message);
+                        $("#dtNTP").html(result.DateUploaded);
+                        $("#viewNTP").html(result.ViewLink);
+                    } else {
+                        $("#alert").removeClass("alert-success");
+                        $("#alert").addClass("alert-danger");
+                        $("#alert").html(result.Message);
+                    }
+                    $("#alert").show();
+                    $("#loading").hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#loading").hide();
+                }
+            });
+
+            $(this).val(null);
+        });
+
+        $("#resetNTP").confirm({
+            title: "Delete File",
+            text: "Are you sure to delete this document?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+    });
+</script>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Notice to Proceed
+        </div>
+        <div class="panel-body">
+            <div id="alert" class="alert alert-success" style="display: none;">
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    @using (Html.BeginForm(new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="input-group">
+                            <span class="btn btn-info btn-file">
+                                Select NTP<input type="file" id="fileNTP" />
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-1">
+                    <img id="loading" src="~/Content/images/loading.gif" alt="" style="display: none;" />
+                </div>
+            </div>
+            <div id="dtNTP" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <label class="mar-right-10">Date Uploaded:</label>@Model.DateUploaded
+                }
+            </div>
+            <div id="viewNTP" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <div class="pull-right">
+                        <a id="resetNTP" href="~/Document/DeleteDocument/@Model.DocumentID" class="btn btn-sm btn-danger">Remove</a>
+                    </div>
+                    <a target="_blank" href="@Url.Content("/Files/NTP/" + Model.FileName)">View Document</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

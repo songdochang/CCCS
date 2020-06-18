@@ -1,0 +1,173 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+    string[] style = { "", "", "", "", "" };
+
+    switch (controller)
+    {
+        case "home":
+            style[0] = "color: #ffffff;";
+            break;
+        case "project":
+            style[1] = "color: #ffffff;";
+            break;
+    };
+
+    var users = CCCS.Infrastructure.CommonHelper.GetUsers().Where(x => !x.Text.Contains("Songdo Chang") && !x.Text.Contains("Padmaja"));
+}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="~/Home/Index" class="navbar-brand" style="@style[0]">CCCS Home</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li></li>
+                <li style="@style[1]">@Html.ActionLink("Projects", "Index1", "Project")</li>
+                <li>@Html.ActionLink("Contractors", "Index1", "Contractor")</li>
+                <li>@Html.ActionLink("Clearance Request", "Index1", "ClearanceRequest")</li>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+                {
+                    <li>@Html.ActionLink("Site Visits", "Index2", "Inspection")</li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("Site Visits", "Index3", "Inspection")</li>
+                }
+                <li>@Html.ActionLink("Time Worksheets", "Index1", "Worksheet", new { DCO = ViewBag.CO }, null)</li>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Past Due Documents", "PastDue1", "Report")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Billable by Activity", "BillableByActivity", "Report", new { isBillable = true, since = 30 }, null)</li>
+                            <li>@Html.ActionLink("Non-Billable by Activity", "BillableByActivity", "Report", new { isBillable = false, since = 30 }, null)</li>
+                            <li>@Html.ActionLink("Activity by Month", "ActivityByMonth", "Report")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Hours by Unit", "HoursByUnit1", "Report")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Projects with Late NTP", "ProjectsWithLateNtp", "Report")</li>
+                            <li>@Html.ActionLink("Projects by Fiscal Year", "ProjectsByFiscalYear", "Report")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Manage<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Users", "Index", "UserAdmin")</li>
+                            <li>@Html.ActionLink("Roles", "Index", "RoleAdmin")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Non-Billable Activities", "Index", "Manage")</li>
+                        </ul>
+                    </li>
+                }
+                else if (User.IsInRole("Clerical"))
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Non-Billable Activities", "Index", "Manage")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Hours by Unit", "HoursByUnit1", "Report")</li>
+                        </ul>
+                    </li>
+                }
+                else if (User.IsInRole("Clerical2"))
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("CR Activities", "ClearanceRequests", "Report")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Hours by Unit", "HoursByUnit1", "Report")</li>
+                        </ul>
+                    </li>
+                }
+                else if (User.IsInRole("DCO"))
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Past Due Documents", "PastDue1", "Report")</li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            @{
+                                var hello = "Hello " + User.Identity.GetUserName() + "!";
+                                bool impersonation = false;
+
+                                var claims = ((System.Security.Claims.ClaimsPrincipal)User).Claims;
+                                foreach (var c in claims)
+                                {
+                                    if (c.Type == "impersonate")
+                                    {
+                                        impersonation = true;
+                                    }
+                                }
+                            }
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@hello<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                @if (User.IsInRole("Manager") || impersonation)
+                                {
+                                    <li>
+                                        <a data-toggle="modal" href="#userModal">Login As...</a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                }
+                                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login As</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Impersonate", "Account", null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Employee</label>
+                        <div class="col-md-6">
+                            @Html.DropDownList("UserID", new SelectList(users, "Value", "Text"), new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Continue" class="btn btn-primary" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

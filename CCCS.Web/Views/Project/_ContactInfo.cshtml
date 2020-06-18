@@ -1,0 +1,87 @@
+﻿@model CCCS.Core.Domain.Projects.ProjectContact
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Contact Information
+        <div class="pull-right">
+            <a href="~/Project/EditContact/@Model.ProjectId">Edit Contact Information</a>
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-2"></th>
+                    <th>Contact Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th class="col-md-1">Extension</th>
+                </tr>
+            </thead>
+            <tr>
+                <td class="title-cell">
+                    Department
+                </td>
+                <td>
+                    @Model.DeptContact
+                </td>
+                <td>
+                    <a href="mailto:@Model.DeptContactEmail" target="_top">@Model.DeptContactEmail</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.DeptContactPhoneNumber)
+                </td>
+                <td>@Model.DeptContactExtension</td>
+            </tr>
+            <tr>
+                <td class="title-cell">
+                    Analyst
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Analyst)
+                </td>
+                <td>
+                    <a href="mailto:@Model.AnalystEmail" target="_top">@Model.AnalystEmail</a>
+                </td>                
+                <td>
+                    @Html.DisplayFor(model => model.AnalystPhoneNumber)
+                </td>
+                <td>@Model.AnalystExtension</td>
+            </tr>
+            <tr>
+                <td class="title-cell">
+                    Project Manager
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.ProjectManager)
+                </td>
+                <td>
+                    <a href="mailto:@Model.ProjectManagerEmail" target="_top">@Model.ProjectManagerEmail</a>
+                </td>                
+                <td>
+                    @Html.DisplayFor(model => model.ProjectManagerPhoneNumber)
+                </td>
+                <td>
+                    @Model.ProjectManagerExtension
+                </td>
+            </tr>
+            @*<tr>
+                <td class="title-cell">
+                    Contractor
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Contractor)
+                </td>
+                <td>
+                    <a href="mailto:@Model.ContractorEmail" target="_top">@Model.ContractorEmail</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.ContractorPhoneNumber)
+                </td>
+                <td>
+                    @Model.ContractorExtension
+                </td>
+            </tr>*@
+        </table>
+    </div>
+</div>
+

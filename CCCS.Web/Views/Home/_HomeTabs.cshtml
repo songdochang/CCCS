@@ -1,0 +1,27 @@
+﻿@{
+    string[] cls = { "", "", "", "", "", "" };
+    int idx = ViewBag.Index;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+    {
+        <li class="@cls[0]"><a href="~/Home/Manager1">Notifications</a></li>
+        <li class="@cls[1]"><a href="~/Home/Manager2">Project Overview</a></li>
+        <li class="@cls[2]"><a href="~/Home/Manager3">Contractor Overview</a></li>
+        <li class="@cls[3]"><a href="~/Home/Manager4">Prime Distribution</a></li>
+    }
+    else if (User.IsInRole("DCO"))
+    {
+        <li class="@cls[4]"><a href="~/Home/DCO">Overview</a></li>
+        <li class="@cls[3]"><a href="~/Home/Manager4">Prime Distribution</a></li>
+    }
+    @if (ViewBag.InBox == 0)
+    {
+        <li class="@cls[5]"><a href="~/Home/Messages">Messages</a></li>
+    }
+    else
+    {
+        <li class="@cls[5]"><a href="~/Home/Messages">Messages<span class="badge badge-red mar-left-5">@ViewBag.InBox</span></a></li>
+    }
+</ul>

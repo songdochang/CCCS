@@ -1,0 +1,57 @@
+﻿@model CCCS.Core.Domain.Worksheets.Worksheet
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h3>Delete</h3>
+
+<h4 class="text-danger">Are you sure you want to delete this activity?</h4>
+<hr />
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.WorkDate)
+    </dt>
+
+    <dd>
+        @Model.WorkDate.ToString("MM-dd-yyyy")
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.DCO)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.DCO)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.EventCode)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.EventCode)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.ActivityCode)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.ActivityCode)
+    </dd>
+</dl>
+
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <div class="col-md-offset-1 col-md-10">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <span class="mar-left-20">
+                <a href="@ViewBag.ReturnUrl">Back to list</a>
+            </span>
+        </div>
+    </div>
+}

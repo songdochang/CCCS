@@ -1,0 +1,146 @@
+﻿@model PagedList.IPagedList<CCCS.Web.Models.Projects.ProjectModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Projects";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+
+    .sm {
+        width: 45px;
+    }
+
+    .md {
+        width: 60px;
+    }
+
+    .md2 {
+        width: 75px;
+        font-size: 0.9em;
+    }
+
+    table {
+    }
+</style>
+<style type="text/css">
+    a:focus {
+        outline: none;
+    }
+
+    #panel1 {
+        background: #754c24;
+        height: 200px;
+        display: none;
+    }
+
+    .slide {
+        margin: 0;
+        padding: 0;
+        border-top: solid 4px #422410;
+        background: url(images/btn-slide.gif) no-repeat center top;
+    }
+
+    .btn-slide {
+        background: url(images/white-arrow.gif) no-repeat right -50px;
+        text-align: center;
+        width: 144px;
+        height: 31px;
+        padding: 10px 10px 0 0;
+        margin: 0 auto;
+        display: block;
+        font: bold 120%/100% Arial, Helvetica, sans-serif;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .active {
+        background-position: right 12px;
+    }
+</style>
+<div class="pull-right mar-top-20">
+    @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+    {
+        string url = VirtualPathUtility.ToAbsolute("~/Project/Create") + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+        <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Create new project</a>
+    }
+</div>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_AlertPartial");
+    Html.RenderPartial("_SearchProject");
+    Html.RenderPartial("_ProjectIndexTabs");
+}
+
+<script>
+    $(function () {
+        $('table [role="button"]').hover(function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: RGB(242, 242, 242);");
+            $('#' + id).show();
+        }, function () {
+            var id = $(this).attr("aria-controls");
+            $(this).parent().parent().attr("style", "background-color: #ffffff;");
+            $('#' + id).hide();
+        });
+    })
+</script>
+
+<p>
+    @using (Html.BeginForm("Index1", "Project", new { sortOrder = ViewBag.SortOrder, page = Model.PageNumber }, FormMethod.Post, null))
+    {
+        <div class="form-inline pull-right pad-bottom-10">
+            <div class="form-group mar-left-20">
+                <a data-toggle="modal" href="#filterModalEnding"><div><span class="mar-right-10 glyphicon glyphicon-filter"></span>Filter</div></a>
+            </div>
+        </div>
+        Html.RenderPartial("_FilterModalEnding");
+    }
+    <label class="pull-left pad-top-7">
+        List Total:<span class="mar-left-10">@ViewBag.Total</span>
+        <span class="mar-left-20" style="font-weight: normal;">
+            * Projects ending within 3 months
+        </span>
+    </label>
+</p>
+@if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+{
+    @Html.Partial("_ProjectListAdmin")
+}
+else if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+{
+    @Html.Partial("_ProjectListClerical")
+}
+else if (User.IsInRole("DCO"))
+{
+    @Html.Partial("_ProjectListDCO")
+}
+<br />
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    if (ViewBag.JOC != null && ViewBag.JOC.Contains("true"))
+    {
+        @Html.PagedListPager(Model, page => Url.Action("Index1", new { sortOrder = ViewBag.SortOrder, co = ViewBag.CO, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount, page }))
+    }
+    else
+    {
+        @Html.PagedListPager(Model, page => Url.Action("Index1", new { sortOrder = ViewBag.SortOrder, co = ViewBag.CO, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount, page }))
+    }
+}
+
+

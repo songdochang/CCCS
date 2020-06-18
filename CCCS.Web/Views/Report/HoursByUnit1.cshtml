@@ -1,0 +1,109 @@
+﻿@model List<CCCS.Web.Models.Report.HoursByUnitModel>
+@using System.Data
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            viewMode: "years",
+            format: "MM/YYYY"
+        });
+    });
+</script>
+<h3>Hours by Unit</h3>
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    <li class="active"><a href="~/report/HoursByUnit1">Hours Charged by Unit</a></li>
+    <li><a href="~/report/HoursByUnit2">Projects by Unit</a></li>
+</ul>
+@using (Html.BeginForm())
+{
+    <div style="padding-top: 10px;">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label style="padding-top: 30px;">List Count: @ViewBag.Count</label>
+                </div>
+                <div class="col-md-2">
+                    <label>Unit:</label>
+                    @Html.DropDownList("unit", new SelectList(ViewBag.Units, "Value", "Text", ViewBag.Unit), new { @class = "form-control" })
+                </div>
+                <div class="col-md-2">
+                    <label>Phase:</label>
+                    @Html.DropDownList("phase", new SelectList(ViewBag.Phases, "Value", "Text", ViewBag.Phase), new { @class = "form-control" })
+                </div>
+                <div class="col-md-2">
+                    <label>From Month:</label>
+                    <div class='input-group date'>
+                        <input id="month1" name="month1" type="text" class="form-control" value="@ViewBag.Month1" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label>To Month:</label>
+                    <div class='input-group date'>
+                        <input id="month2" name="month2" type="text" class="form-control" value="@ViewBag.Month2" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="text-right" style="padding-top: 25px;">
+                    <input type="submit" value="Apply" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+}
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Unit</th>
+                <th>JOC</th>
+                <th>Project Name</th>
+                <th>Phase</th>
+                <th>CO</th>
+                <th>Hours<br />Available</th>
+                <th>Hours<br />Charged</th>
+                <th>Hours<br />Remaining</th>
+            </tr>
+        </thead>
+        @{
+            string unit = "";
+            int rowSpan = 1;
+        }
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                @if (Model[i].Unit != unit)
+                {
+                    for (int j = i + 1; j < Model.Count; j++)
+                    {
+                        rowSpan = j - i + 1;
+                        if (Model[j].Unit != Model[i].Unit)
+                        {
+                            rowSpan = j - i;
+                            break;
+                        }
+                    }
+                    <td rowspan="@rowSpan">@Model[i].Unit</td>
+                    unit = Model[i].Unit;
+                }
+                <td><a class="trigger" href="~/project/Details7/@Model[i].ProjectId" data-bind="@Model[i].ProjectId">@Model[i].JOC</a></td>
+                <td>@Model[i].ProjectName</td>
+                <td class="text-center">@Model[i].Phase</td>
+                <td>@Model[i].CO</td>
+                <td class="text-right">@Model[i].HoursAvailable</td>
+                @{ string charged = (Model[i].HoursCharged == null) ? "-" : ((double)Model[i].HoursCharged).ToString("#,###.00"); }
+                <td class="text-right">@charged</td>
+                <td class="text-right">@Model[i].HoursRemaining</td>
+            </tr>
+        }
+    </table>
+    Html.RenderPartial("_ProjectDetails");
+}

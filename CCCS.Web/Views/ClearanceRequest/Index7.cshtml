@@ -1,0 +1,265 @@
+﻿@using PagedList.Mvc
+@using CCCS.Web.Models.ClearanceRequests
+@model List<ClearanceRequestExceptionListModel>
+@{
+    ViewBag.Title = "Clearance Request Exception";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-toggle="popover"]').popover();
+
+        $("a[href$='#messageModal']").on("click", function () {
+            var id = $(this).attr("data-bind");
+            $('#ProjectId').val(id);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMessages", "Home")",
+                data: { id: id },
+                success: function (result) {
+                    $('#MessageList').html(result);
+                }
+            })
+        });
+
+        $("a[href$='#documentModal']").on("click", function () {
+            var id = $(this).attr("data-bind");
+            $('#pdf').attr("href", "ViewDocument/" + id);
+            $('#jpg').attr("href", "ViewJPG/" + id);
+        })
+
+        $("a[href$='#commentModal']").on("click", function () {
+            var id = $(this).attr("id");
+            var dco = $(this).attr("data-bind");
+            $('#id').val(id);
+            $('#dco').val(dco);
+        })
+
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    })
+</script>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+<p>
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@Model.Count</span></label>
+</p>
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th style="width: 60px;">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", "Index6", new { sortOrder = ViewBag.ProjectIdSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "ProjectId")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectId_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                Prime Contractor
+            </th>
+            <th class="col-md-1 text-center">
+                Last Document
+            </th>
+            <th class="col-md-1 text-center">
+                @Html.ActionLink("Sent to CO Date", "Index7", new { sortOrder = ViewBag.DateRequestedSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "DateRequested")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateRequested_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-1 text-center">
+                Sent to SM Date
+            </th>
+            <th class="text-center" style="width: 60px;">
+                CO
+            </th>
+            <th class="text-center" style="width: 60px;">
+                SM
+            </th>
+            <th class="text-center" style="width: 60px;">
+                DEPT
+            </th>
+            <th></th>
+            <th class="col-md-1"></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-left">
+                @if (User.IsInRole("Manager"))
+                {
+                    <a data-toggle="modal" href="#messageModal" data-bind="@item.ProjectID"><span class="glyphicon glyphicon-envelope mar-right-5"></span>@item.DCO</a>
+                }
+                else
+                {
+                    @item.DCO
+                }
+            </td>
+            <td>
+                <a class="trigger" href="~/Project/Details5/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+            </td>
+            <td>
+                <a href="~/Contractor/Details1/@item.PrimeContractorId">@item.PrimeContractor</a>
+            </td>
+            <td class="text-center">
+                @item.DateLastDoc.ToString("MM-dd-yyyy")
+            </td>
+            <td class="text-center">
+                @item.DateRequested.ToString("MM-dd-yyyy")
+            </td>
+            <td class="text-center">
+                @if (item.DateSM != null && item.DateSM > DateTime.MinValue)
+                {
+                    @item.DateSM.ToString("MM-dd-yyyy");
+                }
+            </td>
+            <td class="text-center">
+                @if (item.DaysDCO > 5)
+                {
+                    <span class="badge badge-red">@item.DaysDCO</span>
+                }
+                else
+                {
+                    @item.DaysDCO
+                }
+            </td>
+            <td class="text-center">
+                @if (item.DaysSM > 2)
+                {
+                    <span class="badge">@item.DaysSM</span>
+                }
+                else
+                {
+                    @item.DaysSM
+                }
+            </td>
+            <td class="text-center">
+                @if (item.DaysDEPT > 1)
+                {
+                    <span class="badge badge-red">@item.DaysDEPT</span>
+                }
+                else
+                {
+                    @item.DaysDEPT
+                }
+            </td>
+            <td class="text-center">
+                <a data-toggle="modal" href="#documentModal" data-bind="@item.ProjectID"><span class="glyphicon glyphicon-file" style="font-size: 1.2em;"></span></a>
+            </td>
+            <td class="text-right">
+                @if (User.IsInRole("Manager"))
+                {
+                    <a data-toggle="modal" href="#commentModal" id="@item.ClearanceRequestID" data-bind="SM">Comment</a>
+                }
+                else
+                {
+                    <a data-toggle="modal" href="#commentModal" id="@item.ClearanceRequestID" data-bind="@item.DCO">Comment</a>
+                }
+            </td>
+        </tr>
+        if (item.Comments.Count > 0)
+        {
+            int cnt = 0;
+            <tr>
+                <td class="text-right" colspan="2"><strong>Comments:</strong></td>
+                <td colspan="9">
+                    @foreach(var c in item.Comments)
+                    {
+                        cnt++;
+                        if (c.DateCommented.HasValue)
+                        {
+                            var dt = (DateTime)c.DateCommented;
+                            <div>@cnt<text style="margin-right: 5px;">.</text>@c.DCO said on @dt.ToShortDateString()<text>:</text><span style="margin-left: 10px;">@c.Comment</span></div>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>
+<br />
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @*@:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("Index6", new { dco = ViewBag.CO, page }))*@
+}
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Messages</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Messages", "Home", FormMethod.Post, new { id = "modalform" }))
+                {
+                    <input type="hidden" id="ProjectId" name="ProjectId" />
+                    <div class="form-horizontal">
+                        <div id="MessageList"></div>
+                        <div class="form-group pad-left-20 pad-right-20">
+                            @Html.TextArea("Message", new { @class = "form-control", cols = 50, @rows = 4 })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Send" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Explanation</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm())
+                {
+                    <input type="hidden" name="id" id="id" />
+                    <input type="hidden" name="dco" id="dco" />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Comment</div>
+                            <div class="col-md-8">
+                                @Html.TextArea("Comment", new { @class = "form-control", cols = 35, @rows = 10 })
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input name="submit" type="submit" class="btn btn-primary" value="Submit" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    Html.RenderPartial("_ProjectDetails");
+}
+@Html.Partial("_CrFormatSelector")

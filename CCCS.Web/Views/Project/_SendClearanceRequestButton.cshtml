@@ -1,0 +1,67 @@
+﻿@if (ViewBag.ShowButton)
+{
+    <div class="text-right">
+        <h5>* You may add comment when you click button.</h5>
+    </div>
+    <div class="text-right mar-top-10">
+        @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+        {
+            using (Html.BeginForm("SendClearanceRequest", "Project", new { id = ViewBag.ProjectID }, FormMethod.Post))
+            {
+                <input type="submit" name="reject" value="Reject" class="btn btn-danger" />
+                <span class="mar-left-10"><input type="submit" name="approve" value="Send to Department" class="btn btn-success" /></span>
+            }
+        }
+        else if (User.IsInRole("DCO"))
+        {
+            <a data-toggle="modal" href="#approveModal" value="Send to Manager" class="btn btn-primary">Send to Manager</a>
+        }
+    </div>
+    <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Send to Manager</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("SendClearanceRequest", "Project", new { id = ViewBag.ProjectID }))
+                    {
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.Label("Comment (Optional)", htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-8">
+                                    @Html.TextArea("Comment", new { @class = "form-control", cols = 30, @rows = 5 })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Send" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-right">
+        <h5 class="disabled">* You may add comment when you click button.</h5>
+    </div>
+    <div class="text-right mar-top-20">
+        @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+        {
+            using (Html.BeginForm("SendClearanceRequest", "Project", new { id = ViewBag.ProjectID }, FormMethod.Post))
+            {
+                <input type="submit" name="reject" value="Reject" class="btn btn-danger disabled" />
+                    <span class="mar-left-10"><input type="submit" name="approve" value="Send to Department" class="btn btn-success disabled" /></span>
+            }
+        }
+        else if (User.IsInRole("DCO"))
+        {
+            <a data-toggle="modal" href="#approveModal" value="Send to Manager" class="btn btn-primary disabled">Send to Manager</a>
+        }
+    </div>
+}

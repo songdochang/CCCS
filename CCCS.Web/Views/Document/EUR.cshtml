@@ -1,0 +1,226 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.ContractorDocumentModel>
+
+@{
+    ViewBag.Title = "Log EUR";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        //$('[data-toggle="confirmation"]').confirmation('toggle');
+
+        $("a[href$='#fileModal']").on("click", function () {
+            $("#ContractorName").html($(this).attr('name'));
+            $("#ContractorID").val(this.id);
+        });
+
+        $("a[href$='#editModal']").on("click", function () {
+            $("#EditContractorName").html($(this).attr('name'));
+            $("#EditDocumentID").val(this.id);
+            $("#EditTitle").val($(this).attr('data-content'));
+            $("#EditDateReceived").val($(this).attr('data-rel'));
+        });
+
+        $("a[href$='#uploadModal']").on("click", function () {
+            $("#UploadContractorID").val(this.id);
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+        });
+    });
+</script>
+<h3>Log EUR</h3>
+<h4>Please click on the 'Edit' button to edit dates.</h4>
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-md-4">Contractor Name</th>
+            <th></th>
+            <th>
+                <div class="row">
+                    <div class="col-md-5">Title</div>
+                    <div>Received Date</div>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(c.CompanyName, "Details2", "Contractor", new { id = c.ContractorID }, null)
+                @if (c.IsPrime)
+                {
+                    <span class="badge badge-red mar-left-10">Prime</span>
+                }
+            </td>
+            <td>
+                <a data-toggle="modal" href="#fileModal" id="@c.ContractorID" name="@c.CompanyName">Add EUR</a>
+            </td>
+            <td>
+                <table class="table table-hover">
+                    @foreach (var d in c.Documents)
+                    {
+                        var dt = (d.DateReceived == null) ? "" : ((DateTime)d.DateReceived).ToString("MM-dd-yyyy");
+
+                        <tr class="list-group-item">
+                            <td>@d.Title</td>
+                            <td class="col-md-3">
+                                @if (d.DateReceived != null)
+                                {
+                                    @DateTime.Parse(d.DateReceived.ToString()).ToString("MM-dd-yyyy")
+                                }
+                            </td>
+                            <td class="col-md-1 text-center">
+                                @if (string.IsNullOrEmpty(d.FileName))
+                                {
+                                    <a data-toggle="modal" href="#uploadModal" id="@d.ContractorID">Upload</a>
+                                }
+                            </td>
+                            <td class="col-md-1 text-center">
+                                @if (!string.IsNullOrEmpty(d.FileName))
+                                {
+                                    @Html.ActionLink("View", "Download", "Document", new { id = d.DocumentID }, null)
+                                }
+                            </td>
+                            <td class="col-md-1 text-center">
+                                <a data-toggle="modal" href="#editModal" id="@d.DocumentID" name="@c.CompanyName" data-content="@d.Title" data-rel="@dt">Edit</a>
+                            </td>
+                            <td class="col-md-1 text-center">@Html.ActionLink("Delete", "DeleteDocument", "Document", new { id = d.DocumentID, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery }, new { onclick = "return confirm('Are you sure you want to delete this document?')" })</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+</table>
+<hr />
+<div class="col-md-10">
+    @Html.ActionLink("Back to Document List", "Details2", "Project", new { id = ViewBag.Project.ProjectID }, null)
+</div>
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ContractorName"></h4>
+                <h5>@ViewBag.Project.ProjectName</h5>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("SaveEUR", "Document", new { id = ViewBag.Project.ProjectID }))
+                {
+                    @Html.Hidden("ContractorID")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Title</div>
+                            <div class="col-md-9">
+                                @Html.Editor("Title", new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Date Received</div>
+                            <div class="col-md-4">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("DateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="EditCompanyName"></h4>
+                <h5>@ViewBag.Project.ProjectName</h5>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UpdateEUR", "Document", new { id = ViewBag.Project.ProjectID }))
+                {
+                    @Html.Hidden("EditContractorID")
+                    @Html.Hidden("EditDocumentID")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Title</div>
+                            <div class="col-md-9">
+                                @Html.Editor("EditTitle", new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Date Received</div>
+                            <div class="col-md-4">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("EditDateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload File</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadFile2", "Document", new { id = ViewBag.Project.ProjectID, returnUrl = ViewContext.HttpContext.Request.UrlReferrer.PathAndQuery }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("UploadDocumentName", "EUR")
+                    @Html.Hidden("UploadContractorID")
+                    <div class="form-horizontal">
+                        <div>Select a file to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

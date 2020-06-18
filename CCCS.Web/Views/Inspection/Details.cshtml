@@ -1,0 +1,451 @@
+﻿@model CCCS.Core.Domain.Inspection.Inspection
+
+@{
+    ViewBag.Title = "Site Visit Details";
+    Layout = "~/Views/Shared/_LayoutInspection.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    th, td {
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        @*$("#ProjectID").change(function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetContractors", "Inspection")",
+                data: { id: $(this).val() },
+                success: function (result) {
+                    $.each(result, function () {
+                        $("#ContractorID").append($('<option></option>').attr("value", this.Value).text(this.Text));
+                    });
+                },
+                error: function (req, status, error) {
+                    // do something with error
+                }
+            });
+        })*@
+
+        $("#updateMiles").click(function (event) {
+            event.preventDefault();
+            var wp = $("#Address").val() + ' ' + $("#City").val();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMiles", "Inspection")",
+                data: { id: @Model.Id, wp: wp },
+                success: function (result) {
+                    $("#MilesOneWay").val(result[0]);
+                    $("#MilesToEastern").val(result[1]);
+                    $("#RoundTripMiles").val(result[2]);
+                },
+                error: function (req, status, error) {
+                    // do something with error
+                }
+            });
+        })
+
+        $("a[href$='#photoModal']").on("click", function () {
+            $("#InspectionID1").val(this.id);
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+
+            if ($(this).attr('id') == 'photoFile') {
+                $("#photoName").val(label);
+                $("#photoPath").html($(this).val());
+            } else {
+                $("#fileName").val(label);
+                $("#filePath").html($(this).val());
+            }
+        });
+
+        $("#confirmCancel").confirm({
+            title: "Cancel Request",
+            text: "Are you sure to cancel this site visit request?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+    });
+
+</script>
+@section Navbar
+{
+    <ol class="breadcrumb">
+        <li>
+            <a href="~/">CCCS Home</a>
+        </li>
+        <li><a href="~/Inspection/Index3">Site Visit</a></li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+@{    Html.RenderPartial("_AlertPartial");}
+
+<div style="padding-top: 5px; margin-bottom: 20px; background-color: #eee;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-2">Round Trip Hours</th>
+                <th class="col-md-2">Round Trip Miles</th>
+                <th class="col-md-2">Photos Taken</th>
+                <th class="col-md-2">Violations</th>
+                <th class="col-md-2"># Interviews</th>
+                <th class="col-md-2">Date of Visit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.RoundTripHours</td>
+                <td>@Model.RoundTripMiles</td>
+                <td>
+                    @if (Model.PhotosTaken)
+            {
+                        @:Yes
+                    }
+            else
+            {
+                        @:No
+                    }
+                </td>
+                <td>
+                    @if (Model.Violations)
+            {
+                        @:Yes
+                    }
+            else
+            {
+                        @:No
+                    }
+                </td>
+                <td>@Model.NumberInterviews</td>
+                <td>
+                    @if (Model.DateOfVisit != null)
+            {
+                string dt = DateTime.Parse(Model.DateOfVisit.ToString()).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="pull-right">
+            @if (Model.PhotosTaken)
+            {
+                <a data-toggle="modal" href="#photoModal" id="@Model.Id">Upload Photo</a>
+                <span class="mar-left-20">
+                    @Html.ActionLink("View Photos", "ViewPhoto", "Inspection", new { id = Model.Id, returnUrl = Request.Url.PathAndQuery }, null)
+                </span>
+            }
+        </div>
+        General
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal col-md-6">
+            <dt>
+                Project Name
+            </dt>
+            <dd>
+                @ViewBag.ProjectName
+            </dd>
+
+            <dt>
+                Contractor
+            </dt>
+            <dd>
+                <a href="~/Contractor/Details1/@Model.Id">@ViewBag.ContractorName</a>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal col-md-6">
+            <dt>
+                Project ID
+            </dt>
+            <dd>
+                <a href="~/Project/Details1/@Model.ProjectId">@ViewBag.JOC</a>
+            </dd>
+
+            <dt>
+                DCO
+            </dt>
+            <dd>
+                @Model.DCO
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Progress
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="7">
+                        <div class="progress">
+                            @if (Model.Violations)
+                            {
+                                if (Model.DateViolationCorrection == null)
+                                {
+                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                                        Send Violation Correction
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                        Completed
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                if (Model.Status.Contains("Cancelled"))
+                                {
+                                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                        Cancelled
+                                    </div>
+                                }
+                                else if (Model.Status == "SVC email notification")
+                                {
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                        Completed
+                                    </div>
+                                }
+                                else if (Model.Status == "SVC approved by Manager")
+                                {
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 90%">
+                                        Send Site Visit Completion
+                                    </div>
+                                }
+                                else if (Model.Status.Contains("Inspection document"))
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
+                                        Process Site Visit Completion
+                                    </div>
+                                }
+                                else if (Model.DateApproved == null)
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                        Pending Approval
+                                    </div>
+                                }
+                                else if (Model.DateContractorNotification == null)
+                                {
+                                    if (Model.DateRequested == Model.DateApproved)
+                                    {
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            Upload Site Inspection; Enter travel hours
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                            Send Contractor Notification
+                                        </div>
+                                    }
+                                }
+                                else if (Model.Status == "CN email notification")
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                        Upload Site Inspection; Enter travel hours
+                                    </div>
+                                }
+                                else if (Model.DateSiteVisitCompletion == null)
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
+                                        Process Site Visit Completion
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </th>
+                </tr>
+                <tr id="titleRow">
+                    <th style="width: 15%;">DCO Request</th>
+                    <th style="width: 16%;">Contractor Notification</th>
+                    <th>Site Inspection</th>
+                    <th>Upload Forms</th>
+                    <th>Time Sheet</th>
+                    <th style="width: 15%;">Site Visit Completion</th>
+                    <th style="width: 15%;">Violation Correction</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @if (Model.DateSiteVisitCompletion == null && Model.DateCancelled == null && Model.DateViolationCorrection == null)
+                        {
+                            <a data-toggle="modal" href="#cancelModal" class="btn btn-default">Cancel Site Visit</a>
+                        }
+                        else if (Model.DateCancelled != null)
+                        {
+                            <text>Cancelled on </text>@Model.DateCancelled
+                        }
+                        else
+                        {
+                            @Model.DateRequested
+                        }
+                    </td>
+                    <td>
+                        @if (Model.DateApproved != null && Model.DateRequested != Model.DateApproved)
+                        {
+                            @Html.ActionLink("Form", "FormCN", "Inspection", new { id = Model.Id, returnUrl = Request.Url.PathAndQuery }, new { @class = "btn btn-default" })
+                        }
+                    </td>
+                    <td>
+                        @if (Model.DateApproved != null && Model.DateRequested != Model.DateApproved)
+                        {
+                            @Html.ActionLink("Form", "FormSI", "Inspection", new { id = Model.Id, returnUrl = Request.Url.PathAndQuery }, new { @class = "btn btn-default" })
+                        }
+                    </td>
+                    <td>
+                        <a data-toggle="modal" href="#uploadModal" class="btn btn-default mar-right-10">Upload</a>
+                    </td>
+                    <td>
+                        <a href="~/Inspection/Worksheet/@Model.Id" class="btn btn-default">Enter Hours</a>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Form", "FormSVC", "Inspection", new { id = Model.Id, returnUrl = Request.Url.PathAndQuery }, new { @class = "btn btn-default" })
+                    </td>
+                    <td>
+                        @if (Model.Violations)
+                        {
+                            @Html.ActionLink("Form", "FormVC", "Inspection", new { id = Model.Id, returnUrl = Request.Url.PathAndQuery }, new { @class = "btn btn-default" })
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-5 mar-left-25">
+            @{ Html.RenderAction("InspectionLog", new { id = Model.Id }); }
+        </div>
+        <div class="col-md-6 mar-left-25">
+            @{ Html.RenderAction("InspectionDocument", new { id = Model.Id }); }
+        </div>
+    </div>
+</div>
+
+@{ Html.RenderAction("DetailMap", new { id = Model.Id }); }
+
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Site Inspection</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadInspectionDocument", "Inspection", new { returnUrl = Request.Url.PathAndQuery }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                @Html.HiddenFor(x => x.Id);
+                <div class="form-horizontal">
+                    <div>Select a file to upload</div>
+                    <div style="padding-top: 10px;">
+                        <div class="input-group col-md-12 mar-left-20">
+                            <span class="input-group-btn">
+                                <span class="btn btn-info btn-file">
+                                    Browse… <input type="file" name="fileName" />
+                                </span>
+                            </span>
+                            <input class="form-control" type="text" readOnly="" id="fileName" />
+                        </div>
+                        <input type="hidden" id="filePath" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Upload" />
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Photo</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadPhoto", "Inspection", new { id = Model.ProjectId }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("InspectionID1", "")
+                    <div class="form-horizontal">
+                        <div>Select a photo to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" id="photoFile" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="photoName" />
+                            </div>
+                            <input type="hidden" id="photoPath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Cancel Site Visit</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("CancelSiteVisitRequest", "Inspection", new { returnUrl = Request.Url.PathAndQuery }, FormMethod.Post, null))
+                {
+                    @Html.Hidden("InspectionID2", Model.Id)
+                    <div class="form-horizontal">
+                        <div class="form-group" id="dateClosed">
+                            <div class="title-cell col-md-3 mar-top-10">Explanation:</div>
+                            <div class="col-md-8">
+                                @Html.TextArea("Comment", new { @class = "form-control", cols = 35, @rows = 5 })
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Submit" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

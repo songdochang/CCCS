@@ -1,0 +1,121 @@
+﻿@model IEnumerable<CCCS.Core.Domain.Inspection.SiteVisitException>
+@{
+    ViewBag.Title = "Site Visits";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+        th.nc {
+            width: 50px;
+        }
+
+    .glyphicon-plus, .glyphicon-minus {
+        cursor: pointer;
+    }
+
+    tr.bg {
+        border-top: double;
+        background-color: RGB(216, 228, 188);
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    })
+</script>
+<div>
+    <h3>Site Visits</h3>
+    @{
+        Html.RenderPartial("_InspectionTabs");
+    }
+</div>
+<div class="clearfix"></div>
+<p>
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm("Index2", "Inspection", new { dco = ViewBag.CO }, FormMethod.Post, null))
+        {
+            <div class="pull-right pad-top-7 mar-left-20">
+                @if (!String.IsNullOrEmpty(ViewBag.DateRange))
+                {
+                    <label>@ViewBag.DateRange</label>
+                }
+                <a data-toggle="modal" href="#dateModal"><span class="mar-left-10 glyphicon glyphicon-calendar calendar"></span></a>
+            </div>
+            <div class="form-group mar-left-20">
+                @Html.DropDownList("dco", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+                    <!-- Modal -->
+            <div class="modal fade" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Filter by Dates</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">From</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt1" name="dateFrom" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">To</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt2" name="dateTo" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="ok" type="button" class="btn btn-primary" onclick="this.form.submit();">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+</p>
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th class="col-md-1">Week Of</th>
+            <th class="col-md-1">DCO</th>
+            <th class="col-md-1">Date Posted</th>
+            <th class="col-md-1"></th>
+            <th class="text-left">Explanation</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td class="text-center">@m.Week</td>
+                <td class="text-center">@m.DCO</td>
+                <td class="text-center">
+                    @if (m.DateComment != null)
+                    {
+                        @DateTime.Parse(m.DateComment.ToString()).ToShortDateString()
+                    }
+                </td>
+                <td></td>
+                <td>@m.CommentText</td>
+            </tr>
+        }
+    </tbody>
+</table>

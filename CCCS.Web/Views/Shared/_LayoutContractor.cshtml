@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Countywide Contract Compliance System</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <style>
+        .navbar {
+            max-height: 50px;
+            background-color: RGB(54, 36, 0);
+        }
+
+        .breadcrumb {
+            margin-top: 7px;
+            padding-left: 0;
+            background-color: RGB(54, 36, 0);
+        }
+
+        .breadcrumb a {
+            color: #ffffff;
+        }
+
+    </style>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+    <div class="navbar navbar-fixed-top">
+        <div class="container">
+            @RenderSection("Navbar")
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

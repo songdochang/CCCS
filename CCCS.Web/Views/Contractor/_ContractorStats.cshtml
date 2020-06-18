@@ -1,0 +1,32 @@
+﻿@model CCCS.Web.Models.ContractorStats
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    th, td {
+        text-align: center;
+    }
+</style>
+<div class="topPanel" style="padding-top: 5px; margin-bottom: 20px;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-2">CO</th>
+                <th class="col-md-2">Alternate CO</th>
+                <th class="col-md-2">Total Projects</th>
+                <th class="col-md-2">FY Site Visits</th>
+                <th class="col-md-2">Date Registered</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.DCO</td>
+                <td>@Model.AlternateDCO</td>
+                <td>@Model.NumberProjects</td>
+                <td>@Model.FySiteVisits</td>
+                <td>@Model.DateRegistered</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

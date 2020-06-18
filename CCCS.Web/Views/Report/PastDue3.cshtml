@@ -1,0 +1,174 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.NonComplianceModel>
+@{
+    ViewBag.Title = "Past Due Documents";
+    Layout = "~/Views/Shared/_LayoutContractor.cshtml";
+    int cnt = 0;
+}
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("a[href$='#includeModal']").on("click", function () {
+            var id = $(this).attr('id');
+            $("#excludedId").val(id);
+        })
+    });
+</script>
+
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li>@Html.ActionLink("Documents Past Due", "DocumentsPastDue", "Report")</li>
+            </ul>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+@Html.Partial("_AlertPartial")
+@Html.Partial("_PastDueDocumentsTabs")
+
+<p>
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm())
+        {
+            <div class="form-group mar-left-20">
+                @Html.DepartmentDropDownList("dept", new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+            @*<div class="form-group mar-left-20">
+                    @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+                    {
+                        <input name="button" type="submit" class="btn btn-primary" value="Send" />
+                    }
+                </div>*@
+        }
+    </div>
+    <div class="form-inline pull-left pad-bottom-10">
+        <div class="form-group pull-left">
+            <label>Total Past Due Documents:<span class="mar-left-20">@ViewBag.TotalPastDue</span></label>
+        </div>
+        @*@using (Html.BeginForm())
+        {
+            <div class="form-group pull-left mar-left-20">
+                <button name="button" value="PDF" type="submit" class="btn btn-info mar-left-10">Export to PDF</button>
+            </div>
+        }*@
+    </div>
+</p>
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th></th>
+            <th>
+                Project ID
+            </th>
+            <th>
+                Project Name
+            </th>
+            <th>Contractor</th>
+            <th>PS</th>
+            <th>DEPT</th>
+            <th class="col-md-1">Start Date</th>
+            <th class="col-md-1">End Date</th>
+            <th>Year</th>
+            <th class="text-center">Month</th>
+            <th>Type</th>
+            <th class="col-md-1">Date Required</th>
+            <th>Months</th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        cnt = cnt + 1;
+        <tr>
+            <td>@cnt<span>.</span></td>
+            <td>
+                @Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectName)
+            </td>
+            <td>@item.ContractorName</td>
+            <td>
+                @if (item.IsPrime)
+                {
+                    <span class="badge badge-red">P</span>
+                }
+                else
+                {
+                    <span class="badge">S</span>
+                }
+            </td>
+            <td>@item.DepartmentID</td>
+            <td>
+                @if (item.StartDate != null)
+                {
+                    var dt1 = (DateTime)item.StartDate;
+                    @dt1.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @if (item.EndDate != null)
+                {
+                    var dt2 = (DateTime)item.EndDate;
+                    @dt2.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @item.Year
+            </td>
+            <td class="text-center">
+                @if (item.Month > 0)
+                {
+                    @item.Month
+                }
+            </td>
+            <td><span data-toggle="tooltip" data-placement="left" title="@item.Comment" style="border-bottom: dotted;">@item.DocumentType</span></td>
+            <td>
+                @if (item.DateRequired != null)
+                {
+                    var dt3 = (DateTime)item.DateRequired;
+                    @dt3.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td class="text-center">@item.PastDueMonths</td>
+            <td class="text-right"><a data-toggle="modal" href="#includeModal" id="@item.ID"><span class="mar-left-10">Include</span></a></td>
+        </tr>
+    }
+</table>
+<div class="modal fade" id="includeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Move to 'Active' list
+                </h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("IncludePastDueDocument", "Report", new { dept = ViewBag.Dept }, FormMethod.Post, null))
+                {
+                    <input type="hidden" id="excludedId" name="excludedId" />
+                    <div class="form-horizontal">
+                        <div class="form-group date" id="dateClosed">
+                            <div class="title-cell col-md-3 mar-top-10">Comment</div>
+                            <div class="col-md-8">
+                                Are you sure to include this file in the 'Non-compliance' list?
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Move" name="submit" class="btn btn-danger" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

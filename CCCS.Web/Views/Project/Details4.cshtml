@@ -1,0 +1,261 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionListModel>
+@{
+    ViewBag.Title = "Project Details";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('.dropdown-toggle').dropdown();
+
+        $('[data-toggle="tooltip"]').tooltip()
+
+        $("a[href$='#photoModal']").on("click", function () {
+            $("#InspectionID").val(this.id);
+        });
+
+        $("a[href$='#uploadModal']").on("click", function () {
+            $("#UploadInspectionID").val(this.id);
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+            $("#formName").val(label);
+            $("#formPath").html($(this).val());
+        });
+    });
+</script>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">Site Visits</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = ViewBag.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    if (ViewBag.Message.StartsWith("Error: "))
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @ViewBag.Message
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            @ViewBag.Message
+        </div>
+    }
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Site Visits
+        @if (User.IsInRole("DCO"))
+        {
+            <div class="pull-right">
+                @Html.ActionLink("Request Site Visit", "Create", "Inspection", new { id = ViewBag.ProjectID, dco = ViewBag.CO, returnUrl = Request.Url.PathAndQuery }, null)
+            </div>
+        }
+    </div>
+    @if (Model.Count() > 0)
+            {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-1">Date of Visit</th>
+                    <th>Contractor</th>
+                    <th class="text-center"><span data-toggle="tooltip" data-placement="top" title="Prime or Subcontractor">PS</span></th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th><span data-toggle="tooltip" data-placement="top" title="Number of Interviews">INT</span></th>
+                    <th><span data-toggle="tooltip" data-placement="top" title="Violations?">V?</span></th>
+                    <th><span data-toggle="tooltip" data-placement="top" title="Photos Taken?">P?</span></th>
+                    <th><span data-toggle="tooltip" data-placement="top" title="Miles One Way">M1</span></th>
+                    <th><span data-toggle="tooltip" data-placement="top" title="Miles to Eastern">ME</span></th>
+                    <th>
+                        <span data-toggle="tooltip" data-placement="top" title="Round trip including to and from HQ">M2</span>
+                    </th>
+                    <th class="col-md-1"><span data-toggle="tooltip" data-placement="top" title="Time including to and from HQ">T2</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (item.DateCancelled != null)
+                            {
+                                <span class="badge">Cancelled</span>
+                            }
+                            else if (item.DateApproved == null)
+                            {
+                                <span class="badge">Pending</span>
+                            }
+                            else
+                            {
+                                var url = VirtualPathUtility.ToAbsolute("~/Inspection/Details/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                                <a href="@url">Details</a>
+                            }
+                        </td>
+                        <td>
+                            @if (item.DateOfVisit != null)
+                            {
+                                @DateTime.Parse(item.DateOfVisit.ToString()).ToString("MM-dd-yyyy")
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink(item.CompanyName, "Details1", "Contractor", new { id = item.ContractorID }, null)
+                        </td>
+                        <td class="text-center">
+                            @if (item.PS == "P")
+                            {
+                                <span class="badge badge-red">P</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge">S</span>
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.City)
+                        </td>
+                        <td class="text-center">
+                            @item.NumberInterviews
+                        </td>
+                        <td class="text-center">
+                            @if (item.Violations)
+                            {
+                                <div class="glyphicon glyphicon-flag" style="font-size: 1.5em; color: red; margin-top: -4px;"></div>
+                            }
+                            else
+                            {
+                                @:-
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (item.PhotosTaken)
+                            {
+                                var photoUrl = VirtualPathUtility.ToAbsolute("~/Inspection/ViewPhoto/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                                <a href="@photoUrl"><div class="glyphicon glyphicon-camera" style="font-size: 1.5em; color: green; margin-top: -4px;"></div></a>
+                            }
+                            else
+                            {
+                                @:-
+                        }
+                        </td>
+                        <td>
+                            @item.MilesOneWay
+                        </td>
+                        <td>
+                            @item.MilesToEastern
+                        </td>
+                        <td>
+                            @item.RoundTripMiles
+                        </td>
+                        <td>
+                            @item.RoundTripHours
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+                                }
+</div>
+
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Photo</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadPhoto", "Inspection", new { id = ViewBag.ProjectID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("InspectionID", "")
+                    <div class="form-horizontal">
+                        <div>Select a photo to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Site Investigation Form</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadForm", "Inspection", new { id = ViewBag.ProjectID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("UploadInspectionID", "")
+                    <div class="form-horizontal">
+                        <div>Select site investigation form to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="formName" />
+                            </div>
+                            <input type="hidden" id="formPath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

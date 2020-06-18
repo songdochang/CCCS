@@ -1,0 +1,203 @@
+﻿<div id="section2" class="panel panel-default">
+    <div class="panel-heading">
+        <small class="pull-right">Number of Subs: @Model.Project.NumberSubcontractors</small>
+        SECTION 2: SUBCONTRACTOR(S) $10,000 OR MORE
+    </div>
+    @if (Model.Project.NumberSubcontractors != null && Model.Project.NumberSubcontractors > 0)
+    {
+        <div class="panel-body">
+            <input type="hidden" id="seq" value="1" />
+            <input type="hidden" id="contractorId" value="" />
+            <div id="review-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                <div>
+                    @if (Model.Project.NumberSubcontractors > 1)
+                    {
+                        <div class="pull-right">
+                            <ul class="pager">
+                                <li><a href="#review-carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left mar-right-10" aria-hidden="true"></span>Previous</a></li>
+                                <li><a href="#review-carousel" data-slide="next">Next<span class="glyphicon glyphicon-chevron-right mar-left-10" aria-hidden="true"></span></a></li>
+                            </ul>
+                        </div>
+                    }
+                    <div id="companyName" style="font-size: 1.1em; font-weight: 600;"></div>
+                </div>
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    <div id="page1" class="item active">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3 tr q5">
+                                        <input type="radio" name="q5" value="1"> Yes
+                                        <span class="mar-left-20"><input type="radio" name="q5" value="0"> No</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor submitted EEO Documents and Reports timely?
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q5" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 tr q6">
+                                        <input type="radio" name="q6" value="1"> Yes
+                                        <span class="mar-left-20">
+                                            <input type="radio" name="q6" value="0"> No
+                                        </span>
+                                        <span class="mar-left-20"><input type="radio" name="q6" value="2"> N/A</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor met Female Utilization Goal (6.9%), federally funded projects only.
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q6" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 tr q7">
+                                        <input type="radio" name="q7" value="1"> Yes
+                                        <span class="mar-left-20">
+                                            <input type="radio" name="q7" value="0"> No
+                                        </span>
+                                        <span class="mar-left-20"><input type="radio" name="q7" value="2"> N/A</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor met Minority Utilization Goal (28.3%), federally funded projects only.
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q7" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 q8">
+                                        <input type="radio" name="q8" value="1"> Yes
+                                        <span class="mar-left-20"><input type="radio" name="q8" value="0"> No</span>
+                                    </td>
+                                    <td class="col-md-7">
+                                        Liquidated damages recommended?
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q8" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="page2" class="item">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-3 tr q5">
+                                        <input type="radio" name="q5" value="1"> Yes
+                                        <span class="mar-left-20"><input type="radio" name="q5" value="0"> No</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor submitted EEO Documents and Reports timely?
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q5" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 tr q6">
+                                        <input type="radio" name="q6" value="1"> Yes
+                                        <span class="mar-left-20">
+                                            <input type="radio" name="q6" value="0"> No
+                                        </span>
+                                        <span class="mar-left-20"><input type="radio" name="q6" value="2"> N/A</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor met Female Utilization Goal (6.9%), federally funded projects only.
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q6" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 tr q7">
+                                        <input type="radio" name="q7" value="1"> Yes
+                                        <span class="mar-left-20">
+                                            <input type="radio" name="q7" value="0"> No
+                                        </span>
+                                        <span class="mar-left-20"><input type="radio" name="q7" value="2"> N/A</span>
+                                    </td>
+                                    <td class="col-md-7 tr">
+                                        Contractor met Minority Utilization Goal (28.3%), federally funded projects only.
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q7" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-3 q8">
+                                        <input type="radio" name="q8" value="1"> Yes
+                                        <span class="mar-left-20"><input type="radio" name="q8" value="0"> No</span>
+                                    </td>
+                                    <td class="col-md-7">
+                                        Liquidated damages recommended?
+                                    </td>
+                                    <td class="col-md-2 tr text-right"><a data-bind="q8" class="uncheck" href="#">Reset</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetSubcontractor", "Project")",
+                    data: { id: @Model.ProjectID, seq: $('#seq').val() },
+                    success: function (result) {
+                        display(result);
+                    }
+                })
+
+                $(".carousel-inner input[type='radio']").on("click", function () {
+                    var q = $(this).attr("name");
+                    var a = $(this).val();
+                    var cid = $('#contractorId').val();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("SaveSection2", "Project")",
+                        data: { id: @Model.ProjectID, contractorId: cid, question: q, answer: a }
+                    })
+                })
+
+                $('#review-carousel').on('slid.bs.carousel', function (e) {
+                    var seq = Number($('#seq').val());
+                    seq = (e.direction == "left") ? seq + 1 : seq - 1;
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("GetSubcontractor", "Project")",
+                        data: { id: @Model.ProjectID, seq: seq },
+                        success: function (result) {
+                            display(result);
+                        }
+                    })
+                })
+
+                $(".uncheck").click(function () {
+                    var cid = $('#contractorId').val();
+                    var q = $(this).attr("data-bind");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("UncheckSection2", "Project")",
+                        data: { id: @Model.ProjectID, contractorId: cid, question: q },
+                        success: function (result) {
+                            $(".active input[name=" + q + "]").each(function () {
+                                $(this).prop('checked', false);
+                            });
+                        }
+                    })
+                });
+            })
+
+            function checkAnswer(q, a) {
+                if (a !== "undefined")
+                    $(".active input[name=" + q + "][value='" + a + "']").prop("checked", true);
+            }
+
+            function display(result) {
+                $('#seq').val(result.seq);
+                $('#contractorId').val(result.contractorId);
+                $('#companyName').html(result.sub);
+                checkAnswer('q5', result.q5);
+                checkAnswer('q6', result.q6);
+                checkAnswer('q7', result.q7);
+                checkAnswer('q8', result.q8);
+            }
+        </script>
+    }
+</div>

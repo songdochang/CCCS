@@ -1,0 +1,261 @@
+﻿@model IEnumerable<CCCS.Web.Models.ContractorDocumentModel>
+
+@{
+    ViewBag.Title = "Good Faith";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("a[href$='#fileModal']").on("click", function () {
+            $("#ContractorName").html($(this).attr('name'));
+            $("#ContractorID").val(this.id);
+            var array = $(this).attr('data-content').split(';');
+            $("#DateRequested").val(array[0]);
+            $("#DateReceived").val(array[1]);
+            $("#HardCopy").prop('checked', (array[2] == 'True'));
+            $("#Electronic").prop('checked', (array[3] == 'True'));
+        });
+
+        $("a[href$='#editModal']").on("click", function () {
+            $("#EditContractorName").html($(this).attr('name'));
+            $("#EditDocumentID").val(this.id);
+            $("#EditTitle").val($(this).attr('data-content'));
+            $("#EditDateReceived").val($(this).attr('data-rel'));
+        });
+
+        $("a[href$='#uploadModal']").on("click", function () {
+            $("#UploadContractorID").val(this.id);
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+        });
+    });
+</script>
+<h3>Good Faith</h3>
+<h4>Please click on the 'Edit' button to edit dates.</h4>
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>Contractor Name</th>
+            <th class="col-md-1">Hard Copy</th>
+            <th class="col-md-1">Electronic</th>
+            <th class="col-md-1">Date Requested</th>
+            <th class="col-md-1">Date Received</th>
+            <th class="col-md-1">Days Since Request</th>
+            <th class="col-md-1"></th>
+            <th class="col-md-1"></th>
+            <th class="col-md-1 text-center"></th>
+        </tr>
+    </thead>
+    @foreach (var c in Model)
+    {
+        string dateRequested = (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateRequested != null)
+            ? ((DateTime)c.Documents.ElementAt(0).DateRequested).ToString("MM-dd-yyyy") : "";
+        string dateReceived = (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateReceived != null)
+            ? ((DateTime)c.Documents.ElementAt(0).DateReceived).ToString("MM-dd-yyyy") : "";
+        <tr>
+            <td>
+                @Html.ActionLink(c.CompanyName, "Details2", "Contractor", new { id = c.ContractorID }, null)
+                @if (c.IsPrime)
+                {
+                    <span class="badge badge-red mar-left-10">Prime</span>
+                }
+            </td>
+            <td class="text-center"><input type="checkbox" checked="@c.HardCopy" /></td>
+            <td class="text-center"><input type="checkbox" checked="@c.Electronic" /></td>
+            <td>
+                @if (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateRequested != null)
+                {
+                    @c.Documents.ElementAt(0).DateRequested.Value.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @if (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateReceived != null)
+                {
+                    @c.Documents.ElementAt(0).DateReceived.Value.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td class="text-center">
+                @if (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateRequested != null)
+                {
+                    var dt = (DateTime.Today - (DateTime)c.Documents.ElementAt(0).DateRequested.Value).Days;
+                    @dt
+                }
+            </td>
+            <td class="text-center">
+                <a data-toggle="modal" href="#fileModal" id="@c.ContractorID" name="@c.CompanyName" data-content="@dateRequested;@dateReceived;@c.HardCopy;@c.Electronic">Edit</a>
+            </td>
+            <td class="text-center">
+                @if (c.Documents.Count > 0 && c.Documents.ElementAt(0).DateReceived != null)
+                {
+                    if (string.IsNullOrEmpty(c.Documents.ElementAt(0).FileName))
+                    {
+                        <a data-toggle="modal" href="#uploadModal" id="u_@c.ContractorID">Upload</a>
+                    }
+                    else
+                    {
+                        @Html.ActionLink("View", "Download", "Document", new { id = c.Documents.ElementAt(0).DocumentID }, null)
+                    }
+                }
+            </td>
+            <td class="text-center">
+
+            </td>
+        </tr>
+    }
+</table>
+<hr />
+<div class="col-md-10">
+    @Html.ActionLink("Back to Document List", "Details2", "Project", new { id = ViewBag.Project.ProjectID }, null)
+</div>
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="ContractorName"></h4>
+                <h5>@ViewBag.Project.ProjectName</h5>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("SetDatesCommon", "Document", new { id = ViewBag.Project.ProjectID }))
+                {
+                    @Html.Hidden("DocumentName", "Good Faith")
+                    @Html.Hidden("ContractorID")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-4 mar-top-10">Title</div>
+                            <div class="col-md-7">
+                                @Html.Editor("Title", new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-4 mar-top-10">Date Requested</div>
+                            <div class="col-md-4">
+                                <div class='input-group date' id='dtRequested'>
+                                    @Html.Editor("DateRequested", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-4 mar-top-10">Date Received</div>
+                            <div class="col-md-4">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("DateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-4 mar-top-10">Hard Copy</div>
+                            <div class="col-md-4 pad-top-10">
+                                @Html.CheckBox("HardCopy")
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-4 mar-top-10">Electronic</div>
+                            <div class="col-md-4 pad-top-10">
+                                @Html.CheckBox("Electronic")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="EditCompanyName"></h4>
+                <h5>@ViewBag.Project.ProjectName</h5>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("SetDatesCommon", "Document", new { id = ViewBag.Project.ProjectID }))
+                {
+                    @Html.Hidden("EditContractorID")
+                    @Html.Hidden("EditDocumentID")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Title</div>
+                            <div class="col-md-9">
+                                @Html.Editor("EditTitle", new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Date Received</div>
+                            <div class="col-md-4">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("EditDateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload File</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadFile2", "Document", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("UploadDocumentName", "Good Faith")
+                    @Html.Hidden("UploadContractorID")
+                    <div class="form-horizontal">
+                        <div>Select a file to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

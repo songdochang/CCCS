@@ -1,0 +1,127 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionListModel>
+@{
+    ViewBag.Title = "Site Visits";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .narrow {
+        text-align: right;
+        width: 30px;
+    }
+
+    tr.bg {
+        border-top: double;
+        background-color: RGB(216, 228, 188);
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_InspectionTabs");
+}
+
+<p>
+    @if (User.IsInRole("DCO"))
+    {
+        string url = VirtualPathUtility.ToAbsolute("~/Inspection/Create") + "?dco=" + ViewBag.CO + "&returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+        <div class="col-md-2 mar-bottom-20">
+            <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Request Site Visit</a>
+        </div>
+    }
+    else
+    {
+        <div class="pull-right">
+            @using (Html.BeginForm())
+            {
+                string selectedValue = ViewBag.CO;
+                @Html.DcoDropDownList("DCO", false, selectedValue, new { @class = "form-control", onchange = "this.form.submit();" })
+            }
+        </div>
+    }
+</p>
+<div class="clearfix"></div>
+<table class="table table-condensed table-hover mar-top-10">
+    <thead>
+        <tr class="title-row">
+            <th class="col-p-5"></th>
+            <th>CO</th>
+            <th class="col-md-1">Requested</th>
+            <th class="col-md-1">Date of Visit</th>
+            <th class="col-md-1">Cancelled</th>
+            <th>Project</th>
+            <th>Contractor</th>
+            <th class="text-center">PS</th>
+            <th>Address</th>
+            <th>City</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @{
+                        var url1 = VirtualPathUtility.ToAbsolute("~/Inspection/Details/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                        <a href="@url1">Details</a>
+                    }
+                </td>
+                <td>@item.DCO</td>
+                <td>
+                    @if (item.DateRequested != null)
+                    {
+                        @DateTime.Parse(item.DateRequested.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @if (item.DateOfVisit != null)
+                    {
+                        @DateTime.Parse(item.DateOfVisit.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @if (item.DateCancelled != null)
+                    {
+                        @DateTime.Parse(item.DateCancelled.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    <a href="~/Project/Details1/@item.ProjectID" data-toggle="tooltip" data-placement="right" data-placement="right" title="@item.ProjectName">@item.JOC</a>
+                </td>
+                <td>
+                    @Html.ShortString(item.CompanyName, 30)
+                </td>
+                <td class="text-center">
+                    @item.PS
+                </td>
+                <td>
+                    <a data-toggle="modal" href="#mapModal" id="mapLink" data-content="@item.DCO" name="@item.DateOfVisit">
+                        @if (!String.IsNullOrEmpty(item.Address) && item.Address.Length > 18)
+                {
+                            <span data-toggle="tooltip" data-placement="top" title="@item.Address">@item.Address.Substring(0, 18)<text>...</text></span>
+                        }
+                        else
+                        {
+                            @item.Address
+                        }
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+            </tr>
+                        if (!string.IsNullOrEmpty(item.Comment))
+                        {
+                            <tr>
+                                <td></td>
+                                <td colspan="9"><label>Comment:&nbsp;</label>@item.Comment</td>
+                            </tr>
+                            }
+                        }
+    </tbody>
+</table>

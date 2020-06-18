@@ -1,0 +1,59 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Notice of Preconstruction Meeting
+    </div>
+    <table class="table">
+        <tr>
+            <td class="col-md-6 text-center">
+                @if (Model == null)
+                {
+                    string id = ViewBag.ProjectID.ToString();
+                    <a href="~/Files/Service_Request/ServiceRequest.pdf?id=@id" class="btn btn-primary">Create Service Request</a>
+                }
+                else
+                {
+                    string id = Model.ProjectID.ToString();
+                    string query = "ServiceRequest_" + id + ".pdf?id=" + id;
+                    <a href="~/Files/Service_Request/@query" class="btn btn-default">View Service Request</a>
+                    <span class="mar-left-10">Updated on @Model.DateUploaded</span>
+                }
+            </td>
+            <td></td>
+            <td class="col-md-3 text-center">
+                @if (Model != null)
+                {
+                    @Html.ActionLink("Send Email", "EmailServiceRequest", "Notice", new { id = ViewBag.ProjectID }, new { @class = "btn btn-primary" })
+                }
+            </td>
+        </tr>
+    </table>
+    @if (ViewBag.EmailLogs != null)
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="col-md-2">Date Sent</th>
+                    <th class="col-md-5 text-center">To Address</th>
+                    <th class="col-md-5 text-center">Cc Address</th>
+                </tr>
+            </thead>
+            @foreach (CCCS.Web.Models.EmailLog log in ViewBag.EmailLogs)
+            {
+                <tr>
+                    <td>
+                        @log.DateSent
+                    </td>
+                    <td>
+                        @log.EmailTo
+                    </td>
+                    <td>
+                        @log.EmailCc
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+
+</div>
+

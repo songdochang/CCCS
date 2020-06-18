@@ -1,0 +1,86 @@
+﻿@model CCCS.Core.Domain.Projects.Project
+
+@{
+    ViewBag.Title = "Time Worksheet";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    .well {
+        margin: 0 0 10px 0;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('.dropdown-toggle').dropdown()
+    });
+</script>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = Model.Id });
+    Html.RenderPartial("_ProjectDetailsTabs");
+}
+@{
+    string url = VirtualPathUtility.ToAbsolute("~/Worksheet/CreateBillable/" + Model.Id) + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+    string urlEdit = VirtualPathUtility.ToAbsolute("~/Project/Edit/" + Model.Id) + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+}
+@if (!User.IsInRole("Clerical2"))
+{
+    <div class="mar-bottom-10">
+        <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Create Billable Activity</a>
+    </div>
+}
+<div class="row well well-sm">
+    <div class="col-md-3">
+        Hours Available
+        <strong class="mar-left-10">
+            @if (Model.HoursAvailable == null)
+            {
+                <a href="@urlEdit" style="font-weight: normal;">Please update</a>
+            }
+            else
+            {
+                @Model.HoursAvailable
+            }
+        </strong>
+    </div>
+    <div class="col-md-3">
+        Hours Remaining<strong class="mar-left-10">
+            @if (Model.HoursRemaining == null)
+            {
+                @:N/A
+            }
+            else
+            {
+                @Model.HoursRemaining
+            }
+        </strong>
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3 text-right">
+        @Html.ActionLink("Timesheet by Pay Period", "Index1", "Worksheet", new { dco = Model.DCO }, null)
+    </div>
+</div>
+@{
+    Html.RenderAction("WorksheetList", "Worksheet", new { id = Model.Id });
+}
+
+
+

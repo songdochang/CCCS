@@ -1,0 +1,218 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionListModel>
+@{
+    ViewBag.Title = "Site Visits";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .narrow {
+        text-align: right;
+        width: 30px;
+    }
+
+    tr.bg {
+        border-top: double;
+        background-color: RGB(216, 228, 188);
+        font-weight: bold;
+    }
+</style>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_InspectionTabs");
+}
+
+@if (User.IsInRole("DCO"))
+{
+    string url = VirtualPathUtility.ToAbsolute("~/Inspection/Create") + "?dco=" + ViewBag.CO + "&returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+    <p>
+        <div class="col-md-2 mar-bottom-20">
+            <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Request Site Visit</a>
+        </div>
+    </p>
+}
+else
+{
+    <div class="pull-right">
+        @using (Html.BeginForm())
+        {
+            string selectedValue = ViewBag.CO;
+            @Html.DcoDropDownList("DCO", false, selectedValue, new { @class = "form-control", onchange = "this.form.submit();" })
+        }
+    </div>
+}
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr>
+            <th class="col-p-5"></th>
+            <th>CO</th>
+            <th class="col-md-1">Req. Date</th>
+            <th class="col-md-1">Date of Visit</th>
+            <th class="col-md-1"></th>
+            <th>Project</th>
+            <th>Contractor</th>
+            <th class="text-center">PS</th>
+            <th>Address</th>
+            <th>City</th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="right" data-placement="top" title="Number of Interviews">INT</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="right" data-placement="top" title="Violations?">V?</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="right" data-placement="top" title="Photos Taken?">P?</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @if (item.DateApproved == null)
+                    {
+                        <span class="badge" title="Waiting for manager approval; No approval date">Pending</span>
+                    }
+                    else
+                    {
+                        var url1 = VirtualPathUtility.ToAbsolute("~/Inspection/Details/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                        <a href="@url1">Details</a>
+                    }
+                </td>
+                <td>@item.DCO</td>
+                <td>
+                    @if (item.DateRequested != null)
+                    {
+                        @DateTime.Parse(item.DateRequested.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @if (item.DateOfVisit != null)
+                    {
+                        @DateTime.Parse(item.DateOfVisit.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    <div class="progress">
+                        @if (item.Violations)
+                        {
+                            if (item.DateViolationCorrection == null)
+                            {
+                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%"
+                                     data-toggle="tooltip" data-placement="right" title="Process Violation Correction">
+                                    VC
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                    Completed
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            if (item.Status == "Cancelled")
+                            {
+                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                    Cancelled
+                                </div>
+                            }
+                            else if (item.Status == "SVC email notification" || item.Status == "SVC sent to Department")
+                            {
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                    Completed
+                                </div>
+                            }
+                            else if (item.Status == "SVC approved by Manager")
+                            {
+                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 90%"
+                                     data-toggle="tooltip" data-placement="right" title="Send Site Visit Completion">
+                                    SVC
+                                </div>
+                            }
+                            else if (item.Status == "Inspection document uploaded")
+                            {
+                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%"
+                                     data-toggle="tooltip" data-placement="right" title="Process Site Visit Completion">
+                                    SVC
+                                </div>
+                            }
+                            else if (item.DateApproved == null)
+                            {
+                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%"
+                                     data-toggle="tooltip" data-placement="right" title="Pending Approval">
+                                    Pending
+                                </div>
+                            }
+                            else if (item.DateContractorNotification == null)
+                            {
+                                if (item.DateRequested == item.DateApproved)
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%"
+                                         data-toggle="tooltip" data-placement="right" title="Site Inspection">
+                                        SI
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"
+                                         data-toggle="tooltip" data-placement="right" title="Contractor Notification">
+                                        CN
+                                    </div>
+                                }
+                            }
+                            else if (item.Status == "CN email notification")
+                            {
+                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%" 
+                                     data-toggle="tooltip" data-placement="right" title="Site Inspection">
+                                    SI
+                                </div>
+                            }
+                            else if (item.DateSiteVisitCompletion == null)
+                            {
+                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%"
+                                     data-toggle="tooltip" data-placement="right" title="Process Site Visit Completion">
+                                    SVC
+                                </div>
+                            }
+                        }
+                    </div>
+                </td>
+                <td>
+                    <a href="~/Project/Details1/@item.ProjectID" data-toggle="tooltip" data-placement="right" data-placement="right" title="@item.ProjectName">@item.JOC</a>
+                </td>
+                <td>
+                    @item.CompanyName
+                </td>
+                <td class="text-center">
+                    @item.PS
+                </td>
+                <td>
+                    <a data-toggle="modal" href="#mapModal" id="mapLink" data-content="@item.DCO" name="@item.DateOfVisit">@item.Address</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.NumberInterviews)
+                </td>
+                <td class="text-center">
+                    @if (item.Violations)
+                    {
+                        <span class="glyphicon glyphicon-flag" style="color: red; margin-top: -4px;"></span>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+                <td class="text-center">
+                    @if (item.PhotosTaken)
+                    {
+                        var photoUrl = VirtualPathUtility.ToAbsolute("~/Inspection/ViewPhoto/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                        <a href="@photoUrl"><div class="glyphicon glyphicon-camera" style="color: green; margin-top: -4px;"></div></a>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,145 @@
+﻿@using CCCS.Web.Models.Worksheets
+@model IEnumerable<DepartmentalBillingModel>
+
+@{
+    ViewBag.Title = "Time Worksheet";
+}
+<style>
+    .pt {
+        font-weight: bold;
+        background-color: RGB(242,220,219);
+    }
+
+    .at {
+        font-weight: bold;
+        background-color: RGB(218,238,243);
+    }
+</style>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_WorksheetTabs");
+}
+@{
+    Html.RenderPartial("_AlertPartial");
+}
+<div class="form-inline pull-right pad-bottom-10">
+    @using (Html.BeginForm("Index6", "Worksheet", new { returnUrl = Request.Url.PathAndQuery }, FormMethod.Post, null))
+    {
+        <div class="form-group mar-left-20">
+            @Html.DropDownList("Month", new SelectList(ViewBag.Months, "Value", "Text", ViewBag.CurrentMonth), new { @class = "form-control", onchange = "this.form.submit();" })
+        </div>
+        <div class="form-group mar-left-20">
+            @Html.DropDownList("FundOrg", new SelectList(ViewBag.FundOrgs, "Value", "Text", ViewBag.CurrentFundOrg), new { @class = "form-control", onchange = "this.form.submit();" })
+        </div>
+        <div class="form-group mar-left-20">
+            @Html.DropDownList("Department", new SelectList(ViewBag.Departments, "Value", "Text", ViewBag.CurrentDepartment), new { @class = "form-control", onchange = "this.form.submit();" })
+        </div>
+        <div class="form-group mar-left-20">
+            @if (User.IsInRole("Clerical"))
+            {
+                if (string.IsNullOrEmpty(ViewBag.CurrentDepartment))
+                {
+                    <input name="button" type="submit" disabled class="btn btn-primary" value="Send" />
+                }
+                else
+                {
+                    <input name="button" type="submit" class="btn btn-primary" value="Send" />
+                }
+            }
+        </div>
+    }
+</div>
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                Account Number
+            </th>
+            <th>
+                Activity Code
+            </th>
+            <th>
+                Project ID
+            </th>
+            <th class="col-md-1">Date</th>
+            <th>Project Description</th>
+            <th>Dept Contact</th>
+            <th>Dept Phone</th>
+            <th>CO</th>
+            <th class="text-right">Hours</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        if (item.ActivityCode == "Grand Total")
+        {
+            <tr>
+                <td colspan="8">
+                    <strong>@item.Unit</strong>
+                </td>
+                <td class="text-right"><strong>@item.TotalHours.ToString("#.0")</strong></td>
+            </tr>
+        }
+        else if (item.ActivityCode == "Unit Total")
+        {
+            <tr>
+                <td colspan="8">
+                    <strong>@item.Unit</strong>
+                </td>
+                <td class="text-right"><strong>@item.TotalHours.ToString("#.0")</strong></td>
+            </tr>
+        }
+        else if (item.ActivityCode == "Activity Total")
+        {
+            <tr>
+                <td></td>
+                <td colspan="7" class="at">
+                    @item.Unit
+                </td>
+                <td class="text-right at">@item.TotalHours.ToString("#.0")</td>
+            </tr>
+        }
+        else if (item.ActivityCode == "Project Total")
+        {
+            <tr>
+                <td></td>
+                <td></td>
+                <td colspan="6" class="pt">
+                    @item.Unit
+                </td>
+                <td class="text-right pt">@item.TotalHours.ToString("#.0")</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>
+                    @item.Unit
+                </td>
+                <td>
+                    @item.ActivityCode
+                </td>
+                <td>
+                    @item.JOC
+                </td>
+                <td>
+                    @item.WorkDate.ToString("MM-dd-yyyy")
+                </td>
+                <td>
+                    @item.ProjectDescription
+                </td>
+                <td>@item.DepartmentContactName</td>
+                <td>@item.DepartmentContactPhone</td>
+                <td>@item.DCO</td>
+                <td class="text-right">
+                    @{
+                        string url1 = VirtualPathUtility.ToAbsolute("~/Worksheet/EditBillable") + "?id=" + item.WorksheetID;
+                        url1 += "&returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                    }
+                    <a href="@url1">@item.TotalHours.ToString("#.0")</a>
+                </td>
+            </tr>
+                            }
+                        }
+</table>

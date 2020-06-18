@@ -1,0 +1,275 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionListModel>
+@{
+    ViewBag.Title = "Site Visits";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .narrow {
+        text-align: right;
+        width: 30px;
+    }
+
+    tr.bg {
+        border-top: double;
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L",
+            defaultDate: new Date()
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_InspectionTabs");
+}
+@using (Html.BeginForm())
+{
+    <table style="width: 100%;">
+        <tr>
+            <td><strong class="mar-right-10">List Count: @Model.Count()</strong></td>
+            <td class="text-right"><label>From:</label></td>
+            <td class="col-md-2">
+                <div class='input-group date'>
+                    <input id="fromDate" name="fromDate" type="text" class="form-control" value="@ViewBag.FromDate" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar "></span>
+                    </span>
+                </div>
+            </td>
+            <td class="text-right"><label>To:</label></td>
+            <td class="col-md-2">
+                <div class='input-group date'>
+                    <input id="toDate" name="toDate" type="text" class="form-control" value="@ViewBag.ToDate" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar "></span>
+                    </span>
+                </div>
+            </td>
+            <td><input type="submit" name="button" value="Refresh List" class="btn btn-primary" /></td>
+            <td>
+            <td><input type="submit" name="button" value="Print List" class="btn btn-info" /></td>
+            <td class="col-md-2 text-right">
+                @if (!User.IsInRole("DCO"))
+                {
+                    string selectedValue = ViewBag.CO;
+                    @Html.DcoDropDownList("DCO", false, selectedValue, new { @class = "form-control", onchange = "this.form.submit();" })
+                }
+            </td>
+        </tr>
+    </table>
+                    }
+<table class="table table-condensed table-hover mar-top-10">
+    <thead class="title-row">
+        <tr>
+            <th class="col-p-5"></th>
+            <th>CO</th>
+            <th class="col-md-1">Visit Date</th>
+            <th class="col-md-1">SVC Date</th>
+            <th>Contractor</th>
+            <th class="text-center">PS</th>
+            <th>Project</th>
+            <th>City</th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Number of Interviews">INT</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Violations?">V?</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Photos Taken?">P?</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Miles One Way">M1</span></th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Miles to Eastern">ME</span></th>
+            <th class="narrow">
+                <span data-toggle="tooltip" data-placement="top" title="Round trip including to and from HQ">M2</span>
+            </th>
+            <th class="narrow"><span data-toggle="tooltip" data-placement="top" title="Time including to and from HQ">T2</span></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int cnt = 0, NI = 0;
+            decimal M2 = 0.0m, T2 = 0.0m;
+            decimal MM = 0.0m, MT = 0.0m, XM = 0.0m, XT = 0.0m;
+        }
+        @foreach (var item in Model)
+            {
+                cnt++;
+
+                if (cnt == 1)
+                {
+                    MM = item.RoundTripMiles;
+                    MT = item.RoundTripHours;
+                    XM = item.RoundTripMiles;
+                    XT = item.RoundTripHours;
+                }
+
+                NI += item.NumberInterviews;
+                M2 += item.RoundTripMiles;
+                T2 += item.RoundTripHours;
+                MM = (item.RoundTripMiles < MM) ? item.RoundTripMiles : MM;
+                MT = (item.RoundTripHours < MT) ? item.RoundTripHours : MT;
+                XM = (item.RoundTripMiles > XM) ? item.RoundTripMiles : XM;
+                XT = (item.RoundTripHours > XT) ? item.RoundTripHours : XT;
+
+            <tr>
+                <td>
+                    @{
+                        var url = VirtualPathUtility.ToAbsolute("~/Inspection/Details/") + item.InspectionID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                    }
+                    <a href="@url">Details</a>
+                </td>
+                <td>@item.DCO</td>
+                <td>
+                    @if (item.DateOfVisit != null)
+                    {
+                        @DateTime.Parse(item.DateOfVisit.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @if (item.DateSiteVisitCompletion != null)
+                    {
+                        @DateTime.Parse(item.DateSiteVisitCompletion.ToString()).ToString("MM-dd-yyyy")
+                    }
+                </td>
+                <td>
+                    @Html.ShortString(item.CompanyName, 35)            
+                </td>
+                <td class="text-center">
+                    @item.PS
+                </td>
+                <td>
+                    @Html.ActionLink(item.JOC, "Details1", "Project", new { id = item.ProjectID }, null)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.NumberInterviews)
+                </td>
+                <td class="text-center">
+                    @if (item.Violations)
+                    {
+                        <span class="glyphicon glyphicon-flag" style="color: red;"></span>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+                <td class="text-center">
+                    @if (item.PhotosTaken)
+                    {
+                        <span class="glyphicon glyphicon-camera" style="color: green;"></span>
+                    }
+                    else
+                    {
+                        @:-
+                        }
+                </td>
+                <td class="text-right">
+                    @item.MilesOneWay
+                </td>
+                <td class="text-right">
+                    @item.MilesToEastern
+                </td>
+                <td class="text-right">
+                    @item.RoundTripMiles
+                </td>
+                <td class="text-right">
+                    @item.RoundTripHours
+                </td>
+            </tr>
+                        }
+    </tbody>
+    @if (cnt > 0)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="5"></td>
+                <td colspan="3" class="title-cell">
+                    Total Interviews, Miles Driven, Hours
+                </td>
+                <td class="text-center">@NI</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">@M2</td>
+                <td class="text-right">@T2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5"></td>
+                <td colspan="3" class="title-cell">
+                    Average Miles Driven and Hours/Site Visit
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">
+                    @{ var AM = M2 / cnt; }
+                    @Math.Round(AM, 1)
+                </td>
+                <td class="text-right">
+                    @{ var AT = T2 / cnt; }
+                    @Math.Round(AT, 1)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5"></td>
+                <td colspan="3" class="title-cell">
+                    Minimum Miles Driven and Hours
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">@MM</td>
+                <td class="text-right">@MT</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="5"></td>
+                <td colspan="3" class="title-cell">
+                    Maximum Miles Driven and Hours
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">@XM</td>
+                <td class="text-right">@XT</td>
+                <td></td>
+            </tr>
+            <tr class="bg">
+                <td colspan="5"></td>
+                <td colspan="3" class="title-cell">
+                    Miles per Hour
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">
+                    @if (AT > 0)
+                    {
+                        var MH = AM / AT;
+                        @Math.Round(MH, 1)
+                    }
+                </td>
+                <td></td>
+            </tr>
+        </tfoot>
+                        }
+</table>

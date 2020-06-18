@@ -1,0 +1,23 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string[] cls = { "", "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("index", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 0 0 15px 0;">
+    <li class="@cls[0]"><a href="~/worksheet/index1">Timesheet by CO</a></li>
+    <li class="@cls[1]"><a href="~/worksheet/index2">Billable by CO</a></li>
+    <li class="@cls[2]"><a href="~/worksheet/index3">Non-Billable by CO</a></li>
+    @*@if (User.IsInRole("Administrator"))
+    {
+        <li class="@cls[3]"><a href="~/worksheet/index4">Activities by CO</a></li>
+    }*@
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+    {
+        <li class="@cls[4]"><a href="~/worksheet/index5">Account Numbers</a></li>
+    }
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+    {
+        <li class="@cls[5]"><a href="~/worksheet/index6">Departmental Billing</a></li>
+    }
+</ul>

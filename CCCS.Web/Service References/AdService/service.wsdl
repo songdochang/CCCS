@@ -1,0 +1,1865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://lacounty.gov/IADWebServices" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://lacounty.gov/IADWebServices" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://lacounty.gov/IADWebServices">
+      <s:element name="Hello">
+        <s:complexType />
+      </s:element>
+      <s:element name="HelloResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HelloResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidUser">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidUserResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsValidUserResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsVerified">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DOB" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SSN" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Zip" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsVerifiedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsVerifiedResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HasPasswordResetProfile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HasPasswordResetProfileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="HasPasswordResetProfileResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangePassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="NewPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangePasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ChangePasswordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAuthenticated">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="logonName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="logonPass" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAuthenticatedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsAuthenticatedResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserSearch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchValue" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserSearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserSearchResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAnyType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="anyType" nillable="true" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GroupSearch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchValue" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GroupSearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GroupSearchResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangeADPassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="newPassword" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangeADPasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ChangeADPasswordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserSearchReturnAttributes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchValue" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="attributes" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="UserSearchReturnAttributesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserSearchReturnAttributesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FilteredUserSearchReturnAttributes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchFilter" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="searchValue" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="attributes" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="FilteredUserSearchReturnAttributesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="FilteredUserSearchReturnAttributesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CustomUserSearchReturnAttributes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchFilter" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="attributes" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CustomUserSearchReturnAttributesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CustomUserSearchReturnAttributesResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidIdNumber">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidIdNumberResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsValidIdNumberResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidTicketNumber">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_TicketNumber" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidTicketNumberResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsValidTicketNumberResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetAdPassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_SsnLast4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_ZipCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetAdPasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ResetAdPasswordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetMainFramePassword">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_SsnLast4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_ZipCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetMainFramePasswordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ResetMainFramePasswordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetSecurId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_SsnLast4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_ZipCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ResetSecurIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ResetSecurIdResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangeFleetPIN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_SsnLast4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_ZipCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_NewPIN" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ChangeFleetPINResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ChangeFleetPINResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidUnitNumber">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UnitNumber" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsValidUnitNumberResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsValidUnitNumberResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateUnitMeter">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UnitNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Meter" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateUnitMeterResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UpdateUnitMeterResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTokenIds">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTokenIdsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTokenIdsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountLockedOut">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountLockedOutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsAccountLockedOutResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountDisabled">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountDisabledResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsAccountDisabledResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountExpired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsAccountExpiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsAccountExpiredResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPasswordExpired">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsPasswordExpiredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="IsPasswordExpiredResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AccountExists">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AccountExistsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="AccountExistsResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PasswordExirationDate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PasswordExirationDateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PasswordExirationDateResult" type="s:dateTime" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGroupMemberships">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetGroupMembershipsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetGroupMembershipsResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMemberOf">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMemberOfResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMemberOfResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ClearMemberOf">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ClearMemberOfResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ClearMemberOfResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProfile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UserObject">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="givenName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="sn" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="displayName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="telephoneNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="mail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="department" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="division" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="title" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="manager" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="streetAddress" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="l" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="st" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="postalCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="memberOf" type="tns:ArrayOfAnyType" />
+          <s:element minOccurs="0" maxOccurs="1" name="employeeID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="physicalDeliveryOfficeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="isAccountDisabled" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="isAccountExpired" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="isAccountLockedOut" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="isPasswordExpired" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="accountExpireDate" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="passwordExpireDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="countryCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="homeUnitCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="GUID" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="whenCreated" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="userPrincipalName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="msDSPrincipalName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="titleCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="locationCode" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetUserProfileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserProfileResult" type="tns:UserObject" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LACUserSearch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchString" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LACUserSearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LACUserSearchResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateHomeFolder">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="folderPath" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="userPrincipalName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateHomeFolderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CreateHomeFolderResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RemoveHomeFolderPermission">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="folderPath" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="identity" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RemoveHomeFolderPermissionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="RemoveHomeFolderPermissionResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMappings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="deptno" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMappingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMappingsResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UnlockADAccount">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="a_IdNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_DateOfBirth" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_SsnLast4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="a_ZipCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UnlockADAccountResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UnlockADAccountResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProvisioningRule">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProvisioningRuleResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserProvisioningRuleResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMembers">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GroupName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMembersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMembersResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProfileByDN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DN" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProfileByDNResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserProfileByDNResult" type="tns:UserObject" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProfileByUPN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UPN" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserProfileByUPNResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserProfileByUPNResult" type="tns:UserObject" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AddLogEntry">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="method" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="objectGUID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="userID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="soure" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="status" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AddLogEntryResponse">
+        <s:complexType />
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="HelloSoapIn">
+    <wsdl:part name="parameters" element="tns:Hello" />
+  </wsdl:message>
+  <wsdl:message name="HelloSoapOut">
+    <wsdl:part name="parameters" element="tns:HelloResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsValidUserSoapIn">
+    <wsdl:part name="parameters" element="tns:IsValidUser" />
+  </wsdl:message>
+  <wsdl:message name="IsValidUserSoapOut">
+    <wsdl:part name="parameters" element="tns:IsValidUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsVerifiedSoapIn">
+    <wsdl:part name="parameters" element="tns:IsVerified" />
+  </wsdl:message>
+  <wsdl:message name="IsVerifiedSoapOut">
+    <wsdl:part name="parameters" element="tns:IsVerifiedResponse" />
+  </wsdl:message>
+  <wsdl:message name="HasPasswordResetProfileSoapIn">
+    <wsdl:part name="parameters" element="tns:HasPasswordResetProfile" />
+  </wsdl:message>
+  <wsdl:message name="HasPasswordResetProfileSoapOut">
+    <wsdl:part name="parameters" element="tns:HasPasswordResetProfileResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ChangePassword" />
+  </wsdl:message>
+  <wsdl:message name="ChangePasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ChangePasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsAuthenticatedSoapIn">
+    <wsdl:part name="parameters" element="tns:IsAuthenticated" />
+  </wsdl:message>
+  <wsdl:message name="IsAuthenticatedSoapOut">
+    <wsdl:part name="parameters" element="tns:IsAuthenticatedResponse" />
+  </wsdl:message>
+  <wsdl:message name="UserSearchSoapIn">
+    <wsdl:part name="parameters" element="tns:UserSearch" />
+  </wsdl:message>
+  <wsdl:message name="UserSearchSoapOut">
+    <wsdl:part name="parameters" element="tns:UserSearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="GroupSearchSoapIn">
+    <wsdl:part name="parameters" element="tns:GroupSearch" />
+  </wsdl:message>
+  <wsdl:message name="GroupSearchSoapOut">
+    <wsdl:part name="parameters" element="tns:GroupSearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChangeADPasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ChangeADPassword" />
+  </wsdl:message>
+  <wsdl:message name="ChangeADPasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ChangeADPasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="UserSearchReturnAttributesSoapIn">
+    <wsdl:part name="parameters" element="tns:UserSearchReturnAttributes" />
+  </wsdl:message>
+  <wsdl:message name="UserSearchReturnAttributesSoapOut">
+    <wsdl:part name="parameters" element="tns:UserSearchReturnAttributesResponse" />
+  </wsdl:message>
+  <wsdl:message name="FilteredUserSearchReturnAttributesSoapIn">
+    <wsdl:part name="parameters" element="tns:FilteredUserSearchReturnAttributes" />
+  </wsdl:message>
+  <wsdl:message name="FilteredUserSearchReturnAttributesSoapOut">
+    <wsdl:part name="parameters" element="tns:FilteredUserSearchReturnAttributesResponse" />
+  </wsdl:message>
+  <wsdl:message name="CustomUserSearchReturnAttributesSoapIn">
+    <wsdl:part name="parameters" element="tns:CustomUserSearchReturnAttributes" />
+  </wsdl:message>
+  <wsdl:message name="CustomUserSearchReturnAttributesSoapOut">
+    <wsdl:part name="parameters" element="tns:CustomUserSearchReturnAttributesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsValidIdNumberSoapIn">
+    <wsdl:part name="parameters" element="tns:IsValidIdNumber" />
+  </wsdl:message>
+  <wsdl:message name="IsValidIdNumberSoapOut">
+    <wsdl:part name="parameters" element="tns:IsValidIdNumberResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsValidTicketNumberSoapIn">
+    <wsdl:part name="parameters" element="tns:IsValidTicketNumber" />
+  </wsdl:message>
+  <wsdl:message name="IsValidTicketNumberSoapOut">
+    <wsdl:part name="parameters" element="tns:IsValidTicketNumberResponse" />
+  </wsdl:message>
+  <wsdl:message name="ResetAdPasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ResetAdPassword" />
+  </wsdl:message>
+  <wsdl:message name="ResetAdPasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ResetAdPasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="ResetMainFramePasswordSoapIn">
+    <wsdl:part name="parameters" element="tns:ResetMainFramePassword" />
+  </wsdl:message>
+  <wsdl:message name="ResetMainFramePasswordSoapOut">
+    <wsdl:part name="parameters" element="tns:ResetMainFramePasswordResponse" />
+  </wsdl:message>
+  <wsdl:message name="ResetSecurIdSoapIn">
+    <wsdl:part name="parameters" element="tns:ResetSecurId" />
+  </wsdl:message>
+  <wsdl:message name="ResetSecurIdSoapOut">
+    <wsdl:part name="parameters" element="tns:ResetSecurIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="ChangeFleetPINSoapIn">
+    <wsdl:part name="parameters" element="tns:ChangeFleetPIN" />
+  </wsdl:message>
+  <wsdl:message name="ChangeFleetPINSoapOut">
+    <wsdl:part name="parameters" element="tns:ChangeFleetPINResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsValidUnitNumberSoapIn">
+    <wsdl:part name="parameters" element="tns:IsValidUnitNumber" />
+  </wsdl:message>
+  <wsdl:message name="IsValidUnitNumberSoapOut">
+    <wsdl:part name="parameters" element="tns:IsValidUnitNumberResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUnitMeterSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateUnitMeter" />
+  </wsdl:message>
+  <wsdl:message name="UpdateUnitMeterSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateUnitMeterResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTokenIdsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTokenIds" />
+  </wsdl:message>
+  <wsdl:message name="GetTokenIdsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTokenIdsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountLockedOutSoapIn">
+    <wsdl:part name="parameters" element="tns:IsAccountLockedOut" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountLockedOutSoapOut">
+    <wsdl:part name="parameters" element="tns:IsAccountLockedOutResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountDisabledSoapIn">
+    <wsdl:part name="parameters" element="tns:IsAccountDisabled" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountDisabledSoapOut">
+    <wsdl:part name="parameters" element="tns:IsAccountDisabledResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountExpiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsAccountExpired" />
+  </wsdl:message>
+  <wsdl:message name="IsAccountExpiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsAccountExpiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsPasswordExpiredSoapIn">
+    <wsdl:part name="parameters" element="tns:IsPasswordExpired" />
+  </wsdl:message>
+  <wsdl:message name="IsPasswordExpiredSoapOut">
+    <wsdl:part name="parameters" element="tns:IsPasswordExpiredResponse" />
+  </wsdl:message>
+  <wsdl:message name="AccountExistsSoapIn">
+    <wsdl:part name="parameters" element="tns:AccountExists" />
+  </wsdl:message>
+  <wsdl:message name="AccountExistsSoapOut">
+    <wsdl:part name="parameters" element="tns:AccountExistsResponse" />
+  </wsdl:message>
+  <wsdl:message name="PasswordExirationDateSoapIn">
+    <wsdl:part name="parameters" element="tns:PasswordExirationDate" />
+  </wsdl:message>
+  <wsdl:message name="PasswordExirationDateSoapOut">
+    <wsdl:part name="parameters" element="tns:PasswordExirationDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetGroupMembershipsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetGroupMemberships" />
+  </wsdl:message>
+  <wsdl:message name="GetGroupMembershipsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetGroupMembershipsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMemberOfSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMemberOf" />
+  </wsdl:message>
+  <wsdl:message name="GetMemberOfSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMemberOfResponse" />
+  </wsdl:message>
+  <wsdl:message name="ClearMemberOfSoapIn">
+    <wsdl:part name="parameters" element="tns:ClearMemberOf" />
+  </wsdl:message>
+  <wsdl:message name="ClearMemberOfSoapOut">
+    <wsdl:part name="parameters" element="tns:ClearMemberOfResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserProfile" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserProfileResponse" />
+  </wsdl:message>
+  <wsdl:message name="LACUserSearchSoapIn">
+    <wsdl:part name="parameters" element="tns:LACUserSearch" />
+  </wsdl:message>
+  <wsdl:message name="LACUserSearchSoapOut">
+    <wsdl:part name="parameters" element="tns:LACUserSearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateHomeFolderSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateHomeFolder" />
+  </wsdl:message>
+  <wsdl:message name="CreateHomeFolderSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateHomeFolderResponse" />
+  </wsdl:message>
+  <wsdl:message name="RemoveHomeFolderPermissionSoapIn">
+    <wsdl:part name="parameters" element="tns:RemoveHomeFolderPermission" />
+  </wsdl:message>
+  <wsdl:message name="RemoveHomeFolderPermissionSoapOut">
+    <wsdl:part name="parameters" element="tns:RemoveHomeFolderPermissionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMappingsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMappings" />
+  </wsdl:message>
+  <wsdl:message name="GetMappingsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMappingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="UnlockADAccountSoapIn">
+    <wsdl:part name="parameters" element="tns:UnlockADAccount" />
+  </wsdl:message>
+  <wsdl:message name="UnlockADAccountSoapOut">
+    <wsdl:part name="parameters" element="tns:UnlockADAccountResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProvisioningRuleSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserProvisioningRule" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProvisioningRuleSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserProvisioningRuleResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMembersSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMembers" />
+  </wsdl:message>
+  <wsdl:message name="GetMembersSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMembersResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileByDNSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserProfileByDN" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileByDNSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserProfileByDNResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileByUPNSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserProfileByUPN" />
+  </wsdl:message>
+  <wsdl:message name="GetUserProfileByUPNSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserProfileByUPNResponse" />
+  </wsdl:message>
+  <wsdl:message name="AddLogEntrySoapIn">
+    <wsdl:part name="parameters" element="tns:AddLogEntry" />
+  </wsdl:message>
+  <wsdl:message name="AddLogEntrySoapOut">
+    <wsdl:part name="parameters" element="tns:AddLogEntryResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ServiceSoap">
+    <wsdl:operation name="Hello">
+      <wsdl:input message="tns:HelloSoapIn" />
+      <wsdl:output message="tns:HelloSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUser">
+      <wsdl:input message="tns:IsValidUserSoapIn" />
+      <wsdl:output message="tns:IsValidUserSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsVerified">
+      <wsdl:input message="tns:IsVerifiedSoapIn" />
+      <wsdl:output message="tns:IsVerifiedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="HasPasswordResetProfile">
+      <wsdl:input message="tns:HasPasswordResetProfileSoapIn" />
+      <wsdl:output message="tns:HasPasswordResetProfileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <wsdl:input message="tns:ChangePasswordSoapIn" />
+      <wsdl:output message="tns:ChangePasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAuthenticated">
+      <wsdl:input message="tns:IsAuthenticatedSoapIn" />
+      <wsdl:output message="tns:IsAuthenticatedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UserSearch">
+      <wsdl:input message="tns:UserSearchSoapIn" />
+      <wsdl:output message="tns:UserSearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GroupSearch">
+      <wsdl:input message="tns:GroupSearchSoapIn" />
+      <wsdl:output message="tns:GroupSearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeADPassword">
+      <wsdl:input message="tns:ChangeADPasswordSoapIn" />
+      <wsdl:output message="tns:ChangeADPasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UserSearchReturnAttributes">
+      <wsdl:input message="tns:UserSearchReturnAttributesSoapIn" />
+      <wsdl:output message="tns:UserSearchReturnAttributesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FilteredUserSearchReturnAttributes">
+      <wsdl:input message="tns:FilteredUserSearchReturnAttributesSoapIn" />
+      <wsdl:output message="tns:FilteredUserSearchReturnAttributesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CustomUserSearchReturnAttributes">
+      <wsdl:input message="tns:CustomUserSearchReturnAttributesSoapIn" />
+      <wsdl:output message="tns:CustomUserSearchReturnAttributesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsValidIdNumber">
+      <wsdl:input message="tns:IsValidIdNumberSoapIn" />
+      <wsdl:output message="tns:IsValidIdNumberSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsValidTicketNumber">
+      <wsdl:input message="tns:IsValidTicketNumberSoapIn" />
+      <wsdl:output message="tns:IsValidTicketNumberSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResetAdPassword">
+      <wsdl:input message="tns:ResetAdPasswordSoapIn" />
+      <wsdl:output message="tns:ResetAdPasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResetMainFramePassword">
+      <wsdl:input message="tns:ResetMainFramePasswordSoapIn" />
+      <wsdl:output message="tns:ResetMainFramePasswordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResetSecurId">
+      <wsdl:input message="tns:ResetSecurIdSoapIn" />
+      <wsdl:output message="tns:ResetSecurIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeFleetPIN">
+      <wsdl:input message="tns:ChangeFleetPINSoapIn" />
+      <wsdl:output message="tns:ChangeFleetPINSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUnitNumber">
+      <wsdl:input message="tns:IsValidUnitNumberSoapIn" />
+      <wsdl:output message="tns:IsValidUnitNumberSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUnitMeter">
+      <wsdl:input message="tns:UpdateUnitMeterSoapIn" />
+      <wsdl:output message="tns:UpdateUnitMeterSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTokenIds">
+      <wsdl:input message="tns:GetTokenIdsSoapIn" />
+      <wsdl:output message="tns:GetTokenIdsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountLockedOut">
+      <wsdl:input message="tns:IsAccountLockedOutSoapIn" />
+      <wsdl:output message="tns:IsAccountLockedOutSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountDisabled">
+      <wsdl:input message="tns:IsAccountDisabledSoapIn" />
+      <wsdl:output message="tns:IsAccountDisabledSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountExpired">
+      <wsdl:input message="tns:IsAccountExpiredSoapIn" />
+      <wsdl:output message="tns:IsAccountExpiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsPasswordExpired">
+      <wsdl:input message="tns:IsPasswordExpiredSoapIn" />
+      <wsdl:output message="tns:IsPasswordExpiredSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AccountExists">
+      <wsdl:input message="tns:AccountExistsSoapIn" />
+      <wsdl:output message="tns:AccountExistsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PasswordExirationDate">
+      <wsdl:input message="tns:PasswordExirationDateSoapIn" />
+      <wsdl:output message="tns:PasswordExirationDateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupMemberships">
+      <wsdl:input message="tns:GetGroupMembershipsSoapIn" />
+      <wsdl:output message="tns:GetGroupMembershipsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMemberOf">
+      <wsdl:input message="tns:GetMemberOfSoapIn" />
+      <wsdl:output message="tns:GetMemberOfSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ClearMemberOf">
+      <wsdl:input message="tns:ClearMemberOfSoapIn" />
+      <wsdl:output message="tns:ClearMemberOfSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfile">
+      <wsdl:input message="tns:GetUserProfileSoapIn" />
+      <wsdl:output message="tns:GetUserProfileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LACUserSearch">
+      <wsdl:input message="tns:LACUserSearchSoapIn" />
+      <wsdl:output message="tns:LACUserSearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateHomeFolder">
+      <wsdl:input message="tns:CreateHomeFolderSoapIn" />
+      <wsdl:output message="tns:CreateHomeFolderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveHomeFolderPermission">
+      <wsdl:input message="tns:RemoveHomeFolderPermissionSoapIn" />
+      <wsdl:output message="tns:RemoveHomeFolderPermissionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMappings">
+      <wsdl:input message="tns:GetMappingsSoapIn" />
+      <wsdl:output message="tns:GetMappingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UnlockADAccount">
+      <wsdl:input message="tns:UnlockADAccountSoapIn" />
+      <wsdl:output message="tns:UnlockADAccountSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProvisioningRule">
+      <wsdl:input message="tns:GetUserProvisioningRuleSoapIn" />
+      <wsdl:output message="tns:GetUserProvisioningRuleSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMembers">
+      <wsdl:input message="tns:GetMembersSoapIn" />
+      <wsdl:output message="tns:GetMembersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByDN">
+      <wsdl:input message="tns:GetUserProfileByDNSoapIn" />
+      <wsdl:output message="tns:GetUserProfileByDNSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByUPN">
+      <wsdl:input message="tns:GetUserProfileByUPNSoapIn" />
+      <wsdl:output message="tns:GetUserProfileByUPNSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddLogEntry">
+      <wsdl:input message="tns:AddLogEntrySoapIn" />
+      <wsdl:output message="tns:AddLogEntrySoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiceSoap" type="tns:ServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Hello">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/Hello" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUser">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsValidUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsVerified">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsVerified" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HasPasswordResetProfile">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/HasPasswordResetProfile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAuthenticated">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsAuthenticated" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserSearch">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/UserSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GroupSearch">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GroupSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeADPassword">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ChangeADPassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserSearchReturnAttributes">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/UserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FilteredUserSearchReturnAttributes">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/FilteredUserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CustomUserSearchReturnAttributes">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/CustomUserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidIdNumber">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsValidIdNumber" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidTicketNumber">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsValidTicketNumber" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetAdPassword">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ResetAdPassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetMainFramePassword">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ResetMainFramePassword" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetSecurId">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ResetSecurId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeFleetPIN">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ChangeFleetPIN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUnitNumber">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsValidUnitNumber" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUnitMeter">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/UpdateUnitMeter" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTokenIds">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetTokenIds" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountLockedOut">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountLockedOut" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountDisabled">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountDisabled" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountExpired">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountExpired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPasswordExpired">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/IsPasswordExpired" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AccountExists">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/AccountExists" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PasswordExirationDate">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/PasswordExirationDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupMemberships">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetGroupMemberships" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMemberOf">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetMemberOf" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClearMemberOf">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/ClearMemberOf" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfile">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LACUserSearch">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/LACUserSearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateHomeFolder">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/CreateHomeFolder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveHomeFolderPermission">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/RemoveHomeFolderPermission" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMappings">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetMappings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UnlockADAccount">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/UnlockADAccount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProvisioningRule">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProvisioningRule" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMembers">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetMembers" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByDN">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfileByDN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByUPN">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfileByUPN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddLogEntry">
+      <soap:operation soapAction="http://lacounty.gov/IADWebServices/AddLogEntry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceSoap12" type="tns:ServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Hello">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/Hello" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUser">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsValidUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsVerified">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsVerified" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="HasPasswordResetProfile">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/HasPasswordResetProfile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangePassword">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ChangePassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAuthenticated">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsAuthenticated" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserSearch">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/UserSearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GroupSearch">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GroupSearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeADPassword">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ChangeADPassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserSearchReturnAttributes">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/UserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FilteredUserSearchReturnAttributes">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/FilteredUserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CustomUserSearchReturnAttributes">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/CustomUserSearchReturnAttributes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidIdNumber">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsValidIdNumber" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidTicketNumber">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsValidTicketNumber" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetAdPassword">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ResetAdPassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetMainFramePassword">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ResetMainFramePassword" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResetSecurId">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ResetSecurId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeFleetPIN">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ChangeFleetPIN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsValidUnitNumber">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsValidUnitNumber" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateUnitMeter">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/UpdateUnitMeter" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTokenIds">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetTokenIds" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountLockedOut">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountLockedOut" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountDisabled">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountDisabled" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsAccountExpired">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsAccountExpired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsPasswordExpired">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/IsPasswordExpired" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AccountExists">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/AccountExists" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PasswordExirationDate">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/PasswordExirationDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGroupMemberships">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetGroupMemberships" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMemberOf">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetMemberOf" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ClearMemberOf">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/ClearMemberOf" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfile">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LACUserSearch">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/LACUserSearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateHomeFolder">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/CreateHomeFolder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveHomeFolderPermission">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/RemoveHomeFolderPermission" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMappings">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetMappings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UnlockADAccount">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/UnlockADAccount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProvisioningRule">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProvisioningRule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMembers">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetMembers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByDN">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfileByDN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProfileByUPN">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/GetUserProfileByUPN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddLogEntry">
+      <soap12:operation soapAction="http://lacounty.gov/IADWebServices/AddLogEntry" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service">
+    <wsdl:port name="ServiceSoap" binding="tns:ServiceSoap">
+      <soap:address location="https://webadminisd.lacounty.gov/iadwebsvc/service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceSoap12" binding="tns:ServiceSoap12">
+      <soap12:address location="https://webadminisd.lacounty.gov/iadwebsvc/service.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

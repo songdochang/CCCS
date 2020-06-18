@@ -1,0 +1,68 @@
+﻿@model List<CCCS.Core.Domain.Inspection.SiteVisitException>
+
+@if (Model != null && Model.Count() > 0)
+{
+    <script>
+        $(function () {
+            $("a[href$='#sveModal']").on("click", function () {
+                $("#week").val(this.id);
+            });
+        });
+    </script>
+    <div class="panel panel-danger">
+        <div class="panel-heading" data-toggle="collapse" href="#SVE" aria-expanded="true">
+            Site Visit Exception<span id="chevronSVE" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="SVE">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Week Of</th>
+                        <th>Date Range</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td>@e.Week</td>
+                            <td>@e.DateRange</td>
+                            <td class="text-right">
+                                <a data-toggle="modal" href="#sveModal" id="@e.Week">Add Explanation</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="sveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Explanation</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("AddExplanation", "Inspection", new { dco = ViewBag.CO }))
+                {
+                        <input type="hidden" id="week" name="week" />
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="control-label col-md-2">Explanation</div>
+                                <div class="col-md-9">
+                                    @Html.TextArea("comment", new { @class = "form-control", cols = 90, @rows = 10 })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

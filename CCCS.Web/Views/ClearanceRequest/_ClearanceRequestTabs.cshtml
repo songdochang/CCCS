@@ -1,0 +1,25 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string[] cls = { "", "", "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("index", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 0 0 15px 0;">
+    <li class="@cls[0]"><a href="~/ClearanceRequest/index1">Pending</a></li>
+    <li class="@cls[1]"><a href="~/ClearanceRequest/index2">Closed</a></li>
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+    {
+        <li class="@cls[2]"><a href="~/ClearanceRequest/index3">Summary by DCO</a></li>
+    }
+    <li class="@cls[3]"><a href="~/ClearanceRequest/index4">User Registration</a></li>
+    <li class="@cls[4]"><a href="~/ClearanceRequest/index5">Over 30 Days</a></li>
+    <li class="@cls[5]"><a href="~/ClearanceRequest/index6">Rejected</a></li>
+    @if (ViewBag.Exceptions == 0)
+    {
+        <li class="@cls[6]"><a href="~/ClearanceRequest/index7">Exception</a></li>
+    }
+    else
+    {
+        <li class="@cls[6]"><a href="~/ClearanceRequest/index7">Exception<span class="badge badge-red mar-left-5">@ViewBag.Exceptions</span></a></li>
+    }
+</ul>

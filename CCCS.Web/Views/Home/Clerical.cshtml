@@ -1,0 +1,171 @@
+﻿@model IEnumerable<CCCS.Web.Models.Home.SummaryRowModel>
+
+@{
+    ViewBag.Title = "Clerical Home";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<style>
+    .first-last {
+        width: 50px;
+    }
+
+    .stat6 {
+        width: 170px;
+        margin: 0;
+    }
+
+    #topBody {
+        padding: 0 15px;
+    }
+
+    .panel-heading span {
+        cursor: pointer;
+    }
+
+    ul {
+        margin-left: -40px;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .panel-heading {
+        cursor: move;
+    }
+</style>
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    <li class="active"><a href="#">Overview</a></li>
+    <li><a href="~/Home/Manager2">Project Overview</a></li>
+    <li><a href="~/Home/Manager3">Contractor Overview</a></li>
+    <li><a href="~/Home/Manager4">Prime Distribution</a></li>
+</ul>
+<div class="panel topPanel">
+    <div id="topBody" class="panel-body">
+        @if (Model != null)
+        {
+            <table id="summary" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Open Projects</div>
+                                        <div class="number">@ViewBag.NumberOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">$ Open Projects</div>
+                                        <div class="number-sm">@ViewBag.AmountOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Federal Projects</div>
+                                        <div class="number">@ViewBag.NumberFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Federal Projects</div>
+                                        <div class="number">@ViewBag.AmountFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title"># Site Visits</div>
+                                        <div class="number">@ViewBag.NumberSiteVisits</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default stat6">
+                                <div class="panel-body">
+                                    <div class="pull-left">
+                                        <div class="title">Last Site Visit</div>
+                                        <div class="number">@ViewBag.LastSiteVisit</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td class="first-last title-cell-left">@r.DCO</td>
+                            <td class="text-right"><span class="pad-right-70">@r.NumberOpenProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.AmountOpenProjects</span></td>
+                            <td class="text-right"><span class="pad-right-70">@r.NumberFederalProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.AmountFederalProjects</span></td>
+                            <td class="text-right"><span class="pad-right-70">@r.NumberSiteVisits</span></td>
+                            <td class="text-right"><span class="pad-right-40">@r.LastSiteVisit</span></td>
+                            <td class="first-last"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+@{
+    <ul id="sortable">
+        <li>
+            @{
+                Html.RenderAction("MissingProjectDetails", "Home");
+            }
+        </li>
+        <li>
+            @{
+                Html.RenderAction("RegistrationApproval", "Home", new { dco = ViewBag.CO });
+            }
+        </li>
+        <li>
+            @{
+                Html.RenderAction("DocumentRejected", "Home");
+            }
+        </li>
+        <li>
+            @{
+                Html.RenderAction("ClearanceRequest", "Home");
+            }
+        </li>
+        <li>
+            @{
+                Html.RenderAction("ClearanceRequestException", "Home", new { dco = ViewBag.CO });
+            }
+        </li>
+        <li>
+            @{
+                Html.RenderAction("DocumentReceivedClerical", "Home");
+            }
+        </li>
+
+    </ul>
+}
+
+
+
+

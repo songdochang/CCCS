@@ -1,0 +1,92 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+<script>
+    $(function () {
+        $('#fileWOA').change(function () {
+            $("#loading").show();
+            $("#viewLink").removeAttr('href');
+
+            var formData = new FormData();
+            formData.append('file', $('#fileWOA')[0].files[0]);
+            formData.append('id', @Model.ProjectID);
+            formData.append('type', 'WOA');
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadDocument", "Document")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.IsSuccess) {
+                        $("#alertWOA").removeClass("alert-danger");
+                        $("#alertWOA").addClass("alert-success");
+                        $("#alertWOA").html(result.Message);
+                        $("#dtWOA").html(result.DateUploaded);
+                        $("#viewWOA").html(result.ViewLink);
+                    } else {
+                        $("#alertWOA").removeClass("alert-success");
+                        $("#alertWOA").addClass("alert-danger");
+                        $("#alertWOA").html(result.Message);
+                    }
+                    $("#alertWOA").show();
+                    $("#loading").hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#loading").hide();
+                }
+            });
+
+            $(this).val(null);
+        });
+
+        $("#resetWOA").confirm({
+            title: "Delete File",
+            text: "Are you sure to delete this document?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+    });
+</script>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Work Order Authorization
+        </div>
+        <div class="panel-body">
+            <div id="alertWOA" class="alert alert-success" style="display: none;">
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    @using (Html.BeginForm(new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="input-group">
+                            <span class="btn btn-info btn-file">
+                                Select WOA<input type="file" id="fileWOA" />
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-1">
+                    <img id="loading" src="~/Content/images/loading.gif" alt="" style="display: none;" />
+                </div>
+
+            </div>
+            <div id="dtWOA" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <label class="mar-right-10">Date Uploaded:</label>@Model.DateUploaded
+                }
+            </div>
+            <div id="viewWOA" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <div class="pull-right">
+                        <a id="resetWOA" href="~/Document/DeleteDocument/@Model.DocumentID" class="btn btn-sm btn-danger">Remove</a>
+                    </div>
+                    <a target="_blank" href="@Url.Content("/Files/WOA/" + Model.FileName)">View Document</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

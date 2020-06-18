@@ -1,0 +1,262 @@
+﻿@model CCCS.Core.Domain.Worksheets.Worksheet
+
+@{
+    ViewBag.Title = "Create Billable Activity";
+    Layout = "~/Views/Shared/_LayoutWorksheet.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            @if (ViewBag.ReturnUrl.ToLower().Contains("project"))
+            {
+                <a href="@ViewBag.ReturnUrl">Project Details</a>
+            }
+            else
+            {
+                <a href="~/Worksheet/Index2">Worksheets</a>
+            }
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("a[href$='#contactModal']").on("click", function () {
+            $("#UploadDocumentName").val(this.id);
+            $("#UploadContractorID").val($(this).prop("name"));
+        });
+
+        $("#JOC").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("GetJOC", "Worksheet")",
+                    dataType: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { id: item.Id, label: item.JOC, value: item.ProjectName, phase: item.Phase };
+                        }))
+                    }
+                });
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                $("#JOC").val(ui.item.label);
+                $("#projectName").html(ui.item.value);
+                $("#phase").html(ui.item.phase);
+                getContractors(ui.item.id);
+            },
+            minLength: 3
+        });
+
+        $("#Comment").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("GetComment", "Worksheet")",
+                    dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item, value: item };
+                    }))
+                    }
+                });
+            },
+            minLength: 3
+        });
+    });
+
+    function getContractors(projectId) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetContractors", "Worksheet")",
+            data: { projectId: projectId },
+            success: function (result) {
+                $.each(result, function () {
+                    if (this.Selected) {
+                        $("#Contractor").append($('<option selected></option>').attr("value", this.Value).text(this.Text));
+                    } else {
+                        $("#Contractor").append($('<option></option>').attr("value", this.Value).text(this.Text));
+                    }
+                });
+            },
+            error: function (req, status, error) {
+                // do something with error
+            }
+        });
+    }
+</script>
+<h3>@ViewBag.Title</h3>
+<hr />
+@Html.Partial("_AlertPartial")
+
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @if (Model.ProjectId != null)
+        {
+            @Html.HiddenFor(x => x.ProjectId)
+            <div class="well well-sm">
+                <div class="form-group">
+                    @Html.Label("Project ID", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-4 pad-top-7">
+                        @ViewBag.JOC
+                    </div>
+                    <label class = "control-label col-md-2">CO</label>
+                    <div class="col-md-4 pad-top-7">
+                        @Model.DCO
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Project Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10 pad-top-7">
+                        @ViewBag.ProjectName
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Phase", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-4 pad-top-7">
+                        @if (!string.IsNullOrEmpty(Model.Phase))
+                        {
+                            @Html.Label(Model.Phase, new { style = "font-weight: normal" })
+                        }
+                    </div>
+                    @Html.LabelFor(model => model.EventCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-4 pad-top-7">
+                        @if (!string.IsNullOrEmpty(Model.EventCode))
+                        {
+                            @Html.Label(Model.EventCode, new { style = "font-weight: normal" })
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                @Html.Label("Project ID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.JOC, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.JOC, "", new { @class = "text-danger" })
+                </div>
+                <label class = "control-label col-md-2">CO</label>
+                <div class="col-md-4 pad-top-7">
+                    @Model.DCO
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Project Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-4 pad-top-7">
+                    <span id="projectName"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Phase", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-2  pad-top-7">
+                    <span id="phase"></span>
+                </div>
+                @Html.LabelFor(model => model.EventCode, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-4 pad-top-7">
+                    @if (!string.IsNullOrEmpty(Model.EventCode))
+                    {
+                        @Html.Label(Model.EventCode, new { style = "font-weight: normal" })
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Contractor</label>
+            <div class="col-md-4">
+                @Html.DropDownList("Contractor", new SelectList(ViewBag.Contractors, "Value", "Text", ViewBag.PrimeContractor), new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ActivityCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.DropDownList("ActivityCode", new SelectList(ViewBag.ActivityCodes, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ActivityCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WorkDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtWork'>
+                    @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.TextArea("Comment", new { @class = "form-control", @rows = 3 })
+                @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Hours, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownList("Hour", new SelectList(ViewBag.Hours, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Minutes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownList("Minute", new SelectList(ViewBag.Minutes, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                @if (string.IsNullOrEmpty(Model.DCO))
+                {
+                    <input type="submit" value="Create" class="btn btn-primary" disabled />
+                }
+                else
+                {
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                }
+                @if (Model.ProjectId == null)
+                {
+                    <span class="mar-left-20"><a href="@ViewBag.ReturnUrl">Cancel</a></span>
+                }
+                else
+                {
+                    <span class="mar-left-20">@Html.ActionLink("Cancel", "Details7", "Project", new { id = Model.ProjectId }, null)</span>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

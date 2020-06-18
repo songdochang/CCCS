@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Countywide Contract Compliance System</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+    <script type="text/javascript" src="~/Scripts/jquery.confirm.min.js"></script>
+    <script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0">
+    </script>
+
+</head>
+<body>
+    <style>
+        .navbar {
+            max-height: 50px;
+            background-color: RGB(46, 65, 23);
+        }
+
+        .breadcrumb {
+            margin-top: 7px;
+            padding-left: 0;
+            background-color: RGB(46, 65, 23);
+        }
+
+        .breadcrumb a {
+            color: #ffffff;
+        }
+    </style>
+    <div class="navbar navbar-fixed-top">
+        <div class="container">
+            @RenderSection("Navbar")
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+    <script src="/Scripts/lightbox.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

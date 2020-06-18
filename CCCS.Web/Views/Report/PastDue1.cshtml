@@ -1,0 +1,147 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.NonComplianceModel>
+@{
+    ViewBag.Title = "Past Due Documents";
+    Layout = "~/Views/Shared/_LayoutContractor.cshtml";
+    string selectedValue = ViewBag.CO;
+    int cnt = 0;
+}
+<script type="text/javascript">
+    $(function () {
+        $("a[href$='#excludeModal']").on("click", function () {
+            var id = $(this).attr('id');
+            $("#projectId").val(id);
+        })
+
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+</script>
+
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li>@Html.ActionLink("Documents Past Due", "DocumentsPastDue", "Report")</li>
+            </ul>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+@Html.Partial("_AlertPartial")
+@Html.Partial("_PastDueDocumentsTabs")
+<p>
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm())
+        {
+            <div class="form-group mar-left-20">
+                @Html.DepartmentDropDownList("dept", new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+            <div class="form-group mar-left-20">
+                @Html.DcoDropDownList("dco", false, selectedValue, new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+            @*<div class="form-group mar-left-20">
+                    @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+                    {
+                        <input name="button" type="submit" class="btn btn-primary" value="Send" />
+                    }
+                </div>*@
+        }
+    </div>
+    <div class="form-inline pull-left pad-bottom-10">
+        <div class="form-group pull-left">
+            <label>Total Past Due Projects:<span class="mar-left-20">@Model.Count()</span></label>
+        </div>
+        @using (Html.BeginForm())
+        {
+            <div class="form-group pull-left mar-left-20">
+                <button name="button" value="PDF" type="submit" class="btn btn-info mar-left-10">Export to PDF</button>
+            </div>
+        }
+    </div>
+</p>
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th></th>
+            <th>CO</th>
+            <th>
+                Project ID
+            </th>
+            <th>
+                Project Name
+            </th>
+            <th># Past Due</th>
+            <th>Dept</th>
+            <th class="col-md-1">Start Date</th>
+            <th class="col-md-1">End Date</th>
+            <th>Months</th>
+            <th class="col-p-5"></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        cnt = cnt + 1;
+        <tr>
+            <td>@cnt<span>.</span></td>
+            <td>@item.DCO</td>
+            <td>
+                @Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)
+            </td>
+            <td>
+                @Html.ShortString(item.ProjectName, 55)
+            </td>
+            <td class="text-center">@item.NumberOfDocs</td>
+            <td class="text-center">@item.DepartmentID</td>
+            <td>
+                @if (item.StartDate != null)
+                {
+                    var dt1 = (DateTime)item.StartDate;
+                    @dt1.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @if (item.EndDate != null)
+                {
+                    var dt2 = (DateTime)item.EndDate;
+                    @dt2.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td class="text-center">@item.PastDueMonths</td>
+            <td class="text-right"><a data-toggle="modal" href="#excludeModal" id="@item.ProjectID"><span class="mar-left-10">Exclude</span></a></td>
+        </tr>
+    }
+</table>
+<div class="modal fade" id="excludeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Move to 'Excluded' list
+                </h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("ExcludePastDueProject", "Report", new { dept = ViewBag.Dept }, FormMethod.Post, null))
+                {
+                    <input type="hidden" id="projectId" name="projectId" />
+                    <div class="form-horizontal">
+                        <div class="form-group date" id="dateClosed">
+                            <div class="title-cell col-md-3 mar-top-10">Comment</div>
+                            <div class="col-md-8">
+                                @Html.TextArea("Comment", new { @class = "form-control", cols = 35, @rows = 6 })
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" value="Move" name="submit" class="btn btn-danger" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

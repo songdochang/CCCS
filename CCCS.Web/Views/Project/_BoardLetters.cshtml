@@ -1,0 +1,93 @@
+﻿@model CCCS.Core.Domain.Documents.Document
+<script>
+    $(function () {
+        $('#fileBL').change(function () {
+            $("#loading").show();
+            $("#viewLink").removeAttr('href');
+
+            var formData = new FormData();
+            formData.append('file', $('#fileBL')[0].files[0]);
+            formData.append('id', @Model.ProjectID);
+            formData.append('type', 'BL');
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("UploadDocument", "Document")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $(".alert").hide();
+                    if (result.IsSuccess) {
+                        $("#alertBL").removeClass("alert-danger");
+                        $("#alertBL").addClass("alert-success");
+                        $("#alertBL").html(result.Message);
+                        $("#dtBL").html(result.DateUploaded);
+                        $("#viewBL").html(result.ViewLink);
+                    } else {
+                        $("#alertBL").removeClass("alert-success");
+                        $("#alertBL").addClass("alert-danger");
+                        $("#alertBL").html(result.Message);
+                    }
+                    $("#alertBL").show();
+                    $("#loading").hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    $("#loading").hide();
+                }
+            });
+
+            $(this).val(null);
+        });
+
+        $("#resetBL").confirm({
+            title: "Delete File",
+            text: "Are you sure to delete this document?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+    });
+</script>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+                Board Letters
+        </div>
+        <div class="panel-body">
+            <div id="alertBL" class="alert alert-success" style="display: none;">
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    @using (Html.BeginForm(new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="input-group">
+                            <span class="btn btn-info btn-file">
+                                Select Board Letter<input type="file" id="fileBL" />
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-1">
+                    <img id="loading" src="~/Content/images/loading.gif" alt="" style="display: none;" />
+                </div>
+
+            </div>
+            <div id="dtBL" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <label class="mar-right-10">Date Uploaded:</label>@Model.DateUploaded
+                }
+            </div>
+            <div id="viewBL" class="mar-top-10">
+                @if (Model.DateUploaded != null)
+                {
+                    <div class="pull-right">
+                        <a id="resetBL" href="~/Document/DeleteDocument/@Model.DocumentID" class="btn btn-sm btn-danger">Remove</a>
+                    </div>
+                    <a target="_blank" href="@Url.Content("/Files/BL/" + Model.FileName)">View Document</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

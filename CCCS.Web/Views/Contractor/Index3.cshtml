@@ -1,0 +1,130 @@
+﻿@using CCCS.Web.Models.Contractors
+@model PagedList.IPagedList<ContractorModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Contractors";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+<div class="pull-right mar-top-20">
+    @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                string url = VirtualPathUtility.ToAbsolute("~/Contractor/Create") + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+        <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Create new contractor</a>
+    }
+</div>
+<h3>@ViewBag.Title</h3>
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    <li><a href="~/contractor/index1">All Contractors</a></li>
+    <li><a href="~/contractor/index2">Active Primes</a></li>
+    <li class="active"><a href="~/contractor/index3">Non-active Primes</a></li>
+</ul>
+@using (Html.BeginForm("Index4", "Contractor", FormMethod.Post))
+{
+    <div class="col-md-3 pull-right mar-left-20">
+        <div class="input-group pad-bottom-10">
+            <input type="text" class="form-control" name="searchString" placeholder="Search for..." value="@ViewBag.SearchString">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </div>
+}
+@if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+{
+    <p>
+        <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+    </p>
+}
+@using (Html.BeginForm(Html.BeginForm("Index3", "Contractor", FormMethod.Post)))
+{
+    Html.RenderPartial("_AlphabetSearch");
+}
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Company Name", "Index3", new { sortOrder = ViewBag.CompanyNameSortParm })
+                @if (ViewBag.SortOrder == "CompanyName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "CompanyName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                Contact Name
+            </th>
+            <th>EIN</th>
+            <th>Phone Number</th>
+            <th>Recent Project</th>
+            <th>End Date</th>
+            <th class="col-md-1">Past Due Documents</th>
+            @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DCO)
+            </td>
+            <td>
+                @Html.ActionLink(item.CompanyName, "Details1", new { id = item.ContractorID })
+            </td>
+            <td>
+                @item.ContactName
+            </td>
+            <td>@item.TaxId</td>
+            <td>
+                @item.ContactPhone
+                @if (!string.IsNullOrEmpty(item.ContactExtension))
+                {
+                    <span class="mar-left-10">Ext: @item.ContactExtension</span>
+                }
+            </td>
+            <td>
+                @if (item.RecentProjectID > 0)
+                {
+                    <a href="~/Project/Details1/@item.RecentProjectID">
+                        <span data-toggle="tooltip" title="@item.RecentProjectName" data-placement="left">@item.RecentJOC</span>
+                    </a>
+                }
+            </td>
+            <td>@if (item.EndDate != null)
+            {
+                var dt = (DateTime)item.EndDate.Value;
+                @dt.ToShortDateString()
+            }</td>
+            <td class="text-center">
+                @if (item.NumberPastDueDocuments > 0)
+                {
+                    <a href="~/Contractor/Details2/@item.ContractorID"><span class="badge badge-red">@item.NumberPastDueDocuments</span></a>
+                }
+            </td>
+            @if (User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                string url = VirtualPathUtility.ToAbsolute("~/Contractor/Edit/") + @item.ContractorID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                <td class="text-right">
+                    <a href="@url" data-toggle="tooltip" title="Edit" data-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index3", new { page }))

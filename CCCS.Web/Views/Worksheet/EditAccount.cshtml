@@ -1,0 +1,128 @@
+﻿@model CCCS.Core.Domain.Reference.AccountNumber
+
+@{
+    ViewBag.Title = "Edit Account Number";
+    Layout = "~/Views/Shared/_LayoutWorksheet.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Worksheet/Index4">Account Numbers</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+
+<h3>@ViewBag.Title</h3>
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.Label("Department", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.DropDownListFor(x => x.DepartmentID, new SelectList(ViewBag.Departments, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DepartmentID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control text-box-lg" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Phase", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.Phase, new SelectList(ViewBag.Phases, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Phase, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FundOrg, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.FundOrg, new { htmlAttributes = new { @class = "form-control text-box-sm" } })
+                @Html.ValidationMessageFor(model => model.FundOrg, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SubaccountNo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.SubaccountNo, new { htmlAttributes = new { @class = "form-control text-box-sm" } })
+                @Html.ValidationMessageFor(model => model.SubaccountNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AccountDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AccountDescription, new { htmlAttributes = new { @class = "form-control text-box-lg" } })
+                @Html.ValidationMessageFor(model => model.AccountDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ActivityCodes, htmlAttributes: new { @class = "control-label col-md-2" })
+            @{
+                int cnt = 0;
+            }
+            @foreach (var ac in ViewBag.ActivityCodes)
+            {
+                string cls = (cnt == 0) ? "col-md-10 pad-top7" : "col-md-offset-2 col-md-10 pad-top7";
+                <div class="@cls">
+                    @if (!string.IsNullOrEmpty(Model.ActivityCodes) && Model.ActivityCodes.Contains(ac.Value))
+                    {
+                        <input type="checkbox" name="@ac.Value" id="@ac.Value" value="@ac.Value" checked>
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="@ac.Value" id="@ac.Value" value="@ac.Value">
+                    }
+                    <label for="@ac.Value"><span style="font-weight: normal;">@ac.Text</span></label>
+                </div>
+                cnt++;
+            }
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.UsedFor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.TextAreaFor(x => x.UsedFor, new { @class = "form-control", @rows = 4 })
+                @Html.ValidationMessageFor(model => model.UsedFor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("AccountType", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownListFor(x => x.AccountType, new SelectList(ViewBag.AccountTypes, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AccountType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2 pad-top-7">
+                @Html.CheckBoxFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <span class="mar-left-20">@Html.ActionLink("Cancel", "Index5", "Worksheet")</span>
+            </div>
+        </div>
+    </div>
+}

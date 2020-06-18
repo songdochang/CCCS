@@ -1,0 +1,22 @@
+﻿@model CCCS.Core.Domain.Contractors.Contractor
+@{
+    ViewBag.Title = "Log EUR";
+}
+<h3>@Model.CompanyName</h3>
+<h4>Please select a project and click on the 'Add EUR' button to save EUR.</h4>
+<hr />
+@using (Html.BeginForm(new { id = Model.ContractorID }))
+{
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-1 title-cell pad-top-7">Project</div>
+            <div class="col-md-9">
+                @Html.DropDownList("Project", new SelectList(ViewBag.Projects, "Value", "Text"), new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+        </div>
+    </div>
+}
+<hr />
+<div class="col-md-10">
+    @Html.ActionLink("Back to Document List", "Details2", "Contractor", new { id = Model.ContractorID }, null)
+</div>

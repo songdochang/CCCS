@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DateTime dt = DateTime.Today;
+}
+<h3>@ViewBag.Title</h3>
+@{ Html.RenderPartial("_dateFilter2"); }
+@for(int i = 0; i < ViewBag.Since; i++)
+{
+    <h4>@dt.AddMonths((-1) * i).ToString("MM/yyyy")</h4>
+    Html.RenderAction("PartialActivityByMonth", new { monthAgo = i });
+}
+
+

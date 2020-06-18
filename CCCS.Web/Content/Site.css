@@ -1,0 +1,363 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select {
+    max-width: 350px;
+}
+
+a {
+    cursor: pointer;
+}
+
+textarea {
+    max-width: 1100px;
+}
+
+.text-box-sm {
+    max-width: 165px;
+}
+
+.select-lg, .text-box-lg {
+    max-width: 600px;
+}
+
+.title-row {
+    background-color: #808080;
+    color: #fff;
+}
+
+    .title-row a {
+        color: #fff;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+.title-cell {
+    font-weight: bold;
+    text-align: right;
+}
+
+.title-cell-left {
+    font-weight: bold;
+    text-align: left;
+}
+
+.mar-bottom-10 {
+    margin-bottom: 10px;
+}
+
+.mar-bottom-20 {
+    margin-bottom: 20px;
+}
+
+.mar-left-3 {
+    margin-left: 3px;
+}
+
+.mar-left-5 {
+    margin-left: 5px;
+}
+
+.mar-left-10 {
+    margin-left: 10px;
+}
+
+.mar-left-20 {
+    margin-left: 20px;
+}
+
+.mar-left-25 {
+    margin-left: 25px;
+}
+
+.mar-top-10 {
+    margin-top: 10px;
+}
+
+.mar-top-20 {
+    margin-top: 20px;
+}
+
+.mar-top-50 {
+    margin-top: 50px;
+}
+
+.mar-right-3 {
+    margin-right: 3px;
+}
+
+.mar-right-5 {
+    margin-right: 5px;
+}
+
+.mar-right-10 {
+    margin-right: 10px;
+}
+
+.mar-right-30 {
+    margin-right: 30px;
+}
+
+.pad-top-7 {
+    padding-top: 7px;
+}
+
+.pad-top-10 {
+    padding-top: 10px;
+}
+
+.pad-right-20 {
+    padding-right: 20px;
+}
+
+.pad-right-40 {
+    padding-right: 40px;
+}
+
+.pad-right-70 {
+    padding-right: 70px;
+}
+
+.pad-bottom-10 {
+    padding-bottom: 10px;
+}
+
+.pad-left-20 {
+    padding-left: 20px;
+}
+
+.pad-left-50 {
+    padding-left: 50px;
+}
+
+.panel-default {
+    border-color: #dddddd;
+}
+
+    .panel-default > .panel-heading {
+        color: #333333;
+        background-color: #f5f5f5;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+        .panel-default > .panel-heading a {
+            font-weight: normal;
+            font-size: 0.8em;
+        }
+
+.panel-simple > .panel-heading + .panel-collapse .panel-body {
+    border-top-color: #dddddd;
+}
+
+.panel-simple > .panel-footer + .panel-collapse .panel-body {
+    border-bottom-color: #dddddd;
+}
+
+.bootstrap-datetimepicker-widget {
+    cursor: pointer;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+
+.badge-black {
+    background-color: #000000;
+}
+
+.badge-red {
+    background-color: red;
+}
+
+.badge-orange {
+    background-color: orange;
+}
+
+.badge-green {
+    background-color: green;
+}
+
+/* Dashboard */
+.topPanel {
+    padding-top: 25px;
+    background-color: #eee;
+}
+
+.icon {
+    font-size: 1.2em;
+    display: table-cell;
+    vertical-align: middle;
+    padding-right: 10px;
+    padding-top: 5px;
+}
+
+.stat {
+    width: 22%;
+    float: right;
+    text-align: center;
+    margin-right: 25px;
+}
+
+    .stat div.title {
+        font-size: 10pt;
+        border-bottom: solid 1px #ddd;
+        width: 150px;
+    }
+
+    .stat div.number {
+        font-size: 14pt;
+    }
+
+.stat6 {
+    width: 15%;
+    float: right;
+    text-align: center;
+    margin-right: 16px;
+    min-height: 79px;
+}
+
+    .stat6 div.title {
+        font-size: 10pt;
+        border-bottom: solid 1px #ddd;
+        width: 140px;
+    }
+
+    .stat6 div.number {
+        font-size: 14pt;
+    }
+
+        .stat6 div.number-sm {
+        font-size: 12pt;
+    }
+
+.panel-heading {
+    font-weight: bold;
+}
+
+.red {
+    color: #d9534f;
+}
+
+.green {
+    color: #3c763d;
+}
+
+.blue {
+    color: #337ab7;
+}
+
+.dropdown {
+    cursor: pointer;
+}
+
+.calendar {
+    font-size: 14pt;
+    color: purple;
+}
+.ajax-loading-block-window {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	z-index: 999;
+	width: 32px;
+	height: 32px;
+	margin: -16px 0 0 -16px;
+	background: url('images/loading.gif') center no-repeat;
+}
+.ajax-loading-block-window-sm {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 999;
+	width: 32px;
+	height: 32px;
+	margin: -16px 0 0 -16px;
+	background: url('images/loading.gif') center no-repeat;
+}
+.col-p-4 {
+    width: 4%;
+}
+.col-p-5 {
+    width: 5%;
+}
+.col-p-6 {
+    width: 6%;
+}
+.col-p-14 {
+    width: 14%;
+}
+.text-red {
+    color: #c9302c;
+}
+.co-DG {
+    background-color: #c5d9f1;
+}
+
+.co-ER {
+    background-color: #fcd5b4;
+}
+
+.co-LJ {
+    background-color: #d8e4bc;
+}
+
+.co-VC {
+    background-color: #ffe699;
+}
+
+.co-GB {
+    background-color: #e6b8b7;
+}
+
+.co-CT {
+    background-color: #bfe7f7;
+}
+
+.co-RC {
+    background-color: #ccc0da;
+}
+
+.breadcrumb span.glyphicon {
+    color: #ffffff;
+}
+
+.text-overflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

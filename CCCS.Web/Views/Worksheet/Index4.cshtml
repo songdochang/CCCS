@@ -1,0 +1,111 @@
+﻿@model IEnumerable<CCCS.Web.Models.ActivityListModel>
+
+@{
+    ViewBag.Title = "Time Worksheet";
+}
+<script type="text/javascript">
+    $(function () {
+        $("a[href$='#dataModal']").on("click", function () {
+            var id = $(this).attr('id');
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetEntityData", "Worksheet")",
+                data: { id: id },
+                success: function (result) {
+                    $("#data").html(result);
+                },
+                error: function (req, status, error) {
+                    // do something with error
+                }
+            });
+        });
+    });
+</script>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_WorksheetTabs");
+}
+<p>
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm())
+        {
+            if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <div class="form-group mar-left-20">
+                    @Html.DropDownList("DCO", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CurrentDCO), new { @class = "form-control", onchange = "this.form.submit();" })
+                </div>    
+            }
+            <div class="form-group mar-left-20">
+                <label class="mar-right-10">Pay Period:</label>
+                @Html.DropDownList("PayPeriod", new SelectList(ViewBag.PayPeriods, "Value", "Text", ViewBag.CurrentPayPeriod), new { @class = "form-control", onchange = "this.form.submit();", style = "width: 240px;" })
+            </div>
+        }
+    </div>
+</p>
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                DCO
+            </th>
+            <th>
+                By DCO
+            </th>
+            <th>
+                Date Time
+            </th>
+            <th>
+                Activity
+            </th>
+            <th>Project ID</th>
+            <th>Project Name</th>
+            <th class="col-md-1"></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.DCO
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExecutedBy)
+            </td>
+            <td>
+                @item.ActivityDate.ToString("MM-dd-yyyy hh:mm")
+            </td>
+            <td>
+                @item.Action
+            </td>
+            <td>
+                @if (item.JOC != null)
+                {
+                    @Html.ActionLink(item.JOC, "Details1", "Project", new { id = item.ProjectID }, null)
+                }
+            </td>
+            <td>
+                @item.ProjectName
+            </td>
+            <td class="text-right">
+                <a data-toggle="modal" href="#dataModal" id="@item.ID">View Data</a>
+            </td>
+        </tr>
+    }
+</table>
+<div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">View Data</h4>
+            </div>
+            <div id="data" class="modal-body">               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

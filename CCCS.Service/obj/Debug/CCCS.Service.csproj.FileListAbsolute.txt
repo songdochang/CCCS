@@ -1,0 +1,5 @@
+C:\Projects 2015\CCCS\CCCS.Service\bin\Debug\CCCS.Service.dll
+C:\Projects 2015\CCCS\CCCS.Service\bin\Debug\CCCS.Service.pdb
+C:\Projects 2015\CCCS\CCCS.Service\obj\Debug\CCCS.Service.csproj.CoreCompileInputs.cache
+C:\Projects 2015\CCCS\CCCS.Service\obj\Debug\CCCS.Service.dll
+C:\Projects 2015\CCCS\CCCS.Service\obj\Debug\CCCS.Service.pdb

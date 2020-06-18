@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Countywide Contract Compliance System</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+    <script type="text/javascript" src="~/Scripts/jquery.confirm.min.js"></script>
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $("a[href$='#mapModal']").on("click", function () {
+                var dco = $(this).attr('data-content');
+                var dt = $(this).attr('name');
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetMapImage", "Inspection")",
+                    data: { dco: dco, dt: dt },
+                    success: function (result) {
+                        $("#mapImage").attr('src', result);
+                    },
+                    error: function (req, status, error) {
+                        // do something with error
+                    }
+                });
+
+                var wp = $(this).html() + ' ' + $(this).parent().next().html() + ' CA';
+
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetMiles", "Inspection")",
+                    data: { start: '', end: wp },
+                    success: function (result) {
+                        $("#miles").html(result);
+                    },
+                    error: function (req, status, error) {
+                        alert(req.responseText);
+                    }
+                });
+
+            });
+
+            $("a[href$='#photoModal']").on("click", function () {
+                $("#InspectionID").val(this.id);
+            });
+
+            $(document).on('change', '.btn-file :file', function () {
+                var input = $(this),
+                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.trigger('fileselect', [numFiles, label]);
+                $("#fileName").val(label);
+                $("#filePath").html($(this).val());
+            });
+
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+
+            $('.panel-body').on('hidden.bs.collapse', function () {
+                var id = $(this).attr("id");
+                $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-down');
+            });
+
+            $('.panel-body').on('show.bs.collapse', function () {
+                var id = $(this).attr("id");
+                $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-up');
+            });
+
+            $(window).scroll(function () {
+                $('#textBox').animate({ top: $(window).scrollTop() + $(window).height() - 75 }, { queue: false, duration: 350 });
+            });
+        });
+    </script>
+
+    @Html.Partial("_Navbar")
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+    </div>
+    <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width: 605px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Site Visit Map</h4>
+                </div>
+                <div class="modal-body">
+                    <img id="mapImage" alt="" />
+                    <div style="font-weight: bold; padding: 10px 0;">Estimated miles from Eastern:<span id="miles" class="mar-left-10"></span></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Upload Photo</h4>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("UploadPhoto", "Inspection", new { returnUrl = Request.Url.PathAndQuery }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                    @Html.Hidden("InspectionID", "")
+                    <div class="form-horizontal">
+                        <div>Select a photo to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="textModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width: 80%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <input type="hidden" id="userName" value="@User.Identity.Name" />
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h4 class="modal-title" id="myModalLabel">Messages<small class="mar-left-20" id="logged">You are not connected to the hub.</small></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Subjects</label>
+                            <ul id="rooms"></ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div>
+                                <ul id="chats"></ul>
+                                <textarea id="msg" cols="45" rows="3" class="form-control"></textarea>
+                                <div class="pull-right mar-top-10">
+                                    <button class="btn btn-sm btn-info">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/Scripts/lightbox.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

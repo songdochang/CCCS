@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+    .form-inline td {
+        text-align: right;
+        width: 100px;
+    }
+</style>
+<div>
+    @using (Html.BeginForm())
+    {
+        <div class="form-inline pull-right pad-bottom-10">
+            <div class="form-group mar-left-20">
+                @Html.DropDownList("Year", new SelectList(ViewBag.Years, "Value", "Text", ViewBag.CurrentYear), new { @class = "form-control col-md-4", onchange = "this.form.submit();" })
+            </div>
+        </div>
+        <h3>CR Activities<small class="mar-left-20">Click on number to see the list of projects.</small></h3>
+    }
+</div>
+@{
+    Html.RenderAction("CrProcessed", new { year = ViewBag.CurrentYear });
+}
+
+

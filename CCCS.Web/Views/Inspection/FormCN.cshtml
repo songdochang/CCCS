@@ -1,0 +1,135 @@
+﻿@model CCCS.Core.Domain.Inspection.ContractorNotification
+
+@{
+    ViewBag.Title = "Contractor Notification";
+    Layout = "~/Views/Shared/_LayoutInspection.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $('.time').datetimepicker({
+            format: "LT"
+        });
+    });
+</script>
+@section Navbar
+{
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li><a href="~/Inspection/Index3">Site Visit</a></li>
+        <li><a href="~/Inspection/Details/@Model.InspectionID">Details</a></li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+@{ Html.RenderPartial("_AlertPartial");}
+
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(x => x.InspectionID)
+
+        <div class="form-group">
+            @Html.Label("ContractorRepresentative", new { @class = "col-md-3 control-label" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.ContractorRepresentative, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.JOC, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3 pad-top-7">
+                @Html.EditorFor(model => model.JOC, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Project Description", new { @class = "col-md-3 control-label" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.ProjectDescription, new { htmlAttributes = new { @class = "form-control text-box-lg" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box-lg" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateOfVisit, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dateOfVisit'>
+                    @Html.EditorFor(model => model.DateOfVisit, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeOfVisit, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-2">
+                <div class='input-group time' id='timeOfVisit'>
+                    @Html.EditorFor(model => model.TimeOfVisit, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DCO, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.DCO, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DcoContactInfo, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.DcoContactInfo, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Type of Visit", new { @class = "col-md-3 control-label" })
+            <div class="col-md-2 pad-top-7 text-center">
+                <span class="mar-right-10">Site Inspection</span>@Html.CheckBoxFor(model => model.SiteInspection, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2 pad-top-7 text-center">
+                <span class="mar-right-10">Employee Interviews</span>@Html.CheckBoxFor(model => model.EmployeeInterviews, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2 pad-top-7 text-center">
+                <span class="mar-right-10">Good Faith Review</span>@Html.CheckBoxFor(model => model.GoodFaithReview, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                @if (ViewBag.FileUrl != null)
+                {
+                    <div class="pull-right">
+                        <a target="_blank" href="@ViewBag.FileUrl" class="mar-right-30"><span class="glyphicon glyphicon-file mar-right-5"></span>View Document</a>
+                        <a href="~/Notice/EmailCN/@Model.InspectionID" class="btn btn-danger">Email Notification</a>
+                    </div>
+                }
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <span class="mar-left-20"><a href="~/Inspection/Details/@Model.InspectionID">Cancel</a></span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

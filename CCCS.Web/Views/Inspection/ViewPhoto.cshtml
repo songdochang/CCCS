@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CCCS.Web.Models.InspectionPhoto>
+
+@{
+    ViewBag.Title = "Site Visit Photos";
+    Layout = "~/Views/Shared/_LayoutInspection.cshtml";
+}
+<style>
+    .img {
+        height: 200px;
+        max-width: 350px;
+    }
+</style>
+@{
+    string url = ViewBag.ReturnUrl.ToString().ToLower();
+    url = url.Substring(url.IndexOf("=") + 1);
+}
+@section Navbar
+{
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        @if (url.Contains("project"))
+        { 
+            <li><a href="@ViewBag.ReturnUrl">Project Details</a></li>
+        }
+        else
+        {
+            <li><a href="@url">Site Visit</a></li>
+            <li><a href="@ViewBag.ReturnUrl">Details</a></li>
+        }
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+<h4>To view large image, click on the photo.<small class="mar-left-20">To delete photo(s), check the photos to delete and click on 'Delete' button.</small></h4>
+<hr />
+@using (Html.BeginForm(new{ id = ViewBag.InspectionID, returnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        @foreach (var photo in Model)
+        {
+            <div class="col-md-4">
+                <a href="~/Files/Site_Inspection/Photos/@photo.FileName" data-lightbox="@photo.PhotoID">
+                    <img class="img" src="~/Files/Site_Inspection/Photos/@photo.FileName" alt="" />
+                </a>
+                <div class="mar-top-10">@Html.CheckBox("pid_" + photo.PhotoID.ToString())</div>
+            </div>
+        }
+    </div>
+
+    <p class="form-group mar-top-50">
+        <div class="col-md-11">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <span class="mar-left-20"><a href="@ViewBag.ReturnUrl">Back to previous page</a></span>
+        </div>
+    </p>
+}
+

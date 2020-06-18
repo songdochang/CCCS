@@ -1,0 +1,308 @@
+﻿@model PagedList.IPagedList<ProjectWithLateNtpModel>
+@using CCCS.Core.Domain.Projects
+@using CCCS.Web.Models.Projects
+@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+}
+
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th class="sm">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", action, new { sortOrder = ViewBag.ProjectIdSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "ProjectID")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectID_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", action, new { sortOrder = ViewBag.ProjectNameSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Prime Contractor", action, new { sortOrder = ViewBag.PrimeContractorSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "PrimeContractor")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "PrimeContractor_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Dept", action, new { sortOrder = ViewBag.DeptSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "Dept")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "Dept_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="sm">
+                Received
+            </th>
+            <th class="md text-center">
+                @Html.ActionLink("Start", action, new { sortOrder = ViewBag.StartSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "Start")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "Start_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="md text-center">
+                @Html.ActionLink("End", action, new { sortOrder = ViewBag.EndSortParm, co = ViewBag.CO, listStyle = ViewBag.ListStyle, notVisited = ViewBag.NotVisited, amount = ViewBag.Amount })
+                @if (ViewBag.SortOrder == "End")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "End_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+
+            <th class="col-md-1 text-right">Contract Amount</th>
+            <th class="md text-center">Federal Funds</th>
+            <th>Missing<br />Docs</th>
+            <th class="sm">
+            </th>
+        </tr>
+    </thead>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td rowspan="2">
+                    @item.DCO
+                </td>
+                <td rowspan="2">
+                    <a href="~/Project/Details1/@item.ProjectID" role="button" data-target="@item.ProjectID" data-interval="@item.ProgressPercent" aria-controls="@item.ProjectID">@item.JOC</a>
+                    <script>
+                        $(function () {
+                            var id = @item.ProjectID;
+                            var percent = @item.ProgressPercent;
+                            $('#p_' + id).attr('aria-valuenow', percent);
+                            $('#p_' + id).attr('style', 'width: ' + percent + '%;')
+                        });
+                    </script>
+                </td>
+                <td rowspan="2">
+                    @item.ProjectName
+                </td>
+                <td rowspan="2">
+                    <a href="~/Contractor/Details1/@item.PrimeContractorId">@item.PrimeContractorName</a>
+                </td>
+                <td rowspan="2">
+                    @item.DepartmentId
+                </td>
+                <td rowspan="2" class="text-center md2">
+                    @if (item.DateReceived != null)
+                    {
+                        var dt = ((DateTime)item.DateReceived).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </td>
+                <td class="text-center md2">
+                    @if (item.StartDate != null)
+                    {
+                        var dt = ((DateTime)item.StartDate).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </td>
+                <td class="text-center md2">
+                    @if (item.EndDate != null)
+                    {
+                        var dt = ((DateTime)item.EndDate).ToString("MM-dd-yyyy");
+                        @dt
+                    }
+                </td>
+                <td rowspan="2" class="text-right">
+                    @if (item.ContractAmount != null)
+                    {
+                        string amount = ((decimal)item.ContractAmount).ToString("#,##0");
+                        @amount
+                    }
+                </td>
+                <td rowspan="2" class="text-center">
+                    @if (item.FederalFunds)
+                    {
+                        <text>Yes</text>
+                    }
+                    else
+                    {
+                        <text>No</text>
+                    }
+                </td>
+                <td rowspan="2">
+                    @if (item.NumberMissingDocuments > 0)
+                    {
+                        <a href="~/Project/Details3/@item.ProjectID">
+                            <span class="badge badge-red" data-toggle="tooltip" title="Click to go to Documents" data-placement="left">@item.NumberMissingDocuments</span>
+                        </a>
+                    }
+                </td>
+                <td rowspan="2">
+                    @if (item.ProjectType == ProjectType.Capital)
+                    {
+                        <span class="badge badge-black" data-toggle="tooltip" title="Capital" data-placement="left">CP</span>
+                    }
+                    else
+                    {
+                        <span class="badge" data-toggle="tooltip" title="Non-Capital" data-placement="left">NC</span>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border: none; padding-top: 0;">
+                    @if (item.StartDate != null && item.EndDate != null)
+                    {
+                        if (item.DateClosed == null)
+                        {
+                            string cls = "progress-bar progress-bar-success";
+                            if (item.ProgressPercent >= 90 && item.ProgressPercent < 100)
+                            {
+                                cls = "progress-bar progress-bar-danger";
+                            }
+                            else if (item.ProgressPercent >= 0 && item.ProgressPercent < 90)
+                            {
+                                cls = "progress-bar progress-bar-warning";
+                            }
+                            <div class="progress" style="margin-bottom: 0;">
+                                <div id="p_@item.ProjectID" class="@cls" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                    @item.ProgressPercent<span>%</span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            string dt = ((DateTime)item.DateClosed).ToString("MM-dd-yyyy");
+                            <div class="text-red pull-right">Closed on @dt</div>
+                        }
+                    }
+                    else if (item.DateClosed != null)
+                    {
+                        string dt = ((DateTime)item.DateClosed).ToString("MM-dd-yyyy");
+                        <div class="text-red pull-right">Closed on @dt</div>
+                    }
+                </td>
+            </tr>
+            string cls1 = (string.IsNullOrEmpty(ViewBag.ListStyle)) ? "collapse" : "";
+            <tr id="@item.ProjectID" class="@cls1">
+                <td colspan="12" style="padding: 0;">
+                    <div style="padding: 5px 10px 0 10px; border: 1px solid #d1d2ce; font-size: 0.9em;">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th class="sm">Phase</th>
+                                    <th class="col-md-1">Unit</th>
+                                    <th class="col-md-1">Clearance Request</th>
+                                    <th class="col-md-1">Last Update</th>
+                                    <th class="col-md-1">Document Received</th>
+                                    <th>Project Location</th>
+                                    <th class="col-md-1 text-center">Zip Code</th>
+                                    <th class="col-md-1">Site Visit</th>
+                                    <th class="md text-center">Available Hours</th>
+                                    <th class="md text-center">Remaining Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">@item.Phase</td>
+                                    <td>@item.Unit</td>
+                                    <td>
+                                        @if (item.ClearanceRequest != null)
+                                        {
+                                            if (item.ClearanceRequest.CurrentStatus.Contains("to Department"))
+                                            {
+                                                var dt = ((DateTime)item.ClearanceRequest.DateModified).ToString("MM-dd-yyyy");
+                                                <span class="badge dp" data-toggle="tooltip" title="@dt" data-placement="right">CLOSED</span>
+                                            }
+                                            else if (item.ClearanceRequest.CurrentStatus.Contains("to Manager"))
+                                            {
+                                                var dt = ((DateTime)item.ClearanceRequest.DateModified).ToString("MM-dd-yyyy");
+                                                <span class="badge purple" data-toggle="tooltip" title="@dt" data-placement="right">MANAGER</span>
+                                            }
+                                            else if (item.ClearanceRequest.CurrentStatus.Contains("to CO"))
+                                            {
+                                                var dt = ((DateTime)item.ClearanceRequest.DateRequested).ToString("MM-dd-yyyy");
+                                                <span class="badge dp" data-toggle="tooltip" title="@dt" data-placement="right">CO</span>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.DateLastUpdate != null)
+                                        {
+                                            var dt = ((DateTime)item.DateLastUpdate).ToString("MM-dd-yyyy");
+                                            @dt
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.DateLastDocumentReceived != null)
+                                        {
+                                            var dt = ((DateTime)item.DateLastDocumentReceived).ToString("MM-dd-yyyy");
+                                            @dt
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            var location = item.Address + ", " + item.City;
+                                            @location
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @item.Zip
+                                    </td>
+                                    <td class="text-center">
+                                        @item.DateLastSiteVisit
+                                    </td>
+                                    <td class="text-center">
+                                        @item.HoursAvailable
+                                    </td>
+                                    <td class="text-center">
+                                        @item.HoursRemaining
+                                    </td>
+                                </tr>
+                                @if (item.Comments != null && item.Comments.Count > 0)
+                                {
+                                    <tr>
+                                        <td class="title-cell">Comments:</td>
+                                        <td colspan="10">
+                                            <ol>
+                                                @foreach (var c in item.Comments)
+                                                {
+                                                    <li>@c.CommentText</li>
+                                                }
+                                            </ol>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="clearfix"></div>
+                    </div>
+                </td>
+            </tr>
+                                                }
+                                            }
+</table>

@@ -1,0 +1,227 @@
+﻿@model CCCS.Core.Domain.Projects.Project
+
+@{
+    ViewBag.Title = "Site Visit Forms";
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('.dropdown-toggle').dropdown();
+
+        $("a[href$='#photoModal']").on("click", function () {
+            $("#InspectionID").val(this.id);
+        });
+
+        $("a[href$='#uploadModal']").on("click", function () {
+            $("#UploadInspectionID").val(this.id);
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+            $("#formName").val(label);
+            $("#formPath").html($(this).val());
+        });
+    });
+</script>
+<h3>Site Visit Forms</h3>
+<h4>Please click on the 'Upload' button to upload form(s).</h4>
+<hr />
+@if (Model.Inspections.Count > 0)
+            {
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-md-1">Date Visited</th>
+                <th>Address</th>
+                <th>City</th>
+                <th class="col-md-1">Number Interviews</th>
+                <th class="col-md-1">Violations?</th>
+                <th class="col-md-1">Photos?</th>
+                <th class="col-md-1"></th>
+                <th class="col-md-1"></th>
+                <th class="col-md-1"></th>
+                <th class="col-md-1"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Inspections)
+                {
+                <tr>
+                    <td>
+                        @item.DateOfVisit.ToString("MM-dd-yyyy")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.NumberInterviews)
+                    </td>
+                    <td class="text-center">
+                        @if (item.Violations)
+                        {
+                            @:Yes
+                            }
+                        else
+                        {
+                            @:No
+                            }
+                    </td>
+                    <td class="text-center">
+                        @if (item.PhotosTaken)
+                        {
+                            @:Yes
+                            }
+                        else
+                        {
+                            @:No
+                            }
+                    </td>
+                    <td class="text-center">
+                        @if (item.PhotosTaken)
+                        {
+                            <a data-toggle="modal" href="#photoModal" id="p_@item.InspectionID">Upload Photo</a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.PhotosTaken)
+                        {
+                            int cnt = 1;
+                            foreach (var photo in item.InspectionPhotos)
+                            {
+                                if (cnt == 1)
+                                {
+                                    <a href="~/Files/Site_Inspection/Photos/@photo.FileName" data-lightbox="images" data-title="">View<span class="badge mar-left-5">@item.InspectionPhotos.Count</span></a>
+                                }
+                                else
+                                {
+                                    <div style="display: none;">
+                                        <a href="~/Files/Site_Inspection/Photos/@photo.FileName" data-lightbox="images">Image</a>
+                                    </div>
+                                }
+                                cnt++;
+                            }
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (string.IsNullOrEmpty(item.FileName))
+                        {
+                            <a data-toggle="modal" href="#uploadModal" id="u_@item.InspectionID">Upload Form</a>
+                        }
+                        else
+                        {
+                            @Html.ActionLink("View", "Download", "Inspection", new { id = item.InspectionID }, null)
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" id="d_@item.InspectionID" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu text-left" aria-labelledby="dropdownMenu1">
+                                <li>@Html.ActionLink("Edit", "Edit", "Inspection", new { id = item.InspectionID }, null)</li>
+                                <li>@Html.ActionLink("Delete", "Delete", "Inspection", new { id = item.InspectionID }, null)</li>
+                                @if (item.PhotosTaken && item.InspectionPhotos.Count > 0)
+                                {
+                                    <li>@Html.ActionLink("Delete Photo", "DeletePhoto", "Inspection", new { id = item.InspectionID }, null)</li>
+                                }
+                                @if (!string.IsNullOrEmpty(item.FileName))
+                                {
+                                    <li>@Html.ActionLink("Delete Form", "DeleteForm", "Inspection", new { id = item.ProjectID, iId = item.InspectionID }, null)</li>
+                                }
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+
+}
+<hr />
+<div class="col-md-10">
+    @Html.ActionLink("Back to Document List", "Details2", "Project", new { id = Model.Id }, null)
+</div>
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Photo</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadPhoto", "Inspection", new { id = Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("InspectionID", "")
+                    <div class="form-horizontal">
+                        <div>Select a photo to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload Site Investigation Form</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("UploadForm", "Inspection", new { id = Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("UploadInspectionID", "")
+                    <div class="form-horizontal">
+                        <div>Select site investigation form to upload</div>
+                        <div style="padding-top: 10px;">
+                            <div class="input-group col-md-12 mar-left-20">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="formName" />
+                            </div>
+                            <input type="hidden" id="formPath" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

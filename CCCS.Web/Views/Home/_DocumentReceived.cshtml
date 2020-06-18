@@ -1,0 +1,74 @@
+﻿@{
+    string selectedValue = ViewBag.CO;
+}
+
+<script type="text/javascript">
+    $(function () {
+        getTable('@ViewBag.CO');
+
+        $("#DcoDR").change(function () {
+            var dco = $(this).val();
+
+            getTable(dco);
+        });
+    });
+
+    function getTable(dco) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DocumentReceivedTable", "Home")",
+            data: { dco: dco },
+            success: function (result) {
+                if (result.success) {
+                    $("#table").html(result.details);
+                    $("#DcoDR").val(result.dco);
+                    $("#totalDR").html(result.count);
+                } else {
+                    $("#table").html("There was an error while processing.");
+                }
+           },
+            error: function(xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+        $(function () {
+            $("#print").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PrintDocumentReceived", "Home")",
+                    data: { dco: $('#DcoDR').val() },
+                    success: function (url) {
+                        if (url.substr(0, 5) == "Error") {
+                            alert(url);
+                        } else {
+                            window.open(url, '_blank');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+        });
+</script>
+<div class="panel panel-info">
+    <div class="panel-heading" data-toggle="collapse" href="#DR" aria-expanded="true">
+        <div class="pull-right">
+            List Total:<span id="totalDR" class="mar-left-10"></span>
+        </div>
+        Document Received<span id="chevronDR" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+    </div>
+    <div class="panel-body collapse in" id="DR">
+        <div>
+            <div class="pull-left mar-left-10">
+                <button id="print" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-print mar-right-10"></span>Print List</button>
+            </div>
+            <div class="pull-right">@Html.DcoDropDownList("DcoDR", false, selectedValue, new { @class = "form-control" })</div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="table"></div>
+    </div>
+</div>

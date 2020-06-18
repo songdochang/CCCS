@@ -1,0 +1,136 @@
+﻿@model IEnumerable<CCCS.Web.Models.Worksheets.NonBillableListModel>
+
+@{
+    ViewBag.Title = "Time Worksheet";
+}
+<style>
+    .form-group {
+        margin-bottom: 15px !important;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#ok").click(function () {
+            $("#payPeriod").change();
+            $('#dateModal').modal('hide');
+        });
+    });
+</script>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_WorksheetTabs");
+}
+<p>
+    @if (User.IsInRole("DCO"))
+    {
+        <div class="col-md-3">
+            @{
+                string url = VirtualPathUtility.ToAbsolute("~/Worksheet/CreateNonBillable") + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+            }
+            <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Create Non-Billable Activity</a>
+        </div>
+    }
+    <div class="form-inline pull-right pad-bottom-10">
+        @using (Html.BeginForm())
+        {
+            if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <div class="form-group mar-left-20">
+                    @Html.DropDownList("DCO", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CurrentDCO), new { @class = "form-control", onchange = "this.form.submit();" })
+                </div>
+            }
+            <div class="form-group mar-left-20">
+                <label class="mar-right-10">Pay Period:</label>
+                @Html.DropDownList("payPeriod", new SelectList(ViewBag.PayPeriods, "Value", "Text", ViewBag.CurrentPayPeriod), new { @class = "form-control", onchange = "this.form.submit();", style = "width: 240px;" })
+                <a data-toggle="modal" href="#dateModal"><span class="mar-left-10 glyphicon glyphicon-calendar calendar"></span></a>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Filter by Dates</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">From</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt1" name="dateFrom" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">To</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt2" name="dateTo" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="ok" type="button" class="btn btn-primary">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</p>
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                CO
+            </th>
+            <th class="col-md-1">
+                @Html.DisplayNameFor(model => model.WorkDate)
+            </th>
+            <th class="col-md-2">
+                Activity
+            </th>
+            <th>Unit</th>
+            <th>Comment</th>
+            <th class="col-md-1 text-center">Hours</th>
+            <th class="col-md-1"></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DCO)
+            </td>
+            <td>
+                @item.WorkDate.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @item.ActivityDescription
+            </td>
+            <td>@item.Unit</td>
+            <td>@item.Comment</td>
+            <td class="text-center">
+                @item.FormattedHours
+            </td>
+            <td class="text-center">
+                @Html.ActionLink("Edit", "EditNonBillable", new { id = item.WorksheetID, returnUrl = ViewBag.ReturnUrl }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.WorksheetID, returnUrl = Request.Url.PathAndQuery })
+            </td>
+        </tr>
+    }
+
+</table>

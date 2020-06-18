@@ -1,0 +1,194 @@
+﻿@model List<CCCS.Web.Models.Worksheets.TimesheetModel>
+
+@{
+    ViewBag.Title = "Time Worksheet";
+}
+<style>
+    th, td {
+        text-align: center;
+    }
+
+    .narrow {
+        text-align: center;
+        width: 45px;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#ok").click(function () {
+            $("#payPeriod").change();
+            $('#dateModal').modal('hide');
+        });
+    });
+</script>
+@if (User.IsInRole("DCO"))
+{
+    <script type="text/javascript">
+        $(function () {
+            $("td.narrow").click(function () {
+                var id = $(this).attr("id");
+                var day = id.split('_')[0];
+                var projectId = id.split('_')[1];
+                var unit = id.split('_')[2];
+                var activity = id.split('_')[3];
+                var payPeriod = $("#payPeriod").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetWorksheetUrl", "Worksheet")",
+                    data: { id: projectId, unit: unit, activity: activity, day: day, payPeriod: payPeriod },
+                    success: function (url) {
+                        if (url != "") {
+                            window.location.href = url;
+                        }
+                    },
+                    error: function (req, status, error) {
+                        // do something with error
+                    }
+                });
+            });
+
+            $("td.narrow").hover(function () {
+                if ($(this).attr("data-content") != "") {
+                    $(this).html("<span class='glyphicon glyphicon-pencil'></span>");
+                }
+            }, function () {
+                if ($(this).attr("data-content") != "") {
+                    $(this).html($(this).attr("data-content"));
+                } else {
+                    $(this).html("");
+                }
+            });
+        });
+    </script>
+}
+<h3>@ViewBag.Title</h3>
+@{ Html.RenderPartial("_WorksheetTabs"); }
+@Html.Partial("_AlertPartial")
+<p>
+    @using (Html.BeginForm())
+    {
+        <div class="form-inline pull-right pad-bottom-10">
+            <div class="btn-group" role="group" aria-label="...">
+                @if (ViewBag.ListStyle == "summary")
+                {
+                    <button name="listStyle" value="" type="submit" class="btn btn-default">Detail</button>
+                    <button name="listStyle" value="summary" type="submit" class="btn btn-default active">Summary</button>
+                }
+                else
+                {
+                    <button name="listStyle" value="" type="submit" class="btn btn-default active">Detail</button>
+                    <button name="listStyle" value="summary" type="submit" class="btn btn-default">Summary</button>
+                }
+            </div>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <div class="form-group mar-left-20">
+                    @Html.DropDownList("DCO", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CurrentDCO), new { @class = "form-control", onchange = "this.form.submit();" })
+                </div>
+            }
+            <div class="form-group mar-left-20">
+                <label class="mar-right-10">Pay Period:</label>
+                @Html.DropDownList("payPeriod", new SelectList(ViewBag.PayPeriods, "Value", "Text", ViewBag.CurrentPayPeriod), new { @class = "form-control", onchange = "this.form.submit();", style = "width: 240px;" })
+                <a data-toggle="modal" href="#dateModal"><span class="mar-left-10 glyphicon glyphicon-calendar calendar"></span></a>
+            </div>
+        </div>
+        <div>
+            @if (TempData["Message"] == null)
+            {
+                <a data-toggle="modal" href="#excelModal" class="btn btn-success">Export to Excel</a>
+                <button name="PDF" value="PDF" type="submit" class="btn btn-info mar-left-10">Export to PDF</button>
+            }
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Filter by Dates</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-md-offset-1 col-md-1 pad-top-7">From</div>
+                                <div class='col-md-5 input-group date'>
+                                    <input id="dt1" name="dateFrom" type="text" class="form-control dt" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar disabled"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-1 col-md-1 pad-top-7">To</div>
+                                <div class='col-md-5 input-group date'>
+                                    <input id="dt2" name="dateTo" type="text" class="form-control dt" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar disabled"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button id="ok" type="button" class="btn btn-primary">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="clearfix"></div>
+</p>
+@if (Model.Count > 0)
+{
+    if (ViewBag.ListStyle == "summary")
+    {
+        @Html.Partial("_WorksheetSummary", Model);
+    }
+    else
+    {
+        @Html.Partial("_WorksheetDetail", Model);
+    }
+}
+<!-- Modal -->
+<div class="modal fade" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Export to Excel</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("GetExcelWorksheetByDCO", "Worksheet", FormMethod.Post))
+                {
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-offset-1 col-md-2 pad-top-7">Month</label>
+                            <div class="col-md-2">
+                                @Html.DropDownList("month", new SelectList(ViewBag.Months, "Value", "Text", ViewBag.CurrentMonth), new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-offset-1 col-md-2 pad-top-7">DCO</label>
+                            <div class="col-md-8">
+                                @Html.DcoDropDownList("dco", true, null, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input name="submit" type="submit" class="btn btn-primary" value="Export" />
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

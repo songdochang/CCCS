@@ -1,0 +1,101 @@
+﻿@model IEnumerable<CCCS.Web.Models.Worksheets.WorksheetListModel>
+
+@{
+    ViewBag.Title = "Time Worksheet Details";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index?closed=false">Projects</a>
+        </li>
+        <li>
+            <a href="~/Project/Details6/@ViewBag.ProjectID">Analysis & Close</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                DCO
+            </th>
+            <th class="col-md-1">
+                Work Date
+            </th>
+            <th>
+                Event<br />Code
+            </th>
+            <th>
+                Account No.
+            </th>
+            <th>
+                Phase
+            </th>
+            <th>
+                Department
+            </th>
+            <th>
+                Activity<br />Code
+            </th>
+            <th>
+                Project ID
+            </th>
+            <th>
+                Contractor
+            </th>
+            <th>Hours<br />Charged</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worksheet.DCO)
+            </td>
+            <td>
+                @item.Worksheet.WorkDate.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worksheet.EventCode)
+            </td>
+            <td>
+                @item.AccountNo
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Worksheet.Phase)
+            </td>
+            <td>
+                @item.DepartmentID
+            </td>
+            <td>
+                @item.Worksheet.ActivityCode
+            </td>
+            <td>
+                @if (item.Worksheet.ProjectID != null)
+                {
+                    <a href="~/Project/Details1/@item.Worksheet.ProjectID" data-toggle="tooltip" data-placement="right" title="@item.ProjectName">@item.JOC</a>
+                }
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.CompanyName))
+                {
+                    @Html.ActionLink(item.CompanyName, "Details1", "Contractor", new { id = item.PrimaryContractorID }, null)
+                }
+            </td>
+            <td>
+                @item.TotalHours.ToString("0.0")
+            </td>
+        </tr>
+    }
+
+</table>

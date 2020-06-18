@@ -1,0 +1,258 @@
+﻿@model IEnumerable<CCCS.Web.Models.Home.ContractorSummaryRowModel>
+@{
+    ViewBag.Title = "Manager Home";
+}
+<style>
+    td {
+        min-width: 80px;
+    }
+
+    tbody td {
+        font-size: 9pt;
+    }
+
+    td .panel {
+        min-height: 120px;
+    }
+
+    div.title {
+        border-bottom: solid 1px #ddd;
+    }
+
+    #summary .title {
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    #summary .number {
+        font-size: 1.1em;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    td.fixed {
+        width: 87px;
+    }
+
+    td.fixed2 {
+        width: 138px;
+    }
+
+        td.fixed3 {
+        width: 160px;
+    }
+        .number-xs {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+</style>
+<script>
+    $(function () {
+        $('.prime').click(function (e) {
+            e.preventDefault();
+
+            var cls = $(this).attr('id');
+            $('.' + cls).toggle();
+        });
+    })
+</script>
+@{
+    Html.RenderAction("HomeTabs");
+}
+<div class="panel topPanel">
+    <div class="panel-body">
+
+        @if (Model != null)
+        {
+            <table id="summary" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-th" style="color: gray;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">Total # of Contractors</div>
+                                        <div class="number">@ViewBag.NumberContractors</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-th" style="color: blue;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title"># Open Projects</div>
+                                        <div class="number">@ViewBag.NumberOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-usd" style="color: blue;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">Open Projects</div>
+                                        <div class="number-xs">@ViewBag.AmountOpenProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-th" style="color: #e26b0a;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title"># Fed Projects</div>
+                                        <div class="number">@ViewBag.NumberFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-usd" style="color: #e26b0a;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">Federal Projects</div>
+                                        <div class="number-xs">@ViewBag.AmountFederalProjects</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-th" style="color: purple;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title"># Site Visits</div>
+                                        <div class="number">@ViewBag.NumberSiteVisits</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-eye-open" style="color: purple;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">Last Site Visit</div>
+                                        <div class="number">@ViewBag.LastSiteVisit</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-ok-sign" style="color: green;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">In Compl.</div>
+                                        <div class="number">@ViewBag.NumberInCompliance</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <div class="glyphicon glyphicon-remove-sign" style="color: red;"></div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title">Not Compl.</div>
+                                        <div class="number">@ViewBag.NumberNotCompliant</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="icon">
+                                        <span class="badge">S</span>
+                                    </div>
+                                    <div class="pull-left">
+                                        <div class="title"># Subs/Distinct</div>
+                                        <div class="number">@ViewBag.NumberSubs/@ViewBag.NumberSubsDistinct</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int cnt = 0;}
+                    @foreach (var r in Model)
+                    {
+                        cnt++;
+                        string id = cnt.ToString();
+                        <tr>
+                            <td class="title-cell-left">
+                                @if (r.Subcontractors.Count > 0)
+                                {
+                                    <span class="glyphicon glyphicon-plus-sign"></span>
+                                    <a id="@id" href="#" class="prime">
+                                        @r.CompanyName
+                                    </a>
+                                }
+                                else
+                                {
+                                    @r.CompanyName
+                                }
+                            </td>
+                            <td class="text-center">@r.NumberOpenProjects</td>
+                            <td class="text-right"><span>@r.AmountOpenProjects</span></td>
+                            <td class="text-center">@r.NumberFederalProjects</td>
+                            <td class="text-right"><span>@r.AmountFederalProjects</span></td>
+                            <td class="text-right"><span class="pad-right-20">@r.NumberSiteVisits</span></td>
+                            <td class="text-center">@r.LastSiteVisit</td>
+                            <td class="text-center">@r.NumberInCompliance</td>
+                            <td class="text-center">@r.NumberNotInCompliance</td>
+                            <td class="text-center">@r.NumberSubcontractors</td>
+                        </tr>
+                        foreach (var s in r.Subcontractors)
+                        {
+                            <tr class="@id" style="background-color: #ffffff; display:none;">
+                                <td class="title-cell-left">
+                                    @for(int i = 0; i < s.Level; i++)
+                                    {
+                                        @:&nbsp;
+                                    }
+                                    <span class="badge badge-orange mar-right-5">@s.Level</span>@s.CompanyName
+                                </td>
+                                <td class="text-center">@s.NumberOpenProjects</td>
+                                <td class="text-right"><span>@s.AmountOpenProjects</span></td>
+                                <td class="text-center">@s.NumberFederalProjects</td>
+                                <td class="text-right">@s.AmountFederalProjects</td>
+                                <td class="text-right"><span class="pad-right-20">@s.NumberSiteVisits</span></td>
+                                <td class="text-center">@s.LastSiteVisit</td>
+                                <td class="text-center">@s.NumberInCompliance</td>
+                                <td class="text-center">@s.NumberNotInCompliance</td>
+                                <td class="text-center">@s.NumberSubcontractors</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+                        }
+    </div>
+</div>

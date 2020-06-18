@@ -1,0 +1,102 @@
+﻿@model IEnumerable<CCCS.Web.Models.Worksheets.WorksheetListModel>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                CO
+            </th>
+            <th class="col-md-1">
+                Work Date
+            </th>
+            <th>
+                Event<br />Code
+            </th>
+            <th>
+                Account No.
+            </th>
+            <th>
+                Phase
+            </th>
+            <th>
+                Department
+            </th>
+            <th>
+                Activity<br />Code
+            </th>
+            <th>
+                Project ID
+            </th>
+            <th>
+                Contractor
+            </th>
+            <th>Hours<br />Charged</th>
+            <th>Running<br />Total</th>
+            @if (User.IsInRole("DCO") || User.IsInRole("Clerical"))
+            {
+                <th class="col-md-1 text-right"></th>
+            }
+        </tr>
+    </thead>
+    @{ decimal total = 0.0m; }
+    @foreach (var item in Model)
+    {
+        total += item.TotalHours;
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worksheet.DCO)
+            </td>
+            <td>
+                @item.Worksheet.WorkDate.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worksheet.EventCode)
+            </td>
+            <td>
+                @item.AccountNo
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Worksheet.Phase)
+            </td>
+            <td>
+                @item.DepartmentID
+            </td>
+            <td>
+                @item.Worksheet.ActivityCode
+            </td>
+            <td>
+                @if (item.Worksheet.ProjectId != null)
+                {
+                    <a href="~/Project/Details1/@item.Worksheet.ProjectId" data-toggle="tooltip" title="@item.ProjectName">@item.JOC</a>
+                }
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(item.CompanyName))
+                {
+                    @Html.ActionLink(item.CompanyName, "Details1", "Contractor", new { id = item.PrimaryContractorID }, null)
+                }
+            </td>
+            <td>
+                @item.TotalHours.ToString("0.0")
+            </td>
+            <td>
+                @total.ToString("0.0")
+            </td>
+            @if (User.IsInRole("DCO") || User.IsInRole("Clerical") || User.IsInRole("Clerical2"))
+            {
+                <td class="text-right">
+                    @{
+                        string url1 = VirtualPathUtility.ToAbsolute("~/Worksheet/EditBillable/") + item.Worksheet.Id + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                        string url2 = VirtualPathUtility.ToAbsolute("~/Worksheet/Delete/") + item.Worksheet.Id + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                    }
+                    <a href="@url1">Edit</a><span class="mar-left-10 mar-right-10">|</span>
+                    <a href="@url2" data-toggle="tooltip" title="Delete" data-placement="left"><span class="glyphicon glyphicon-trash"></span></a>
+                </td>
+            }
+        </tr>
+    }
+</table>

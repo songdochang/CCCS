@@ -1,0 +1,50 @@
+﻿@using CCCS.Data
+@model IEnumerable<ApplicationUser>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Manage Users</h3>
+<p>
+    <a href="~/UserAdmin/Create">Create New User</a>
+</p>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        User Accounts
+    </div>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th></th>
+        </tr>
+        @if (Model.Count() == 0)
+        {
+            <tr><td colspan="5" class="text-center">No User Accounts</td></tr>
+        }
+        else
+        {
+            foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.PhoneNumber</td>
+                    <td class="col-md-2 text-right">
+                        @using (Html.BeginForm("Delete", "Manage", new { id = user.Id }))
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = user.Id }, new { @class = "btn btn-default btn-xs" })
+                            <button class="btn btn-danger btn-xs" type="submit">
+                                Delete
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

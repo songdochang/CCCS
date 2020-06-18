@@ -1,0 +1,47 @@
+﻿<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Filter</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row mar-bottom-10">
+                    <label for="department" class="col-md-3 mar-top-10 col-form-label">Department</label>
+                    @Html.DropDownList("department", new SelectList(ViewBag.Departments, "Value", "Text", ViewBag.Dept), new { @class = "form-control col-md-9" })
+                </div>
+                <div class="row mar-bottom-10">
+                    <label for="co" class="col-md-3 mar-top-10 col-form-label">CO</label>
+                    @Html.DropDownList("co", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control col-md-5" })
+                </div>
+                <hr />
+                <div class="form-horizontal">
+                    <label class="col-md-2 mar-top-10">Received</label>
+                    <label for="dt1" class="col-md-1 mar-top-10 col-form-label">From</label>
+                    <div class='col-md-4 input-group date'>
+                        <input id="dt1" name="dateFrom" type="text" class="form-control dt" value="@ViewBag.DateFrom" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar "></span>
+                        </span>
+                    </div>
+                    <label for="dt2" class="col-md-1 mar-top-10 col-form-label">To</label>
+                    <div class='col-md-4 input-group date'>
+                        <input id="dt2" name="dateTo" type="text" class="form-control dt" value="@ViewBag.DateTo" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar "></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer mar-top-20">
+                <div class="pull-left">
+                    <button type="submit" name="submit" value="reset" class="btn btn-info">Reset List</button>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="filter" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

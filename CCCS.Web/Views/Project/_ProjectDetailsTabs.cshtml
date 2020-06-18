@@ -1,0 +1,21 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string id = ViewContext.RouteData.Values["id"].ToString();
+    string[] cls = { "", "", "", "", "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("details", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 0 0 15px 0;">
+    <li class="@cls[0]"><a href="~/project/details1/@id">General</a></li>
+    <li class="@cls[1]"><a href="~/project/details2/@id">NTP / Misc</a></li>
+    <li class="@cls[2]"><a href="~/project/details3/@id">Documents</a></li>
+    <li class="@cls[3]"><a href="~/project/Details4/@id">Site Visits</a></li>
+    <li class="@cls[4]"><a href="~/project/Details5/@id">Clearance Request</a></li>
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager") || User.IsInRole("DCO"))
+    {
+        <li class="@cls[5]"><a href="~/project/Details6/@id">Analysis & Close</a></li>
+    }
+    <li class="@cls[7]"><a href="~/project/Details8/@id">Subcontractors</a></li>
+    <li class="@cls[6]"><a href="~/project/Details7/@id">Time Worksheet</a></li>
+    <li class="@cls[8]"><a href="~/project/Details9/@id">Messages</a></li>
+</ul>

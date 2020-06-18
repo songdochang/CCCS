@@ -1,0 +1,109 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("input[name=since]:radio").change(function () {
+            if ($(this).val() == '0') {
+                $(".dt").removeAttr('disabled');
+            } else {
+                $(".dt").attr('disabled', 'disabled');
+            }
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <div style="padding-top: 10px;">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-2 pad-top-7">
+                    @if (ViewBag.Since == 6)
+                    {
+                        <input name="since" type="radio" value="6" checked /><span class="mar-left-10">Last 6 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="6" /><span class="mar-left-10">Last 6 months</span>
+                    }
+                </div>
+                <div class="col-md-2 pad-top-7">
+                    @if (ViewBag.Since == 12)
+                    {
+                        <input name="since" type="radio" value="12" checked /><span class="mar-left-10">Last 12 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="12" /><span class="mar-left-10">Last 12 months</span>
+                    }
+                </div>
+                <div class="col-md-2 pad-top-7">
+                    @if (ViewBag.Since == 24)
+                    {
+                        <input name="since" type="radio" value="24" checked /><span class="mar-left-10">Last 24 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="24" /><span class="mar-left-10">Last 24 months</span>
+                    }
+                </div>
+
+                <div class="col-md-5 row">
+                    <div class="col-md-1 pad-top-7">
+                        @if (ViewBag.Since == 0)
+                        {
+                            <input name="since" type="radio" value="0" checked />
+                        }
+                        else
+                        {
+                            <input name="since" type="radio" value="0" />
+                        }
+                    </div>                    
+                    <div class="col-md-5">
+                        <span class="mar-left-10">From</span>
+                        <div class='input-group date'>
+                            @if (ViewBag.Since == 0)
+                            {
+                                <input id="dt1" name="dateFrom" type="text" class="form-control dt" value="@ViewBag.Date1" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar "></span>
+                                </span>
+                            }
+                            else
+                            {
+                                <input id="dt1" name="dateFrom" type="text" class="form-control dt" disabled />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar disabled"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <span class="mar-left-10">To</span>
+                        <div class='input-group date'>
+                            @if (ViewBag.Since == 0)
+                            {
+                                <input id="dt2" name="dateTo" type="text" class="form-control dt" value="@ViewBag.Date2" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar "></span>
+                                </span>
+                            }
+                            else
+                            {
+                                <input id="dt2" name="dateTo" type="text" class="form-control dt" disabled />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar disabled"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 text-right">
+                    <input type="submit" value="Refresh" class="btn btn-info btn-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+}

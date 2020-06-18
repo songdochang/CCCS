@@ -1,0 +1,151 @@
+﻿@model CCCS.Core.Domain.Worksheets.Worksheet
+
+@{
+    ViewBag.Title = "Create Non-Billable Activity";
+    Layout = "~/Views/Shared/_LayoutWorksheet.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Worksheet/Index3">Worksheets</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        var readonly = function () {
+            var activity = $("#Activity");
+
+            // Vacation, Other
+            if (activity.val() == 9 || activity.val() == 12) {
+                $("#ActivityCode").attr('readonly', false);
+                $("#Unit").attr('readonly', false);
+            } else {
+                $("#ActivityCode").attr('readonly', true);
+                $("#Unit").attr('readonly', true);
+            }
+        };
+
+        readonly();
+
+        $("#Activity").change(function () {
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetActivityCodes", "Worksheet")",
+                data: { id: $(this).val() },
+                success: function (result) {
+                    var codes = result.split(';');
+                    $("#ActivityCode").val(codes[0]);
+                    $("#Unit").val(codes[1]);
+                },
+                error: function (req, status, error) {
+                    $("#ActivityCode").val("");
+                    $("#Unit").val("");
+                }
+            });
+
+            readonly();
+        });
+
+    });
+</script>
+<h3>@ViewBag.Title</h3>
+@Html.Partial("_AlertPartial")
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <label class = "control-label col-md-2">CO</label>
+            <div class="col-md-2 pad-top-7">
+                @if (!string.IsNullOrEmpty(Model.DCO))
+                {
+                    @Html.Label(Model.DCO, new { style = "font-weight: normal", name = "DCO" })
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WorkDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                <div class='input-group date' id='dtWork'>
+                    @Html.EditorFor(model => model.WorkDate, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.WorkDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="title-cell pad-top-7 col-md-2">Activity</span>
+            <div class="col-md-6">
+                @Html.DropDownListFor(x => x.Activity, new SelectList(ViewBag.Activities, "Value", "Text"), new { @class = "form-control", style = "z-index: 1000;" })
+                @Html.ValidationMessageFor(model => model.Activity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="title-cell pad-top-7 col-md-2">Activity Code</span>
+            <div class="col-md-3">
+                @Html.TextBoxFor(x => x.ActivityCode, new { @class = "form-control", @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.ActivityCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="title-cell pad-top-7 col-md-2">Account Number</span>
+            <div class="col-md-3">
+                @Html.TextBoxFor(x => x.Unit, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comment, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-6">
+                @Html.TextAreaFor(x => x.Comment, new { @class = "form-control", @rows = 3 })
+                @Html.ValidationMessageFor(model => model.Comment, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Hours, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownListFor(model => model.Hours, new SelectList(ViewBag.Hours, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Hours, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Minutes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.DropDownListFor(model => model.Minutes, new SelectList(ViewBag.Minutes, "Value", "Text"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Minutes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <span class="mar-left-20"><a href="@ViewBag.ReturnUrl">Cancel</a></span>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

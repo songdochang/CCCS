@@ -1,0 +1,115 @@
+﻿@model List<Comment>
+@using CCCS.Core.Domain.Common
+<script type="text/javascript">
+    $(function () {
+        $("a[href$='#editModal']").on("click", function () {
+            $("#CommentID").val($(this).attr('id'));
+            $("#EditComment").val($(this).attr('data-content'));
+        });
+
+        $('#delete').click(function () {
+            return confirm("Are you sure to delete this comment?");
+        });
+    });
+</script>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Comments
+        <div class="pull-right">
+            <a data-toggle="modal" href="#commentModal">Add Comment</a>
+        </div>
+    </div>
+    <div class="panel-body">
+        @if (Model != null && Model.Count > 0)
+        {
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="col-md-1"></th>
+                        <th class="col-md-2">Date</th>
+                        <th>Comment</th>
+                        <th class="col-md-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.CommentedBy</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateRegistered)
+                            </td>
+                            <td class="text-left">
+                                @Html.DisplayFor(modelItem => item.CommentText)
+                            </td>
+                            <td class="text-right">
+                                @if (item.CommentedBy == ViewBag.User)
+                                {
+                                    <a data-toggle="modal" href="#editModal" id="@item.CommentId" data-content="@item.CommentText">Edit</a>
+                                            <span class="mar-left-5 mar-right-5">|</span>
+                                            @Html.ActionLink("Delete", "DeleteComment", "Contractor", new { id = ViewBag.ContractorId, cId = item.CommentId }, new { id = "delete" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Comment</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddComment", "Contractor", new { id = ViewBag.ContractorId, category = "Contractor" }))
+                {
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="control-label col-md-2">Comment</div>
+                            <div class="col-md-9">
+                                @Html.TextArea("Comment", new { @class = "form-control", cols = 90, @rows = 10 })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Edit Comment</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("EditComment", "Contractor", new { id = ViewBag.ContractorId, category = "Contractor" }))
+                {
+                    <input type="hidden" id="CommentID" name="CommentID" />
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="control-label col-md-2">Comment</div>
+                            <div class="col-md-9">
+                                @Html.TextArea("EditComment", new { @class = "form-control", cols = 90, @rows = 10 })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

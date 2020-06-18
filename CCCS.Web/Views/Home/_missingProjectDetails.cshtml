@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CCCS.Web.Models.Home.MissingProjectDetailsModel>
+
+@if (Model.Count() > 0)
+{
+    <div class="panel panel-success">
+        <div class="panel-heading" data-toggle="collapse" href="#NP" aria-expanded="true">
+            <div class="pull-right">
+                List Total:<span id="totalNP" class="mar-left-10"></span>
+            </div>
+            Missing Project/Contractor Details<span id="chevronNP" class="glyphicon glyphicon-chevron-down" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse" id="NP">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="col-md-3">Project ID</th>
+                        <th>Project Name</th>
+                        <th>Prime Contractor</th>
+                        <th class="col-md-3">Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ 
+                        int cnt = 0;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        cnt++;
+                        <tr class="@item.DCO">
+                            <td>
+                                @cnt<text>.</text>
+                            </td>
+                            <td>
+                                <a href="~/Project/Details1/@item.ProjectID">@item.JOC</a>
+                            </td>
+                            <td>@item.ProjectName</td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.PrimeContractorName))
+                                {
+                                    @Html.ActionLink(item.PrimeContractorName, "Details1", "Contractor", new { id = item.ContractorID }, null)
+                                }
+                            </td>
+                            <td>
+                                @item.Comment
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <script>
+                $(function () {
+                    var rows = $("#NP tbody tr[style!='display: none;']").length;
+                    $("#totalNP").html(rows);
+                });
+            </script>
+        </div>
+    </div>
+}

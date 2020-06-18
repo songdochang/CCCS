@@ -1,0 +1,243 @@
+﻿@using PagedList.Mvc
+@using CCCS.Web.Models.ClearanceRequests
+@model PagedList.IPagedList<ClearanceRequestModel>
+@{
+    ViewBag.Title = "Clearance Request";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-toggle="popover"]').popover();
+
+        $("a[href$='#messageModal']").on("click", function () {
+            var id = $(this).attr("data-bind");
+            $('#ProjectId').val(id);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMessages", "Home")",
+                data: { id: id },
+                success: function (result) {
+                    $('#MessageList').html(result);
+                }
+            })
+        });
+
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    })
+</script>
+
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+</style>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+<p>
+    @using (Html.BeginForm())
+    {
+        <div class="form-inline pull-right pad-bottom-10">
+            @if (!String.IsNullOrEmpty(ViewBag.DateRange))
+            {
+                <label>@ViewBag.DateRange</label>
+            }
+            <div class="form-group mar-left-20">
+                @Html.DropDownList("dco", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control", onchange = "this.form.submit();" })
+            </div>
+            <div class="form-group mar-left-20">
+                <a data-toggle="modal" href="#dateModal"><span class="mar-left-10 glyphicon glyphicon-calendar calendar"></span></a>
+            </div>
+        </div>
+            <!-- Modal -->
+            <div class="modal fade" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Filter by Dates</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">From</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt1" name="dateFrom" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-1 pad-top-7">To</div>
+                                    <div class='col-md-5 input-group date'>
+                                        <input id="dt2" name="dateTo" type="text" class="form-control dt" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar disabled"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button id="ok" type="button" class="btn btn-primary" onclick = "this.form.submit();">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+</p>
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th style="width: 60px;">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", "Index6", new { sortOrder = ViewBag.ProjectIdSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "ProjectId")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectId_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", "Index6", new { sortOrder = ViewBag.ProjectNameSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                Prime Contractor
+            </th>
+            <th class="col-md-1">
+                @Html.ActionLink("Requested Date", "Index6", new { sortOrder = ViewBag.DateRequestedSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "DateRequested")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateRequested_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-1">
+                @Html.ActionLink("Rejected Date", "Index6", new { sortOrder = ViewBag.DateRejectedSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "DateRejected")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateRejected_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-4">
+                Comment
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-left">
+                @if (User.IsInRole("Manager"))
+                {
+                    <a data-toggle="modal" href="#messageModal" data-bind="@item.ProjectID"><span class="glyphicon glyphicon-envelope mar-right-5"></span>@item.DCO</a>
+                }
+                else
+                {
+                    @item.DCO
+                }
+            </td>
+            <td>
+                <a class="trigger" href="~/Project/Details5/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+            </td>
+            <td>@item.ProjectName</td>
+            <td>
+                <a href="~/Contractor/Details1/@item.PrimeContractorID">@item.PrimeContractorName</a>
+            </td>
+            <td>
+                @item.DateRequested.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @if (item.DateRejected != null)
+                {
+                    var dt = (DateTime)item.DateRejected;
+                    @dt.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @item.Comment
+            </td>
+            <td class="text-right">
+                @{
+                    string url = VirtualPathUtility.ToAbsolute("~/ClearanceRequest/ViewDocument/") + @item.ProjectID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                }
+                <a target="_blank" href="@url" data-toggle="tooltip" data-placement="left" title="View Clearance Request Form"><span class="glyphicon glyphicon-file" style="font-size: 1.2em;"></span></a>
+            </td>
+
+        </tr>
+                    }
+</table>
+<br />
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index6", new { dco = ViewBag.CO, page }))
+}
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Messages</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Messages", "Home", FormMethod.Post, new { id = "modalform" }))
+                {
+                    <input type="hidden" id="ProjectId" name="ProjectId" />
+                    <div class="form-horizontal">
+                        <div id="MessageList"></div>
+                        <div class="form-group pad-left-20 pad-right-20">
+                            @Html.TextArea("Message", new { @class = "form-control", cols = 50, @rows = 4 })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Send" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_ProjectDetails");
+}

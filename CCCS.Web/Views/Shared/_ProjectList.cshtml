@@ -1,0 +1,64 @@
+﻿<style>
+    #toggler {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 500px;
+        height: 100%;
+        overflow-y: scroll;
+    }
+
+    #effect {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 10px 20px;
+        display: none;
+    }
+</style>
+
+<script>
+    $(function () {
+        var timeout;
+
+        $(".trigger").on("mouseenter", function () {
+            clearTimeout(timeout);
+
+            var screenTop = $(document).scrollTop() + 50;
+            $('#toggler').css('top', screenTop);
+
+            var id = $(this).attr("data-bind");
+            var dco = $(this).attr("data-selector");
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetProjectList", "Project")",
+                data: { id: id, dco: dco },
+                success: function (result) {
+                    $('#content').html(result);
+                }
+            });
+
+            $("#effect").show();
+        });
+
+        $(".trigger").on("mouseleave", function () {
+            timeout = setTimeout(function () { $("#effect").fadeOut(); }, 3000);
+        });
+
+        $("#effect").hover(function () {
+            clearTimeout(timeout);
+            $("#effect").show();
+        }, function () {
+            $("#effect").fadeOut();
+        });
+    });
+</script>
+
+<div id="toggler">
+    <div id="effect" class="ui-widget-content ui-corner-all">
+        <h4 class="title">Project List</h4>
+        <p id="content">
+        </p>
+    </div>
+</div>

@@ -1,0 +1,107 @@
+﻿@model PagedList.IPagedList<CCCS.Web.Models.Projects.ProjectModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Projects";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+
+    .sm {
+        width: 45px;
+    }
+
+    .md {
+        width: 60px;
+    }
+
+    .md2 {
+        width: 75px;
+        font-size: 0.9em;
+    }
+
+    table {
+    }
+</style>
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_AlertPartial");
+    Html.RenderPartial("_ProjectIndexTabs");
+}
+
+<table class="table table-condensed table-striped">
+    <thead>
+        <tr class="title-row">
+            <th>Project ID</th>
+            <th>
+                Date Received
+            </th>
+            <th>
+                JOC
+            </th>
+            <th>Prime Contractor</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th class="text-right">Contract Amount</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.ProjectID</td>
+            <td>
+                @if (item.DateReceived != null)
+                {
+                    string dt = ((DateTime)item.DateReceived).ToString("MM-dd-yyyy");
+                    @dt
+                }
+            </td>
+            <td>
+                <a href="~/Project/Details1/@item.ProjectID">@item.JOC</a>
+            </td>
+            <td><a href="~/Contractor/Details1/@item.PrimeContractorId">@item.PrimeContractorName</a></td>
+            <td>
+                @if (item.StartDate != null)
+                {
+                    string dt1 = ((DateTime)item.StartDate).ToString("MM-dd-yyyy"); 
+                    @dt1
+                }
+            </td>
+
+            <td>
+                @if (item.EndDate != null)
+                {
+                    string dt2 = ((DateTime)item.EndDate).ToString("MM-dd-yyyy");
+                    @dt2
+                }
+            </td>
+            <td class="text-right">
+                @if (item.ContractAmount != null)
+                {
+                    decimal amount = (decimal)item.ContractAmount;
+                    @amount.ToString("C")
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index5", new { page }))
+
+
+

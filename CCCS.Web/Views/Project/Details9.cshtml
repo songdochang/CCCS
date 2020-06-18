@@ -1,0 +1,68 @@
+﻿@model IEnumerable<CCCS.Web.Models.Notices.MessageListModel>
+@{
+    ViewBag.Title = "Messages";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = ViewBag.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+    Html.RenderPartial("_AlertPartial");
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Messages
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th class="col-md-2">
+                        Date Sent
+                    </th>
+                    <th class="col-md-1">
+                        Sender
+                    </th>
+                    <th class="col-md-1">
+                        Recipient
+                    </th>
+                    <th>
+                        Message
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.DateSent
+                        </td>
+                        <td>
+                            @item.Sender<span class="glyphicon glyphicon-arrow-right green mar-left-10"></span>
+                        </td>
+                        <td>
+                            @item.Recipient
+                        </td>
+                        <td>
+                            @item.Text
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+

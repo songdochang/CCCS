@@ -1,0 +1,183 @@
+﻿@model CCCS.Web.Models.Inspection.InspectionWorksheetModel
+
+@{
+    ViewBag.Title = "Site Visit Worksheet";
+    Layout = "~/Views/Shared/_LayoutSimple.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    th, td {
+        text-align: center;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("a[href$='#interviewModal']").on("click", function () {
+            $("#InspectionID2").val(this.id);
+        });
+
+        $('#btnAdd').on("click", function () {
+            var formData = new FormData();
+            formData.append('inspectionId', $('#InspectionId').val());
+            formData.append('contractorId', $('#Contractors').val());
+            formData.append('hours', $('#hours').val());
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddInterview", "Inspection")",
+                data: formData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (result) {
+                    $('#tbody').html(result);
+                }
+            });
+        });
+    });
+
+    function deleteInterview(inspectionId, contractorId) {
+        var formData = new FormData();
+        formData.append('inspectionId', inspectionId);
+        formData.append('contractorId', contractorId);
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteInterview", "Inspection")",
+            data: formData,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,  // tell jQuery not to set contentType
+            success: function (result) {
+                $('#tbody').html(result);
+            }
+        });
+
+        return false;
+    }
+</script>
+
+<h3>@ViewBag.Title</h3>
+@{ Html.RenderPartial("_AlertPartial"); }
+@using (Html.BeginForm("Worksheet", "Inspection", new { returnUrl = Request.Url.PathAndQuery }, FormMethod.Post, new { style = "margin-top: 40px;" }))
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-horizontal">
+                @Html.HiddenFor(x => x.InspectionId)
+                <div class="form-group">
+                    <label class="control-label col-md-4">Date of Visit</label>
+                    <div class="col-md-4">
+                        <div class='input-group' id='dtVisited'>
+                            @Html.EditorFor(model => model.DateOfVisit, new { htmlAttributes = new { @class = "form-control date" } })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DateOfVisit, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Round Trip Hours</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.RoundTripHours, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Round Trip Miles</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.RoundTripMiles, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RoundTripMiles, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Photos?</label>
+                    <div class="col-md-3 pad-top-7">
+                        @Html.CheckBoxFor(model => model.PhotosTaken, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Violations?</label>
+                    <div class="col-md-3 pad-top-7">
+                        @Html.CheckBoxFor(model => model.Violations, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Interviews
+                    <div class="pull-right">
+                        <a data-toggle="modal" href="#interviewModal">Add Interview</a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>Contractor</th>
+                                <th class="col-md-2 text-right">Hours</th>
+                                <th class="col-md-2 col-md-offset-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                            @foreach (var item in Model.Interviews)
+                            {
+                                <tr>
+                                    <td class="text-left">@item.CompanyName</td>
+                                    <td class="text-right">@item.Hours</td>
+                                    <td class="text-right"><a onclick="deleteInterview(@item.Id, @item.ContractorId);" href="#">Delete</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mar-top-50">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" name="submit" value="Save" class="btn btn-primary" />
+            <span style="padding-left: 20px;"><a href="~/Inspection/Details/@Model.InspectionId">Cancel</a></span>
+        </div>
+    </div>
+}
+<div class="modal fade" id="interviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Interview</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group" id="dateClosed">
+                        <div class="title-cell col-md-3 mar-top-10">Contractor:</div>
+                        <div class="col-md-8">
+                            @Html.DropDownList("Contractors", new SelectList(ViewBag.Contractors, "Value", "Text"), new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group" id="dateClosed">
+                        <div class="title-cell col-md-3 mar-top-10">Hours:</div>
+                        <div class="col-md-3">
+                            <input id="hours" type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="btnAdd" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

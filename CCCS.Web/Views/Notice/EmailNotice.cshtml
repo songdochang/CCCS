@@ -1,0 +1,145 @@
+﻿@model List<SelectListItem>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Countywide Contract Compliance System</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+</head>
+<body style="padding: 20px;">
+    <h3 class="mar-bottom-20">@ViewBag.Document<small class="mar-left-20">'@ViewBag.Document' will be automatically attached to the email.</small></h3>
+    <hr />
+    @Html.Partial("_AlertPartial")
+
+    @using (Html.BeginForm("SendNotice", "Notice", new { id = ViewBag.ProjectID, doc = ViewBag.Doc }, FormMethod.Post))
+    {
+        <div class="form-horizontal" style="margin-top: 40px;">
+            <div class="form-group">
+                <div class="col-md-2 text-right">
+                    <a href="#emailModal" data-toggle="modal" class="btn btn-default">To...</a>
+                </div>
+                <div class="col-md-5">
+                    @Html.TextArea("To", new { @class = "form-control", cols = 60, @rows = 4, id = "toList" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2 text-right">
+                    <a href="#emailModal" data-toggle="modal" class="btn btn-default">Cc...</a>
+                </div>
+                <div class="col-md-5">
+                    @Html.TextArea("Cc", new { @class = "form-control", cols = 60, @rows = 4, id = "ccList" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="control-label col-md-2">Subject</div>
+                <div class="col-md-5">
+                    <input name="Subject" type="text" class="form-control text-box-lg" value="@ViewBag.Document" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="control-label col-md-1"></div>
+                <div class="col-md-6 pad-top-10">
+                    @Html.TextArea("Body", new { @class = "form-control", cols = 60, @rows = 20 })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-envelope mar-right-10"></span>Send</button>
+                <span style="padding-left: 20px;">
+                    <a href="@ViewBag.ReturnUrl">Cancel</a>
+                </span>
+            </div>
+        </div>
+    }
+    <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    &nbsp;
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-10 pad-top-10">
+                                @{
+                                    var list = Model;
+                                }
+                                @Html.ListBox("recipients", list, new { size = 10, @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 text-right"><button id="toButton" class="btn btn-default">To -></button></div>
+                            <div class="col-md-10">
+                                <input id="toList1" type="text" class="form-control text-box-lg" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 text-right"><button id="ccButton" class="btn btn-default">Cc -></button></div>
+                            <div class="col-md-10">
+                                <input id="ccList1" type="text" class="form-control text-box-lg" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button id="okButton" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $("#toButton").click(function () {
+            var str = $("#toList1").val();
+
+            $("select option:selected").each(function () {
+                str += $(this).text() + "; ";
+            });
+
+            $("#toList1").val(str);
+
+            $("option:selected").removeAttr("selected");
+        })
+
+        $("#ccButton").click(function () {
+            var str = $("#ccList1").val();
+
+            $("select option:selected").each(function () {
+                str += $(this).text() + "; ";
+            });
+
+            $("#ccList1").val(str);
+
+            $("option:selected").removeAttr("selected");
+        })
+
+        $("#okButton").click(function () {
+            var to = $("#toList").val() + $("#toList1").val();
+            $("#toList").val(to);
+
+            var cc = $("#ccList").val() + $("#ccList1").val();
+            $("#ccList").val(cc);
+
+            $("#toList1").val("");
+            $("#ccList1").val("");
+        })
+    </script>
+</body>
+
+
+</html>

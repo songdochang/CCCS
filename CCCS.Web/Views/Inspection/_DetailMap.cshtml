@@ -1,0 +1,85 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.InspectionMapModel>
+<script type="text/javascript">
+    $(function () {
+        var dco = $('#mapImage').attr('data-content');
+        var dt = $('#mapImage').attr('data-interval');
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetMapImage", "Inspection")",
+            data: { dco: dco, dt: dt },
+            success: function (result) {
+                $("#mapImage").attr('src', result);
+            },
+            error: function (req, status, error) {
+                // do something with error
+            }
+        });
+    });
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Site Location
+    </div>
+    <div class="panel-body">
+        <div class="col-md-6">
+            <img id="mapImage" alt="" data-content="@ViewBag.CO" data-interval="@ViewBag.DateOfVisit" />
+        </div>
+        <div class="col-md-6">
+            <table class="table table-condensed">
+                <tbody>
+                    @{ int cnt = 1;
+                        string address = "Address:";
+                        decimal total = 0.0m;
+                    }
+                    @foreach (var wp in Model)
+                    {
+                        total += wp.Miles;
+                        if (cnt == 1)
+                        {
+                            address = "Start " + (char)(65) + ":";
+                        }
+                        else if (cnt == Model.Count())
+                        {
+                            address = "End " + (char)(65) + ":";
+                        }
+                        else
+                        {
+                            address = "Site " + (char)(cnt + 64) + ":";
+                        }
+                        string cls = (wp.Address == ViewBag.CurrentAddress) ? "active" : "";
+                        <tr class="@cls">
+                            <td class="title-cell col-md-2">@address</td>
+                            <td class="text-left" colspan="3">@wp.Address</td>
+                        </tr>
+                        <tr class="@cls">
+                            <td class="title-cell col-md-2">City:</td>
+                            <td class="text-left">@wp.City</td>
+                            @if (cnt > 1)
+                            {
+                                <td class="title-cell col-md-2">Miles:</td>
+                                <td class="text-left">
+                                    @wp.Miles
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="2"></td>
+                            }
+                        </tr>
+                        cnt++;
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td class="title-cell" colspan="2">Total Miles:</td>
+                        <td class="text-left">@total</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+

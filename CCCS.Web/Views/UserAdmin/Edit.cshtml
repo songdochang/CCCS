@@ -1,0 +1,43 @@
+﻿@model CCCS.Data.ApplicationUser
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/UserAdmin/Index">Manage Users</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>Edit User</h3>
+@Html.ValidationSummary(false)
+
+<div class="form-horizontal">
+    <hr />
+    <div class="form-group">
+        @Html.Label("Name", new { @class = "control-label col-md-2" })
+        <p class="form-control-static col-md-4">@Model.UserName</p>
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(x => x.Id)
+        <div class="form-group">
+            @Html.Label("Email", new { @class = "control-label col-md-2" })
+            @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Phone Number", new { @class = "control-label col-md-2" })
+            @Html.TextBoxFor(x => x.PhoneNumber, new { @class = "form-control" })
+        </div>
+
+        <div class="col-md-offset-2 mar-top-50">
+            <button type="submit" class="btn btn-primary">Save</button>
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "mar-left-20" })
+        </div>
+    }
+</div>
+

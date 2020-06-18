@@ -1,0 +1,141 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.DocumentReceivedModel>
+
+@if (Model.Count() > 0)
+{
+    string selectedValue = ViewBag.CO;
+    <script type="text/javascript">
+        $(function () {
+            $("#DcoDR").change(function () {
+                var dco = $(this).val();
+
+                if (dco == '') {
+                    $("#DRec tbody tr").show();
+                } else {
+                    $("#DRec tbody tr:not(" + dco + ")").hide();
+                    $("#DRec tbody tr." + dco).show();
+                }
+
+                var rows = $("#DRec tbody tr[style!='display: none;']").length;
+                $("#totalDR").html(rows);
+            });
+        });
+    </script>
+    if (!String.IsNullOrEmpty(selectedValue))
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var d = '@selectedValue';
+                $("#DRec tbody tr:not(" + d + ")").hide();
+                $("#DRec tbody tr." + d).show();
+            });
+        </script>
+    }
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $("#print").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PrintDocumentReceived", "Home")",
+                    data: { dco: $('#DcoDR').val() },
+                    success: function (url) {
+                        if (url.substr(0, 5) == "Error") {
+                            alert(url);
+                        } else {
+                            window.open(url, '_blank');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    <div class="panel panel-info">
+        <div class="panel-heading" data-toggle="collapse" href="#DRec" aria-expanded="true">
+            <div class="pull-right">
+                List Total:<span id="totalDR" class="mar-left-10"></span>
+            </div>
+            Document Received<span id="chevronDR" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="DRec">
+            <div>
+                <div class="pull-left mar-left-10">
+                    <button id="print" class="btn btn-sm btn-info"><span class="glyphicon glyphicon-print mar-right-10"></span>Print List</button>
+                </div>
+                <div class="pull-right">@Html.DcoDropDownList("DcoDR", false, selectedValue, new { @class = "form-control" })</div>
+            </div>
+            <div class="clearfix"></div>
+            <table class="table table-condensed table-striped mar-top-10">
+                <thead>
+                    <tr>
+                        <th class="col-md-1">Received</th>
+                        <th>Type</th>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th>Contractor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@item.DCO">
+                            <td>
+                                @if (item.Date != null)
+                                {
+                                    DateTime dt;
+                                    if (DateTime.TryParse(item.Date, out dt))
+                                    {
+                                        @dt.ToString("MM-dd-yyyy")
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    string url = Url.Content("/Files/List_of_Subcontractors/" + item.FileName);
+                                }
+                                <a href="@url" target="_blank">@item.DocumentType</a>
+                            </td>
+                            <td>@item.Year</td>
+                            <td class="text-center">
+                                @if (item.Month > 0)
+                                {
+                                    @item.Month
+                                }
+                            </td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.JOC))
+                                {
+                                    @Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)
+                                }
+                            </td>
+                            <td>
+                                @Html.ShortString(item.ProjectName, 50)
+                            </td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.CompanyName))
+                                {
+                                    @Html.ActionLink(item.CompanyName, "Details4", "Contractor", new { id = item.ContractorID }, null)
+                                }
+                            </td>
+                            <td>
+                                @Html.ActionLink("Done", "RemoveDocument", "Home", new { id = item.DocumentID }, new { @class = "btn btn-xs btn-danger"})
+                            </td>
+                        </tr>
+                                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+                                    }
+<script>
+        $(function () {
+            var rows = $("#DRec tbody tr[style!='display: none;']").length;
+            $("#totalDR").html(rows);
+        });
+</script>

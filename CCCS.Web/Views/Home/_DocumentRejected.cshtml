@@ -1,0 +1,55 @@
+﻿@model List<CCCS.Web.Models.Documents.DocumentReceivedModel>
+
+@if (Model.Count() > 0)
+{
+    <div class="panel panel-danger">
+        <div class="panel-heading" data-toggle="collapse" href="#DR" aria-expanded="true">
+            Document Rejected<span id="chevronDR" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="DR">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Rejected Date</th>
+                        <th>Document Type</th>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th>Contractor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @{var dt = DateTime.Parse(item.Date);
+                                }
+                                @dt.ToString("MM-dd-yyyy")
+                            </td>
+                            <td>
+                                @if (item.DocumentType == "ListSub" || item.DocumentType == "NtceEEO")
+                                {
+                                    @Html.ActionLink(item.DocumentType, "Details3", "Project", new { id = item.ProjectID }, null)
+                                }
+                                else
+                                {
+                                    @Html.ActionLink(item.DocumentType, "Details4", "Contractor", new { id = item.ContractorID }, null)
+                                }
+                            </td>
+                            <td>@item.Year</td>
+                            <td>@if (item.Month > 0)
+                            {
+                                @item.Month
+                            }</td>
+                            <td>@item.JOC</td>
+                            <td>@item.ProjectName</td>
+                            <td>@item.CompanyName</td>
+                        </tr>
+                                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+                                    }

@@ -1,0 +1,18 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string[] cls = { "", "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("index", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+    {
+        @*<li class="@cls[0]"><a href="~/Inspection/Index1">Overview</a></li>*@
+        <li class="@cls[1]"><a href="~/Inspection/Index2">Exceptions</a></li>
+    }
+    <li class="@cls[2]"><a href="~/Inspection/Index3">In Progress</a></li>
+    <li class="@cls[3]"><a href="~/Inspection/Index4">Completed</a></li>
+    <li class="@cls[4]"><a href="~/Inspection/Index5">Rejected</a></li>
+    <li class="@cls[5]"><a href="~/Inspection/Index6">Cancelled</a></li>
+</ul>
+

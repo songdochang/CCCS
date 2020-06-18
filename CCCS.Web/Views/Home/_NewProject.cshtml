@@ -1,0 +1,93 @@
+﻿@model IEnumerable<CCCS.Web.Models.Projects.NewProjectModel>
+
+@if (Model.Count() > 0)
+{
+    string selectedValue = ViewBag.CO;
+    string label = (User.IsInRole("Administrator") || User.IsInRole("Manager")) ? "Send to department" : "Send to manager";
+    <script type="text/javascript">
+        $(function () {
+            $("#DcoNP").change(function () {
+                var dco = $(this).val();
+
+                if (dco == '') {
+                    $("#NP tbody tr").show();
+                } else {
+                    $("#NP tbody tr:not(" + dco + ")").hide();
+                    $("#NP tbody tr." + dco).show();
+                }
+
+                var rows = $("#NP tbody tr[style!='display: none;']").length;
+                $("#totalNP").html(rows);
+
+            });
+
+            $('.date').datetimepicker(
+            {
+                format: "L",
+                defaultDate: new Date()
+            });
+        });
+    </script>
+    if (!String.IsNullOrEmpty(selectedValue))
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var d = '@selectedValue';
+                $("#NP tbody tr:not(" + d + ")").hide();
+                $("#NP tbody tr." + d).show();
+            });
+        </script>
+    }
+    <div class="panel panel-success">
+        <div class="panel-heading" data-toggle="collapse" href="#NP" aria-expanded="true">
+            <div class="pull-right">
+                List Total:<span id="totalNP" class="mar-left-10"></span>
+            </div>
+            New Project<span id="chevronNP" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+        </div>
+        <div class="panel-body collapse in" id="NP">
+            <div class="pull-right">@Html.DcoDropDownList("DcoNP", false, selectedValue, new { @class = "form-control" })</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>CO</th>
+                        <th>Project ID</th>
+                        <th>Project Name</th>
+                        <th>Prime Contractor</th>
+                        <th class="col-md-1">Date Received</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@item.DCO">
+                            <td>@item.DCO</td>
+                            <td>
+                                <a class="trigger" href="~/Project/Details1/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+                            </td>
+                            <td>@item.ProjectName</td>
+                            <td>
+                                @if (!String.IsNullOrEmpty(item.PrimeContractorName))
+                                {
+                                    @Html.ActionLink(item.PrimeContractorName, "Details1", "Contractor", new { id = item.ContractorID }, null)
+                                }</td>
+                            <td>
+                                @if (item.DateReceived != null)
+                                {
+                                    DateTime dt = (DateTime)item.DateReceived;
+                                    @dt.ToString("MM-dd-yyyy")
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        var rows = $("#NP tbody tr[style!='display: none;']").length;
+        $("#totalNP").html(rows);
+    });
+</script>

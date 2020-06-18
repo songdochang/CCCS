@@ -1,0 +1,70 @@
+﻿@model IEnumerable<CCCS.Core.Domain.Users.UserProfile>
+
+@{
+    ViewBag.Title = "Prime Distribution";
+}
+<style>
+    .panel-heading span {
+        cursor: pointer;
+    }
+
+    ul {
+        margin-left: -40px;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .panel-heading {
+        cursor: move;
+    }
+</style>
+<script>
+    $(function () {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+
+        $('.panel-body').on('hidden.bs.collapse', function () {
+            var id = $(this).attr("id");
+            $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-down');
+        });
+
+        $('.panel-body').on('show.bs.collapse', function () {
+            var id = $(this).attr("id");
+            $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-up');
+        });
+    });
+</script>
+@{
+    Html.RenderAction("HomeTabs");
+}
+<div class="pull-right mar-bottom-20">
+    @{
+        string url = VirtualPathUtility.ToAbsolute("~/Home/PrintPrimeDistribution/");
+    }
+    <a target="_blank" href="@url" class="btn btn-info"><span class="glyphicon glyphicon-print mar-right-10"></span>Print List</a>
+</div>
+<div class="clearfix"></div>
+<ul id="sortable">
+    @foreach (var u in Model)
+    {
+        string dco = u.UserInitial;
+        string spanId = "chevron" + dco;
+        <li id="li_@dco">
+            <div class="panel panel-default">
+                <div class="panel-heading" data-toggle="collapse" href="#@dco" aria-expanded="true" style="background-color: @u.UserColor;">
+                    @u.UserInitial<span id="@spanId" class="glyphicon glyphicon-chevron-up" style="margin-left: 10px;"></span>
+                </div>
+                <div class="panel-body collapse in" id="@dco">
+                    @{
+                        Html.RenderAction("PrimePartial", new { dco = u.UserInitial });
+                    }
+                </div>
+            </div>
+        </li>
+                        }
+</ul>
+@{
+    Html.RenderPartial("_ProjectList");
+}

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<CCCS.Web.Models.ProjectsByDcoModel>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Projects by DCO
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th colspan="@Model.Count()" class="text-center">Alternate DCOs</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    @foreach (var c in Model)
+                    {
+                        <th class="first-last title-cell-left">@c.DCO</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td class="title-cell-left">@r.DCO</td>
+                        @foreach (var d in Model)
+                        {
+                            <td>
+                                @r.NumberProjects[d.DCO]
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="title-cell-left">Total</td>
+                    @foreach (var c in Model)
+                    {
+                        <td></td>
+                    }
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

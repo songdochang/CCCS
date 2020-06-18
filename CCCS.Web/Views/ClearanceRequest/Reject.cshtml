@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Reject Clearance Request";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index2">Projects</a>
+        </li>
+        <li>
+            @Html.ActionLink("Project Details", "Details3", new { id = ViewBag.ProjectID })
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+
+<h4 class="text-danger">Are you sure you want to reject this request?</h4>
+<hr />
+
+@using (Html.BeginForm())
+{
+    int projectId = ViewBag.ProjectID;
+    @Html.Hidden("ProjectID", projectId.ToString())
+
+    <div class="form-group">
+        <label class="col-md-1 text-right">Comment</label>
+        <div class="col-md-6">
+            @Html.TextArea("Comment", new { @class = "form-control", cols = 30, @rows = 5 })
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="mar-top-50">
+        <div class="col-md-offset-1 col-md-10">
+            <input type="submit" value="Reject" class="btn btn-danger" />
+            <span class="mar-left-20">@Html.ActionLink("Cancel", "Details5", "Project", new { id = ViewBag.ProjectID }, null)</span>
+        </div>
+    </div>
+}
+

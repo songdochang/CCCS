@@ -1,0 +1,120 @@
+﻿@using PagedList.Mvc
+@using CCCS.Web.Models.Users
+@model PagedList.IPagedList<RegistrationApprovalModel>
+@{
+    ViewBag.Title = "Clearance Request";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-toggle="popover"]').popover();
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+</style>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th>
+                Name
+            </th>
+            <th>Department</th>
+            <th>
+                Title
+            </th>
+            <th class="col-md-1">
+                Date Registered
+            </th>
+            <th class="col-md-1">
+                Date Approved
+            </th>
+            <th>
+                Email
+            </th>
+            <th class="col-md-1">Employee Number</th>
+            <th class="col-md-1">Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Department
+            </td>
+            <td>@item.Title</td>
+            <td>
+                @{
+                    var dt = (DateTime)item.DateRegistered;
+                    @dt.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @if (item.DateModified != null)
+                {
+                    var dt1 = (DateTime)item.DateModified;
+                    @dt1.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @item.Email
+            </td>
+            <td>@item.EmployeeNumber</td>
+            <td>
+                @if (item.DateModified != null)
+                {
+                    if (item.IsActive)
+                    {
+                        @:Active
+                    }
+                    else
+                    {
+                       @:Deactivated
+                    }
+                }
+                else
+                {
+                    <span class="badge">Pending</span>
+                }
+            </td>
+            <td class="text-right">
+                @if (item.IsActive)
+                {
+                    @Html.ActionLink("Deactivate", "ActivateRegistration", new { id = item.UserID, activate = false, returnUrl = Request.Url.PathAndQuery })
+                }
+                else
+                {
+                    @Html.ActionLink("Activate", "ActivateRegistration", new { id = item.UserID, activate = true, returnUrl = Request.Url.PathAndQuery })
+                }
+            </td>
+        </tr>
+                    }
+</table>
+<br />
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index4",
+    new { sortOrder = ViewBag.SortOrder, dco = ViewBag.CO, projectType = ViewBag.ProjectType, listStyle = ViewBag.ListStyle, page }))
+}

@@ -1,0 +1,116 @@
+﻿@model IEnumerable<CCCS.Core.Domain.Users.UserProfile>
+
+@{
+    ViewBag.Title = "Messages";
+}
+<style>
+    .panel-heading span {
+        cursor: pointer;
+    }
+
+    ul {
+        margin-left: -40px;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .panel-heading {
+        cursor: move;
+    }
+
+    .msgDate {
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #808080;
+    }
+
+    .msg {
+        border-bottom: 1px solid #ddd;
+    }
+
+    #MessageList {
+        max-height: 400px;
+        overflow-y: scroll;
+        margin-bottom: 20px;
+    }
+</style>
+<script>
+    $(function () {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+
+        $('.panel-body').on('hidden.bs.collapse', function () {
+            var id = $(this).attr("id");
+            $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-down');
+        });
+
+        $('.panel-body').on('show.bs.collapse', function () {
+            var id = $(this).attr("id");
+            $('#chevron' + id).attr('class', 'glyphicon glyphicon-chevron-up');
+        });
+
+        $("a[href$='#messageModal']").on("click", function () {
+            var id = $(this).attr("data-bind");
+            $('#ProjectId').val(id);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMessages", "Home")",
+                data: { id: id },
+                success: function (result) {
+                    $('#MessageList').html(result);
+                }
+            })
+        });
+
+        $('#endConversation').on('click', function () {
+            return confirm('Are you sure to end this conversation?');
+        });
+    });
+
+</script>
+@{
+    Html.RenderAction("HomeTabs");
+}
+<ul id="sortable">
+    @foreach (var u in Model)
+    {
+        <li>
+            @{
+                Html.RenderAction("MessagePartial", new { id = u.UserInitial });
+            }
+        </li>
+                }
+</ul>
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Messages</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Messages", "Home", FormMethod.Post, new { id = "modalform" }))
+                {
+                    <input type="hidden" id="ProjectId" name="ProjectId" />
+                    <div class="form-horizontal">
+                        <div id="MessageList"></div>
+                        <div class="form-group pad-left-20 pad-right-20">
+                            @Html.TextArea("Message", new { @class = "form-control", cols = 50, @rows = 4 })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-left">
+                            <input id="endConversation" name="submit" type="submit" class="btn btn-danger" value="End Conversation" />
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Send" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

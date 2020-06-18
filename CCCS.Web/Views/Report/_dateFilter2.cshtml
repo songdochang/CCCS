@@ -1,0 +1,58 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            format: "L"
+        });
+
+        $("input[name=since]:radio").change(function () {
+            if ($(this).val() == '0') {
+                $("#dt").removeAttr('disabled');
+            } else {
+                $("#dt").attr('disabled', 'disabled');
+            }
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <div style="border-top: solid 1px #ddd; padding-top: 10px;">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-2 col-md-offset-3 pad-top-7">
+                    @if (ViewBag.Since == 3)
+                    {
+                        <input name="since" type="radio" value="3" checked /><span class="mar-left-10">Last 3 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="3" /><span class="mar-left-10">Last 3 months</span>
+                    }
+                </div>
+                <div class="col-md-2 pad-top-7">
+                    @if (ViewBag.Since == 6)
+                    {
+                        <input name="since" type="radio" value="6" checked /><span class="mar-left-10">Last 6 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="6" /><span class="mar-left-10">Last 6 months</span>
+                    }
+                </div>
+                <div class="col-md-2 pad-top-7">
+                    @if (ViewBag.Since == 12)
+                    {
+                        <input name="since" type="radio" value="12" checked /><span class="mar-left-10">Last 12 months</span>
+                    }
+                    else
+                    {
+                        <input name="since" type="radio" value="12" /><span class="mar-left-10">Last 12 months</span>
+                    }
+                </div>
+                <div class="col-md-2 text-right">
+                    <input type="submit" value="Refresh" class="btn btn-info btn-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+}

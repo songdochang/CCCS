@@ -1,0 +1,40 @@
+﻿<script type="text/javascript">
+    $(function () {
+        $('#pdf').click(function(){
+            $('#documentModal').modal('hide');
+        });
+
+        $('#jpg').click(function(){
+            $('#documentModal').modal('hide');
+        });
+    });
+</script>
+@{
+    var pdf1 = VirtualPathUtility.ToAbsolute("~/ClearanceRequest/ViewDocument/") + ViewBag.ProjectID;
+    var jpg1 = VirtualPathUtility.ToAbsolute("~/ClearanceRequest/ViewJPG/") + ViewBag.ProjectID;
+}
+<input type="hidden" id="projectId"/>
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalTitle">View Document</h4>
+                <h4><small class="mar-left-10">* If PDF file doesn't display properly, please select JPG format.</small></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <a target="_blank" href="@pdf1" id="pdf"><img src="~/Content/images/PDF.png" alt="PDF" style="max-height: 110px;" /></a>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <a target="_blank" href="@jpg1" id="jpg"><img src="~/Content/images/JPG.png" alt="JPG" style="max-height: 110px;" /></a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

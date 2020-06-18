@@ -1,0 +1,41 @@
+﻿@model CCCS.Core.Domain.Documents.DocumentFile
+
+@{
+    ViewBag.Title = "Reject Document";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index?closed=false">Projects</a>
+        </li>
+        <li>
+            <a href="@ViewBag.ReturnUrl">Project Details</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<h3>@ViewBag.Title</h3>
+
+<h4 class="text-danger">Are you sure you want to reject this document?</h4>
+<hr />
+
+@using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+{
+    <div class="form-group">
+        <label class="col-md-1 text-right">Explanation</label>
+        <div class="col-md-6">
+            @Html.TextAreaFor(x=> x.Comment, new { @class = "form-control", cols = 30, @rows = 5 })
+            @Html.HiddenFor(x=> x.Id)
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="mar-top-50">
+        <div class="col-md-offset-1 col-md-10">
+            <input type="submit" value="Reject" class="btn btn-danger" /><span class="mar-left-20"><a href="@ViewBag.ReturnUrl" class="mar-left-20">Cancel</a></span>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,197 @@
+﻿@using PagedList.Mvc
+@using CCCS.Web.Models.ClearanceRequests
+@model PagedList.IPagedList<ClearanceRequestModel>
+@{
+    ViewBag.Title = "Clearance Request";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-toggle="popover"]').popover();
+
+        $("a[href$='#messageModal']").on("click", function () {
+            var id = $(this).attr("data-bind");
+            $('#ProjectId').val(id);
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMessages", "Home")",
+                data: { id: id },
+            success: function (result) {
+                $('#MessageList').html(result);
+            }
+        })
+    });
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+</style>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+<p>
+    @using (Html.BeginForm("Index5", "ClearanceRequest", FormMethod.Post))
+    {
+        if (string.IsNullOrEmpty(ViewBag.SearchString))
+        {
+            <div class="form-inline pull-right pad-bottom-10">
+                <div class="form-group mar-left-20">
+                    @Html.DropDownList("dco", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control", onchange = "this.form.submit();" })
+                </div>
+            </div>
+        }
+    }
+    <label class="pull-left pad-top-7">List Total:<span class="mar-left-10">@ViewBag.Total</span></label>
+</p>
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th style="width: 60px;">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", "Index5", new { sortOrder = ViewBag.ProjectIdSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "ProjectId")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectId_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", "Index5", new { sortOrder = ViewBag.ProjectNameSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                Prime Contractor
+            </th>
+            <th class="col-md-1">
+                @Html.ActionLink("Date Requested", "Index5", new { sortOrder = ViewBag.DateRequestedSortParm, dco = ViewBag.CO })
+                @if (ViewBag.SortOrder == "DateRequested")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateRequested_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-1">
+                Status Date
+            </th>
+            <th class="col-md-2">
+                Current Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-left">
+                @if (User.IsInRole("Manager"))
+                {
+                    <a data-toggle="modal" href="#messageModal" data-bind="@item.ProjectID"><span class="glyphicon glyphicon-envelope mar-right-5"></span>@item.DCO</a>
+                }
+                else
+                {
+                    @item.DCO
+                }
+            </td>
+            <td>
+                <a class="trigger" href="~/Project/Details5/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+            </td>
+            <td>@Html.ShortString(item.ProjectName, 45)</td>
+            <td>
+                <a href="~/Contractor/Details1/@item.PrimeContractorID">@item.PrimeContractorName</a>
+            </td>
+            <td>
+                @item.DateRequested.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @if (item.DateModified != null)
+                {
+                    var dt = (DateTime)item.DateModified;
+                    @dt.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @item.CurrentStatus
+                @if (item.CurrentStatus.Contains("Approved"))
+                {
+                    <span class="glyphicon glyphicon-thumbs-up mar-left-10" style="color: green; font-size: 11pt;"></span>
+                }
+                else if (item.CurrentStatus.Contains("Rejected"))
+                {
+                    <span class="glyphicon glyphicon-thumbs-down mar-left-10" style="color: red; font-size: 11pt;"></span>
+                }
+            </td>
+            <td class="text-right">
+                @{
+                    string url = VirtualPathUtility.ToAbsolute("~/ClearanceRequest/ViewDocument/") + @item.ProjectID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                }
+                <a target="_blank" href="@url" data-toggle="tooltip" data-placement="left" title="View Clearance Request Form"><span class="glyphicon glyphicon-file" style="font-size: 1.2em;"></span></a>
+            </td>
+
+        </tr>
+                    }
+</table>
+<br />
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index5", new { dco = ViewBag.CO, page }))
+}
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Messages</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Messages", "Home", FormMethod.Post, new { id = "modalform" }))
+                {
+                    <input type="hidden" id="ProjectId" name="ProjectId" />
+                    <div class="form-horizontal">
+                        <div id="MessageList"></div>
+                        <div class="form-group pad-left-20 pad-right-20">
+                            @Html.TextArea("Message", new { @class = "form-control", cols = 50, @rows = 4 })
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Send" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    Html.RenderPartial("_ProjectDetails");
+}

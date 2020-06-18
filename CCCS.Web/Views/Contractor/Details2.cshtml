@@ -1,0 +1,97 @@
+﻿@using CCCS.Web.Models.Documents
+@model PagedList.IPagedList<NonComplianceModel>
+@using PagedList.Mvc;@{
+    ViewBag.Title = "Past Due Documents";
+    Layout = "~/Views/Shared/_LayoutContractor.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Contractor/Index1">Contractors</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<div class="page-header">
+    <h3>@ViewBag.CompanyName</h3>
+</div>
+@{
+    Html.RenderPartial("_ContractorDetailsTabs");
+}
+<p>
+    <div class="form-inline pull-left pad-bottom-10">
+        <label>Total Past Due Documents:<span class="mar-left-20">@ViewBag.TotalPastDue</span></label>
+    </div>
+</p>
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="title-row">
+            <th>
+                Project ID
+            </th>
+            <th>
+                Project Name
+            </th>
+            <th>Department</th>
+            <th class="col-md-1">Start Date</th>
+            <th class="col-md-1">End Date</th>
+            <th>Year</th>
+            <th class="text-center">Month</th>
+            <th class="col-md-1">Document Type</th>
+            <th class="col-md-1">Date Required</th>
+            <th style="width: 5%;">Past Due Months</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.JOC, "Details3", "Project", new { id = item.ProjectID }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectName)
+            </td>
+            <td>@item.DepartmentName</td>
+            <td>
+                @if (item.StartDate != null)
+                {
+                    var dt = (DateTime)item.StartDate.Value;
+                    @dt.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @if (item.EndDate != null)
+                {
+                    var dt1 = (DateTime)item.EndDate.Value;
+                    @dt1.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td>
+                @item.Year
+            </td>
+            <td class="text-center">
+                @if (item.Month > 0)
+                {
+                    @item.Month
+                }
+            </td>
+            <td>@item.DocumentType</td>
+            <td>
+                @if (item.DateRequired != null)
+                {
+                    var dt2 = item.DateRequired.Value;
+                    @dt2.ToString("MM-dd-yyyy");
+                }
+            </td>
+            <td class="text-center">@item.PastDueMonths</td>
+        </tr>
+    }
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Details2", new { sortOrder = ViewBag.CompanyName, page }))
+
+

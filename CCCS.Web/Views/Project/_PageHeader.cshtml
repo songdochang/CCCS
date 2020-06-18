@@ -1,0 +1,20 @@
+﻿@model CCCS.Core.Domain.Projects.Project
+
+<div class="page-header" style="margin-top: -7px;">
+    @if (Model.DateClosed != null)
+    {
+        string dt = ((DateTime)Model.DateClosed).ToString("MM-dd-yyyy");
+        <div class="badge badge-red pull-right" style="font-size: large;">Closed on @dt</div>
+    }
+    <h3>
+    @if(string.IsNullOrEmpty(Model.JOC))
+    {
+        @:Project
+    }
+    else
+    {
+        @Model.JOC
+    }
+    <small class="mar-left-20">@Model.ProjectName</small>
+    </h3>
+</div>

@@ -1,0 +1,72 @@
+﻿@model IEnumerable<CCCS.Core.Domain.Reference.Activity>
+
+@{
+    ViewBag.Title = "Activities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string url = VirtualPathUtility.ToAbsolute("~/Manage/CreateActivity") + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+}
+<script type="text/javascript">
+    $(function () {
+        $(".confirmDelete").confirm({
+            title: "Delete Activity",
+            text: "Are you sure to delete this activity?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+    });
+</script>
+<h2>@ViewBag.Title</h2>
+
+<p>
+    <a href="@url" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-flash mar-right-5"></span>Create New</a>
+</p>
+@if (Model.Count() > 0)
+{
+    <table class="table table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FundOrg)
+            </th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.ActivityCode)
+            </th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th class="col-md-2"></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FundOrg)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.ActivityCode)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                @if (item.Description == "Other")
+                {
+                    <td class="col-md-2 text-right"></td>
+                }
+                else
+                {
+                    <td class="text-right">
+                        @Html.ActionLink("Edit", "EditActivity", new { id = item.ID }) |
+                        @Html.ActionLink("Delete", "DeleteActivity", new { id = item.ID }, new { @class = "confirmDelete" })
+                    </td>
+                }
+            </tr>
+        }
+
+    </table>
+}

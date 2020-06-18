@@ -1,0 +1,11 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string[] cls = { "", "", "" };
+    int idx = int.Parse(action.Replace("pastdue", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    <li class="@cls[0]"><a href="~/report/PastDue1">Current by Project</a></li>
+    <li class="@cls[1]"><a href="~/report/PastDue2">Current by File</a></li>
+    <li class="@cls[2]"><a href="~/report/PastDue3">Excluded</a></li>
+</ul>

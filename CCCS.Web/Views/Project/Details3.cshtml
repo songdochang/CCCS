@@ -1,0 +1,552 @@
+﻿@model IEnumerable<CCCS.Web.Models.Documents.DocumentRowModel>
+
+@{
+    /**/
+
+    ViewBag.Title = "Documents";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+    .control-label {
+        font-weight: bold;
+    }
+
+    .entryRow td {
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+        .entryRow td.disabled {
+            text-align: center;
+            cursor: default;
+        }
+
+        .entryRow td:first-child {
+            text-align: left;
+        }
+
+        .entryRow td.blocked {
+            background-color: #eeeeee;
+            cursor: not-allowed;
+        }
+
+    .entryRow span {
+        color: green;
+    }
+
+    .entryRow td:first-child span {
+        color: #666;
+    }
+
+        .entryRow td:first-child span.badge {
+            color: #ffffff;
+        }
+
+    span.badge-1 {
+        background-color: #001c71;
+    }
+
+    span.badge-2 {
+        background-color: #3d7dca;
+    }
+
+    span.badge-3 {
+        background-color: #7aa4dd;
+    }
+
+    span.badge-4 {
+        background-color: #b1c9ea;
+    }
+
+    span.badge-5 {
+        background-color: #c9d7ec;
+    }
+
+    .sides {
+        border-left: solid 1px #666;
+        border-right: solid 1px #666;
+        background-color: #f7eb62;
+    }
+
+    .modal-header {
+        cursor: move;
+    }
+
+    #holder.hover {
+        border: 7px dashed #0c0 !important;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+                format: "L",
+                defaultDate: new Date()
+            });
+
+        $('[data-toggle="tooltip"]').tooltip()
+
+        $("#docModal").draggable({
+            handle: ".modal-header"
+        });
+
+        $(".entryRow td:not(.disabled)").click(function () {
+            var id = $(this).attr("id");
+            var cid = id.split('_')[0];
+            $("#ContractorId").val(cid);
+            var yyyy = id.split('_')[1];
+            $("#Year").val(yyyy);
+            var col = id.split('_')[2];
+            $("#Column").val(col);
+            var month = $(this).attr("data-interval");
+            if (month) {
+                $("#divMonth").show();
+                $("#Month").val(month);
+            } else {
+                $("#divMonth").hide();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetFiles", "Project")",
+                data: { id: @ViewBag.ProjectID, cid: cid, year: yyyy, month: month, type: col },
+                success: function (result) {
+                    $("#documentFiles").html(result);
+                },
+                error: function (req, status, error) {
+                    // do something with error
+                }
+            });
+
+            SetFileName(col);
+
+            $("#docModal").modal('show');
+        });
+
+        $(".entryRow td:not(.disabled)").hover(function () {
+            if ($(this).html().indexOf("data") < 0) {
+                $(this).html("<span class='glyphicon glyphicon-ok'></span>");
+            }
+        }, function () {
+            if ($(this).html().indexOf("data") < 0) {
+                $(this).html("");
+            }
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+        });
+
+        $('#docModal').on('shown.bs.modal', function (e) {
+            $('#fileName').val("");
+        });
+    });
+
+    function SetFileName(col) {
+        var doc = "Performance of Previous Contracts";
+        if (col == 'NonSeg')
+            doc = "Non-Segregated Facilities";
+        else if (col == 'GFE')
+            doc = "Good Faith Efforts";
+        else if (col == 'ListSub')
+            doc = "List of Subcontractors";
+        else if (col == 'NtceEEO')
+            doc = "Notice of EEO";
+        else if (col == 'WIBA')
+            doc = "Work in Bid Condition Area";
+        else if (col == 'EUR')
+            doc = "EUR";
+
+        $('#Document').html(doc);
+
+        function readfiles(files) {
+            if (files.length == 1) {
+                $('#submit').prop("disabled", true);
+                $('#fileName').val(files[0].name);
+
+                reader = new FileReader();
+                reader.onload = function (event) {
+                    var formData = new FormData();
+                    formData.append('file', files[0]);
+                    formData.append('fileName', files[0].name);
+                    formData.append('year', $("#Year").val());
+                    formData.append('month', $("#Month").val());
+                    formData.append('documentType', $("#Column").val());
+                    formData.append('projectId', @ViewBag.ProjectId);
+                    formData.append('contractorId', $("#ContractorId").val());
+                    formData.append('dateReceived', $("#DateReceived").val());
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DragAndDropFile", "Project")",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (result) {
+                            $("#NewFileId").val(result.FileId);
+                            $('#submit').prop("disabled", false);
+                        }
+                    });
+                }
+                reader.readAsDataURL(files[0]);
+            }
+        }
+        var holder = document.getElementById('holder');
+        holder.ondragover = function () { this.className = 'hover'; return false; };
+        holder.ondragend = function () { this.className = ''; return false; };
+        holder.ondrop = function (e) {
+            this.className = '';
+            e.preventDefault();
+            readfiles(e.dataTransfer.files);
+        }
+    }
+</script>
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Projects</a>
+            <span class="glyphicon glyphicon-menu-down"></span>
+            <ul class="dropdown-menu" aria-labelledby="dLabel">
+                <li><a href="~/Project/Index1">Projects</a></li>
+                <li><a href="~/Contractor/Index1">Contractors</a></li>
+                <li><a href="~/ClearanceRequest/Index1">Clearance Request</a></li>
+                <li><a href="~/WorkSheet/Index1">Time Worksheets</a></li>
+            </ul>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = ViewBag.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+    Html.RenderPartial("_AlertRawPartial");
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <span class="glyphicon glyphicon-ok mar-right-10" style="color: goldenrod;"></span>Pending Approval
+    </div>
+    <div class="col-md-2">
+        <span class="glyphicon glyphicon-ok mar-right-10" style="color: green;"></span>Approved by CO
+    </div>
+    <div class="col-md-2">
+        <span class="glyphicon glyphicon-ok mar-right-10" style="color: red;"></span>Rejected by CO
+    </div>
+    <div class="col-md-2">
+        <span class="glyphicon glyphicon-ok mar-right-10" style="color: blue;"></span>Approved by Manager
+    </div>
+    <div class="col-md-4 text-right">* Click on year to view all approved documents.</div>
+</div>
+<div class="panel panel-default">
+    <table class="table table-condensed" border="1">
+        <thead>
+            <tr>
+                <th class="col-md-4" rowspan="2">Contractor (Start Date ~ End Date)</th>
+                <th rowspan="2">Prev Perf</th>
+                <th rowspan="2">Non-Seg</th>
+                <th rowspan="2">GFE</th>
+                <th rowspan="2">List of Subs</th>
+                <th rowspan="2">Ntce of EEO</th>
+                <th colspan="2">WIBA</th>
+                <th rowspan="2">Year</th>
+                <th class="col-md-5" colspan="12">EUR</th>
+            </tr>
+            <tr>
+                <th style="min-width: 40px;">1</th>
+                <th style="min-width: 40px;">2</th>
+                <th>JAN</th>
+                <th class="sides">FEB</th>
+                <th>MAR</th>
+                <th>APR</th>
+                <th>MAY</th>
+                <th>JUN</th>
+                <th>JUL</th>
+                <th class="sides">AUG</th>
+                <th>SEP</th>
+                <th>OCT</th>
+                <th>NOV</th>
+                <th>DEC</th>
+            </tr>
+        </thead>
+        @foreach (var c in Model)
+        {
+            for (int y = c.StartYear; y <= c.EndYear; y++)
+            {
+                var row = c.DocumentRows.FirstOrDefault(x => x.Year == y);
+                string pre = c.ContractorID + "_" + y + "_";
+                string id;
+                int cnt = c.EndYear - c.StartYear + 1;
+                <tr class="entryRow">
+                    @if (y == c.StartYear)
+                    {
+                        <td rowspan="@cnt" class="disabled">
+                            @for (int i = 0; i < c.SubLevel; i++)
+                            {
+                                <span class="mar-left-20"></span>
+                            }
+                            @if (c.SubLevel == 0)
+                            {
+                                <span class="badge badge-red mar-right-5">P</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-@c.SubLevel mar-right-5">S&nbsp;@c.SubLevel</span>
+                            }
+                            @c.CompanyName <span class="mar-left-10">(@c.StartDate.ToShortDateString() ~ @c.EndDate.ToShortDateString())</span>
+                            @if (c.SubLevel > 1)
+                            {
+                                <span class="mar-left-5">- Sub to @c.SubToCompanyName</span>
+                            }
+                            <div class="pull-right">
+                                <div class="dropdown">
+                                    <a id="tasks_@c.ContractorID" class="glyphicon glyphicon-share-alt" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="tasks_@c.ContractorID">
+                                        @{
+                                            string url2 = VirtualPathUtility.ToAbsolute("~/Project/AddSubcontractor2/") + @c.ProjectID + "?subTo=" + @c.ContractorID;
+                                            url2 += "&returnUrl=" + Request.Url.PathAndQuery;
+                                            string url3 = VirtualPathUtility.ToAbsolute("~/Notice/ViewDocumentList/") + @c.ProjectID;
+                                            string url4 = VirtualPathUtility.ToAbsolute("~/Notice/EmailDocumentList/") + @c.ProjectID + "?cid=" + @c.ContractorID;
+                                            url4 += "&returnUrl=" + Request.Url.PathAndQuery;
+                                        }
+                                        <li><a href="@url2">Add Subcontractor</a></li>
+                                        @if (c.SubLevel == 0)
+                                        {
+                                            <li role="separator" class="divider"></li>
+                                            <li><a href="@url3">View list in Excel</a></li>
+                                            <li><a href="@url4">Send list to the contractor</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                        { id = pre + "PrevPerf"; }
+                        <td id="@id">
+                            @if (row != null && row.PrevPerf != null)
+                            { Html.RenderPartial("_documentCell", row.PrevPerf); }
+                        </td>
+                        { id = pre + "NonSeg"; }
+                        <td id="@id">
+                            @if (row != null && row.NonSeg != null)
+                            { Html.RenderPartial("_documentCell", row.NonSeg); }
+                        </td>
+                        { id = pre + "GFE"; }
+                        <td id="@id">
+                            @if (row != null && row.GFE != null)
+                            { Html.RenderPartial("_documentCell", row.GFE); }
+                        </td>
+                        { id = pre + "ListSub"; }
+                        <td id="@id">
+                            @if (row != null && row.ListSub != null)
+                            { Html.RenderPartial("_documentCell", row.ListSub); }
+                        </td>
+                        { id = pre + "NtceEEO"; }
+                        <td id="@id">
+                            @if (row != null && row.NtceEEO != null)
+                            { Html.RenderPartial("_documentCell", row.NtceEEO); }
+                        </td>
+                        { id = pre + "WIBA_1"; }
+                        <td id="@id" data-interval="1">
+                            @if (row != null && row.WIBA1 != null)
+                            { Html.RenderPartial("_documentCell", row.WIBA1); }
+                        </td>
+                        id = pre + "WIBA_2";
+                        <td id="@id" data-interval="2">
+                            @if (row != null && row.WIBA2 != null)
+                            { Html.RenderPartial("_documentCell", row.WIBA2); }
+                        </td>
+                    }
+                    else
+                    {
+                        id = pre + "PrevPerf";
+                        <td id="@id">
+                            @if (row != null && row.PrevPerf != null)
+                            { Html.RenderPartial("_documentCell", row.PrevPerf); }
+                        </td>
+                        id = pre + "NonSeg";
+                        <td id="@id">
+                            @if (row != null && row.NonSeg != null)
+                            { Html.RenderPartial("_documentCell", row.NonSeg); }
+                        </td>
+                        id = pre + "GFE";
+                        <td id="@id">
+                            @if (row != null && row.GFE != null)
+                            { Html.RenderPartial("_documentCell", row.GFE); }
+                        </td>
+                        { id = pre + "ListSub"; }
+                        <td id="@id">
+                            @if (row != null && row.ListSub != null)
+                            { Html.RenderPartial("_documentCell", row.ListSub); }
+                        </td>
+                        { id = pre + "NtceEEO"; }
+                        <td id="@id">
+                            @if (row != null && row.NtceEEO != null)
+                            { Html.RenderPartial("_documentCell", row.NtceEEO); }
+                        </td>
+                        id = pre + "WIBA_1";
+                        <td id="@id" data-interval="1">
+                            @if (row != null && row.WIBA1 != null)
+                            { Html.RenderPartial("_documentCell", row.WIBA1); }
+                        </td>
+                        id = pre + "WIBA_2";
+                        <td id="@id" data-interval="2">
+                            @if (row != null && row.WIBA2 != null)
+                            { Html.RenderPartial("_documentCell", row.WIBA2); }
+                        </td>}
+                    <td class="disabled">
+                        @{
+                            string url1 = VirtualPathUtility.ToAbsolute("~/Document/ViewAllDocuments/") + @c.ProjectID;
+                            url1 += "?cid=" + @c.ContractorID + "&yyyy=" + @y;
+                        }
+                        <a target="_blank" href="@url1">@y</a>
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="1">
+                        @if (row.EUR1 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR1); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="2">
+                        @if (row.EUR2 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR2); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="3">
+                        @if (row.EUR3 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR3); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="4">
+                        @if (row.EUR4 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR4); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="5">
+                        @if (row.EUR5 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR5); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="6">
+                        @if (row.EUR6 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR6); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="7">
+                        @if (row.EUR7 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR7); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="8">
+                        @if (row.EUR8 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR8); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="9">
+                        @if (row.EUR9 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR9); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="10">
+                        @if (row.EUR10 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR10); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="11">
+                        @if (row.EUR11 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR11); }
+                    </td>
+                    @{ id = pre + "EUR"; }
+                    <td id="@id" data-interval="12">
+                        @if (row.EUR12 != null)
+                        { Html.RenderPartial("_documentCell", row.EUR12); }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="docModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Document Received</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Details3", "Project", new { id = ViewBag.ProjectID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("ContractorId")
+                    @Html.Hidden("Column")
+                    // file ID of the drag-and-dropped file so 'DateUploaded' may be updated if 'Submit' button is clicked
+                    @Html.Hidden("NewFileId")
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Document</div>
+                            <div class="col-md-9 pad-left-20 pad-top-10">
+                                <span id="Document"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Year</div>
+                            <div class="col-md-2 pad-left-20">
+                                <input type="text" id="Year" name="Year" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group" id="divMonth">
+                            <div class="title-cell col-md-3 mar-top-10">Month</div>
+                            <div class="col-md-2 pad-left-20">
+                                <input type="text" id="Month" name="Month" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="title-cell col-md-3 mar-top-10">Date Received</div>
+                            <div class="col-md-4 pad-left-20">
+                                <div class='input-group date' id='dtReceived'>
+                                    @Html.Editor("DateReceived", new { htmlAttributes = new { @class = "form-control" } })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="holder" style="padding: 15px;width:100%; height:200px; border: 7px dashed #ccc">
+                            <div class="title-cell-left">File to upload (optional)</div>
+                            <div>Click 'Browse...' to select a file or drag-and-drop a file in the dotted area.</div>
+                            <div class="input-group" style="margin-top: 10px;">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-info btn-file">
+                                        Browse… <input type="file" name="fileName" />
+                                    </span>
+                                </span>
+                                <input class="form-control" type="text" readOnly="" id="fileName" />
+                            </div>
+                            <input type="hidden" id="filePath" />
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="documentFiles" style="margin: 20px;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pull-left">
+                            <button onclick="return confirm('Are your sure to reset this document?');" name="submit" type="submit" class="btn btn-default" value="Reset">Reset</button>
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input name="submit" type="submit" class="btn btn-primary" value="Save" id="submit" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

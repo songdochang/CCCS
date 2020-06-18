@@ -1,0 +1,80 @@
+﻿@model IEnumerable<CCCS.Core.Domain.Documents.Document>
+<script>
+    $(function () {
+        $("#resetMisc").confirm({
+            title: "Delete File",
+            text: "Are you sure to delete this document?",
+            confirmButton: "Yes",
+            cancelButton: "No"
+        });
+
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+            $("#fileName").val(label);
+            $("#filePath").html($(this).val());
+        });
+    });
+</script>
+
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            IWA / Misc
+        </div>
+        <div class="panel-body">
+            </div>
+            @using (Html.BeginForm("UploadDocument2", "Document", new { id = ViewBag.ProjectID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <label class="col-md-2 pad-top-7 text-right">Title (IWA, etc.)</label>
+                    <div class="col-md-3">
+                        <input type="text" name="title" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mar-top-10">
+                    <label class="col-md-2 pad-top-7 text-right">Select file and upload</label>
+                    <div class="input-group col-md-5">
+                        <span class="input-group-btn">
+                            <span class="btn btn-info btn-file">
+                                Browse… <input type="file" name="file" />
+                            </span>
+                        </span>
+                        <input class="form-control" type="text" readOnly="" id="fileName" name="fileName" />
+                    </div>
+                    <input type="hidden" id="filePath" name="filePath" />
+                    <input name="submit" type="submit" class="btn btn-primary" value="Upload" />
+                </div>
+            }
+            <div class="mar-top-10">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date Uploaded</th>
+                            <th class="col-md-1"></th>
+                            <th class="col-md-1"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model)
+                        {
+                            <tr>
+                                <td>@d.Title</td>
+                                <td>@d.DateUploaded</td>
+                                <td>
+                                    <a target="_blank" href="@Url.Content("/Files/MISC/" + d.FileName)">View</a>
+                                </td>
+                                <td>
+                                    <a href="~/Document/DeleteDocument/@d.DocumentID">Remove</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

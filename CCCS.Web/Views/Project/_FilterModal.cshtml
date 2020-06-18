@@ -1,0 +1,104 @@
+﻿<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Filter</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Prime Contractor</label>
+                        <div class="col-sm-7">
+                            <input type="text" name="prime" class="form-control" placeholder="Prime Contractor" value="@ViewBag.Prime">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Subcontractor</label>
+                        <div class="col-sm-7">
+                            <input type="text" name="sub" class="form-control" placeholder="Subcontractor" value="@ViewBag.Sub">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mar-top-50">
+                    @Html.DropDownList("projectType", new SelectList(ViewBag.ProjectTypes, "Value", "Text", ViewBag.ProjectType), new { @class = "form-control col-sm-offset-2" })
+                </div>
+                <div class="form-group">
+                    @Html.DropDownList("fed", new SelectList(ViewBag.Feds, "Value", "Text", ViewBag.Fed), new { @class = "form-control col-sm-offset-2" })
+                </div>
+                <div class="form-group">
+                    @Html.DropDownList("co", new SelectList(ViewBag.COs, "Value", "Text", ViewBag.CO), new { @class = "form-control col-sm-offset-2" })
+                </div>
+                <div class="form-group">
+                    @Html.DropDownList("amount", new SelectList(ViewBag.Amounts, "Value", "Text", ViewBag.Amount), new { @class = "form-control col-sm-offset-2" })
+                </div>
+                <div class="row col-sm-offset-2">
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            @if (String.IsNullOrEmpty(ViewBag.MinAmount))
+                            {
+                                <input type="text" class="form-control" id="minAmount" name="minAmount" placeholder="Minimum">
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="minAmount" name="minAmount" placeholder="Minimum" value="@ViewBag.MinAmount">
+                            }
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            @if (String.IsNullOrEmpty(ViewBag.MaxAmount))
+                            {
+                                <input type="text" class="form-control" id="maxAmount" name="maxAmount" placeholder="Maximum">
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="maxAmount" name="maxAmount" placeholder="Maximum" value="@ViewBag.MaxAmount">
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-offset-2 mar-top-20">
+                    @if (ViewBag.JOC != null && ViewBag.JOC.Contains("true"))
+                    {
+                        @Html.CheckBox("joc", true)
+                    }
+                    else
+                    {
+                        @Html.CheckBox("joc", false)
+                    }
+                    <span class="mar-left-3">JOC Only</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="pull-left">
+                    <button type="submit" name="submit" value="reset" class="btn btn-info">Reset List</button>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="filter" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#amount").change(function () {
+            var amount = this.value.split(';');
+            if (amount[0] == "0") {
+                $('#minAmount').val('');
+            } else {
+                var min = amount[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+                $('#minAmount').val(min);
+            }
+            if (amount[1] == "0") {
+                $('#maxAmount').val('');
+            } else {
+                var max = amount[1].replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+                $('#maxAmount').val(max);
+            }
+        });
+    })
+</script>
+

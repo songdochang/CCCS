@@ -1,0 +1,113 @@
+﻿@model PagedList.IPagedList<ProjectModel>
+@using CCCS.Core.Domain.Projects
+@using CCCS.Web.Models.Projects
+
+@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+}
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th class="sm">
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", action, new { sortOrder = ViewBag.ProjectIdSortParm, co = ViewBag.CO, projectType = ViewBag.ProjectType, joc = ViewBag.JOC, closed = ViewBag.Closed })
+                @if (ViewBag.SortOrder == "ProjectID")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectID_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", action, new { sortOrder = ViewBag.ProjectNameSortParm, co = ViewBag.CO, projectType = ViewBag.ProjectType, joc = ViewBag.JOC, closed = ViewBag.Closed })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="sm">
+                Phase
+            </th>
+            <th class="col-md-1">
+                Account Number
+            </th>
+            <th class="text-right">Contract Amount</th>
+            <th class="md text-center">Federal Funds</th>
+            <th>Missing<br />Docs</th>
+            <th class="sm"></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DCO)
+            </td>
+            <td>
+                <a class="trigger" href="~/Project/Details1/@item.ProjectID" role="button" data-target="@item.ProjectID" data-interval="@item.ProgressPercent" data-bind="@item.ProjectID">@item.JOC</a>
+                <script>
+                    $(function () {
+                        var id = @item.ProjectID;
+                        var percent = @item.ProgressPercent;
+                        $('#p_' + id).attr('aria-valuenow', percent);
+                        $('#p_' + id).attr('style', 'width: ' + percent + '%;')
+                    });
+                </script>
+            </td>
+            <td>
+                @Html.ShortString(item.ProjectName, 60)
+            </td>
+            <td class="text-center">
+                @item.Phase
+            </td>
+            <td>
+                @{ string url = VirtualPathUtility.ToAbsolute("~/Project/MapsDetails/") + item.ProjectID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery); }
+                <a href="@url">@item.Unit</a>
+            </td>
+            <td class="text-right">
+                @if (item.ContractAmount != null)
+                {
+                    string amount = ((decimal)item.ContractAmount).ToString("#,##0");
+                    @amount
+                }
+            </td>
+            <td class="text-center">
+                @if (item.FederalFunds)
+                {
+                    <text>Yes</text>
+                }
+                else
+                {
+                    <text>No</text>
+                }
+            </td>
+            <td>
+                @if (item.NumberMissingDocuments > 0)
+                {
+                    <a href="~/Project/Details3/@item.ProjectID">
+                        <span class="badge badge-red" data-toggle="tooltip" title="Click to go to Documents" data-placement="left">@item.NumberMissingDocuments</span>
+                    </a>
+                }
+            </td>
+            <td>
+                @if (item.ProjectType == ProjectType.Capital)
+                {
+                    <span class="badge badge-black" data-toggle="tooltip" title="Capital" data-placement="left">CP</span>
+                }
+                else
+                {
+                    <span class="badge" data-toggle="tooltip" title="Non-Capital" data-placement="left">NC</span>
+                }
+            </td>
+        </tr>
+    }
+</table>
+@{ Html.RenderPartial("_ProjectDetails"); }

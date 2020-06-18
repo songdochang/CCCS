@@ -1,0 +1,200 @@
+﻿@model CCCS.Core.Domain.ClearanceRequests.Review
+
+@{
+    ViewBag.Title = "Analysis & Close";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+<style>
+    .control-label {
+        font-weight: bold;
+    }
+
+    .row div:not(p) {
+        padding: 6px 20px;
+    }
+
+    .row div.tr {
+        border-bottom: solid 1px #ededed;
+    }
+
+    tbody tr:first-child td {
+        border-top: none;
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker(
+            {
+                format: "L"
+            });
+
+        $('.dropdown-toggle').dropdown()
+    });
+</script>
+@if (User.IsInRole("Administrator") || User.IsInRole("Manager") || (ViewBag.Approved != null && ViewBag.Approved))
+{
+    <script>
+        $(function () {
+            $('input').prop('disabled', true);
+
+            $(".clear").hide();
+        })
+    </script>
+}
+else
+{
+    <script>
+        $(function () {
+            $(".clear").click(function () {
+                var cls = $(this).attr("id");
+                $("." + cls + " input[type=radio]").each(function () {
+                    $(this).prop('checked', false);
+                });
+            });
+        })
+    </script>
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li>
+            <a href="~/">CCCS Home</a>
+        </li>
+        <li>
+            <a href="~/Project/Index1">Projects</a>
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+@{
+    Html.RenderAction("PageHeader", new { id = Model.ProjectID });
+    Html.RenderPartial("_ProjectDetailsTabs");
+    Html.RenderPartial("_AlertPartial");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(x => x.ProjectID)
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            SECTION 1: PRIME CONTRACTOR<span class="mar-left-25" style="color: #666; font-size: 0.8em; font-weight: normal;">@ViewBag.CompanyName</span>
+        </div>
+        <div class="panel-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3 tr q1">
+                            @Html.RadioButtonFor(m => m.CheckItem1, "1")  Yes
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem1, "0")  No</span>
+                        </td>
+                        <td class="col-md-7 tr">
+                            Contractor submitted EEO Documents and Reports timely?
+                        </td>
+                        <td class="col-md-2 tr text-right"><a id="q1" class="clear" href="#">Reset</a></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3 tr q2">
+                            @Html.RadioButtonFor(m => m.CheckItem2, "1")  Yes
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem2, "0")  No</span>
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem2, "2")  N/A</span>
+                        </td>
+                        <td class="col-md-7 tr">
+                            Contractor met Female Utilization Goal (6.9%), federally funded projects only.
+                        </td>
+                        <td class="col-md-2 tr text-right"><a id="q2" class="clear" href="#">Reset</a></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3 tr q3">
+                            @Html.RadioButtonFor(m => m.CheckItem3, "1")  Yes
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem3, "0")  No</span>
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem3, "2")  N/A</span>
+                        </td>
+                        <td class="col-md-7 tr">
+                            Contractor met Minority Utilization Goal (28.3%), federally funded projects only.
+                        </td>
+                        <td class="col-md-2 tr text-right"><a id="q3" class="clear" href="#">Reset</a></td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-3 q4">
+                            @Html.RadioButtonFor(m => m.CheckItem4, "1")  Yes
+                            <span class="mar-left-20">@Html.RadioButtonFor(m => m.CheckItem4, "0")  No</span>
+                        </td>
+                        <td class="col-md-7">
+                            Liquidated damages recommended?
+                        </td>
+                        <td class="col-md-2 tr text-right"><a id="q4" class="clear" href="#">Reset</a></td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+    @Html.Partial("_Section2", Model)
+    <table cellpadding="0">
+        <tr>
+            <td class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        HOURS
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Activity Code</th>
+                                    <th class="text-right">Hours</th>
+                                    <th class="col-md-6"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var h in ViewBag.Hours)
+                {
+                                    <tr>
+                                        <td>@h.Key</td>
+                                        <td class="text-right">
+                                            @if (h.Value > 0)
+                                            {
+                                                @h.Value.ToString("#.0")
+                                            }
+                                        </td>
+                                        <td class="text-right">
+                                            @if (h.Value > 0)
+                                            {
+                                                string url = VirtualPathUtility.ToAbsolute("~/Project/WorksheetDetails") + "?id=" + Model.ProjectID;
+                                                url += "&code=" + h.Key + "&returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                                                <a href="@url">Details</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Comment
+                    </div>
+                    <div class="panel-body">
+                        @Html.TextAreaFor(x => x.Comment, new { @class = "form-control", cols = 90, @rows = 10 })
+                    </div>
+                </div>
+            </td>
+            <td class="col-md-2 text-right">
+                <div>
+                    <input type="submit" value="Save Analysis" class="btn btn-primary" style="width: 125px;" />
+                </div>
+                <div class="mar-top-50">
+                    @{
+                        string url1 = VirtualPathUtility.ToAbsolute("~/Project/ViewAnalysisClose/") + Model.ProjectID;
+                    }
+                    <a target="_blank" href="@url1" class="btn btn-info" style="width: 125px;"><span class="glyphicon glyphicon-file mar-right-10"></span>View / Print</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+}
+<div class="clearfix"></div>
+
+
+

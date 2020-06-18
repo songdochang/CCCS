@@ -1,0 +1,97 @@
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\CCCS.Data.dll.config
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\CCCS.Data.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\CCCS.Data.pdb
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\CCCS.Core.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\EntityFramework.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\EntityFramework.SqlServer.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Newtonsoft.Json.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Owin.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\CCCS.Core.pdb
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\EntityFramework.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\EntityFramework.SqlServer.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\bin\Debug\Newtonsoft.Json.xml
+C:\Projects 2015\CCCS_new\CCCS.Data\obj\Debug\CCCS.Data.csprojResolveAssemblyReference.cache
+C:\Projects 2015\CCCS_new\CCCS.Data\obj\Debug\CCCS.Data.dll
+C:\Projects 2015\CCCS_new\CCCS.Data\obj\Debug\CCCS.Data.pdb
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Data.dll.config
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Data.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Data.pdb
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Core.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\EntityFramework.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\EntityFramework.SqlServer.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Newtonsoft.Json.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Owin.dll
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Core.pdb
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\CCCS.Core.dll.config
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\EntityFramework.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\EntityFramework.SqlServer.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.xml
+C:\Projects 2015\CCCS\CCCS.Data\bin\Debug\Newtonsoft.Json.xml
+C:\Projects 2015\CCCS\CCCS.Data\obj\Debug\CCCS.Data.csprojResolveAssemblyReference.cache
+C:\Projects 2015\CCCS\CCCS.Data\obj\Debug\CCCS.Data.dll
+C:\Projects 2015\CCCS\CCCS.Data\obj\Debug\CCCS.Data.pdb
+C:\Projects 2015\CCCS\CCCS.Data\obj\Debug\CCCS.Data.csproj.CoreCompileInputs.cache
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Data.dll.config
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Data.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Data.pdb
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Core.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\EntityFramework.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\EntityFramework.SqlServer.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Newtonsoft.Json.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Owin.dll
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Core.pdb
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\CCCS.Core.dll.config
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\EntityFramework.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\EntityFramework.SqlServer.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.AspNet.Identity.Owin.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.Cookies.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Microsoft.Owin.Security.OAuth.xml
+D:\Website\Internet\CCCS\CCCS.Data\bin\Debug\Newtonsoft.Json.xml
+D:\Website\Internet\CCCS\CCCS.Data\obj\Debug\CCCS.Data.csprojAssemblyReference.cache
+D:\Website\Internet\CCCS\CCCS.Data\obj\Debug\CCCS.Data.csproj.CopyComplete
+D:\Website\Internet\CCCS\CCCS.Data\obj\Debug\CCCS.Data.dll
+D:\Website\Internet\CCCS\CCCS.Data\obj\Debug\CCCS.Data.pdb

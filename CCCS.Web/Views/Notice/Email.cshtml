@@ -1,0 +1,283 @@
+﻿@model CCCS.Web.Models.Notices.EmailModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/Content/css")
+
+</head>
+<body style="padding: 20px 30px;">
+    <script type="text/javascript">
+        $(function () {
+            $(document).on('change', '.btn-file :file', function () {
+                //alert($("#attached").val());
+                var input = $(this),
+                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.trigger('fileselect', [numFiles, label]);
+                var attached = ($("#attached").val().length > 0) ? $("#attached").val() + '; ' + label : label;
+                $("#attached").val(attached);
+                $("#filePath").html($(this).val());
+
+                var formData = new FormData();
+                formData.append('file', $('#fileName')[0].files[0]);
+                formData.append('fileName', attached);
+                formData.append('id', @Model.DocumentID);
+                formData.append('type', 'Attachment');
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("UploadAttachment", "Notice")",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        if (!result.IsSuccess) {
+                            $("#alert").removeClass("alert-success");
+                            $("#alert").addClass("alert-danger");
+                            $("#alert").html(result.Message);
+                        } else {
+                            $("#AttachmentPath").val(result.Path);
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        $("#alert").removeClass("alert-success");
+                        $("#alert").addClass("alert-danger");
+                        $("#alert").html("There was an error while attaching the file.");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <h3>
+        Email @Model.Title
+        @if (Model.AttachmentRequired)
+        {
+            <small class="mar-left-20">'@Model.Title' will be attached to the email.</small>
+        }
+    </h3>
+    <hr />
+    @Html.Partial("_AlertPartial")
+
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm(Model.Action, "Notice", FormMethod.Post))
+            {
+                @Html.HiddenFor(x => x.Title)
+                @Html.HiddenFor(x => x.ProjectID)
+                @Html.HiddenFor(x => x.InspectionID)
+                @Html.HiddenFor(x => x.UserID)
+                @Html.HiddenFor(x => x.DocumentID)
+                @Html.HiddenFor(x => x.Month)
+                @Html.HiddenFor(x => x.Department)
+                @Html.HiddenFor(x => x.FundOrg)
+                @Html.HiddenFor(x => x.ReturnUrl)
+                <div class="form-horizontal" style="margin-top: 40px;">
+                    <div class="form-group">
+                        <div class="col-md-3 text-right">
+                            To
+                        </div>
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(x => x.To, new { @class = "form-control", cols = 60, @rows = 3, id = "toList" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 text-right">
+                            Cc
+                        </div>
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(x => x.Cc, new { @class = "form-control", cols = 60, @rows = 3, id = "ccList" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="control-label col-md-3">Subject</div>
+                        <div class="col-md-9">
+                            <input name="Subject" type="text" class="form-control text-box-lg" value="@Model.Title" />
+                        </div>
+                    </div>
+                    @if (Model.Title == "Rejected Document")
+                    {
+                        <div class="form-group">
+                            <div class="control-label col-md-3">
+                                <div style="padding-top: 10px;">
+                                    <div class="input-group col-md-12 mar-left-20">
+                                        <span class="input-group-btn">
+                                            <span class="btn btn-default btn-file">
+                                                <span class="glyphicon glyphicon-paperclip mar-right-5"></span>Attach<input type="file" name="fileName" id="fileName" />
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <input type="hidden" id="AttachmentPath" name="AttachmentPath" />
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextAreaFor(x => x.Attached, new { @class = "form-control", cols = 60, @rows = 3, id = "attached" })
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <div class="control-label col-md-2"></div>
+                        <div class="col-md-10 pad-top-10">
+                            @Html.TextArea("Body", new { @class = "form-control", cols = 60, @rows = 14 })
+                        </div>
+                    </div>
+                    @if (Model.Title == "Registration Approval")
+                    {
+                        <div class="form-group">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-5 pad-top-10 pad-bottom-10">
+                                <input type="radio" name="approval" value="1" checked /><label class="pad-left-20">Approved</label>
+                            </div>
+                            <div class="col-md-5 pad-top-10">
+                                <input type="radio" name="approval" value="0" /><label class="pad-left-20">Rejected</label>
+                            </div>
+                        </div>
+                        <script>
+                            $("input[name='approval']").on("change", function () {
+                                var regex = new RegExp('<br />', 'g');
+                                var body = "@Html.Raw(Model.Body.Replace(Environment.NewLine, "<br />"))";
+                                if ($(this).val() !== "1") {
+                                    var body = "@Html.Raw(Model.AlternateBody.Replace(Environment.NewLine, "<br />"))";
+                                }
+                                $("#Body").val(body.replace(regex, "\n"));
+                            })
+                        </script>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-8">
+                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-envelope mar-right-10"></span>Send</button>
+                        <span style="padding-left: 20px;">
+                            <a href="@Model.ReturnUrl">Cancel</a>
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-1" style="padding-top: 100px;">
+            <div class="form-group">
+                <button id="toButton" class="btn btn-default">&lt;- To</button>
+            </div>
+            <div class="form-group">
+                <button id="ccButton" class="btn btn-default">&lt;- Cc</button>
+            </div>
+        </div>
+        <div class="col-md-5">
+            @{
+                int recipientLines = 30;
+            }
+            @if (Model.ContractorContacts != null && Model.ContractorContacts.Count > 0)
+            {
+                recipientLines = recipientLines - 11;
+                <div class="form-horizontal">
+                    <label style="margin-bottom: 0;">@Model.CompanyName</label>
+                    <div class="form-group">
+                        <div class="col-md-10 pad-top-10">
+                            @{
+                                var list1 = Model.ContractorContacts;
+                            }
+                            @Html.ListBox("contacts", list1, new { size = 5, @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.ProjectContacts != null && Model.ProjectContacts.Count > 0)
+            {
+                recipientLines = recipientLines - 11;
+                <div class="form-horizontal">
+                    <label style="margin-bottom: 0;">Project Contacts</label>
+                    <div class="form-group">
+                        <div class="col-md-10 pad-top-10">
+                            @{
+                                var list2 = Model.ProjectContacts;
+                            }
+                            @Html.ListBox("contacts", list2, new { size = 5, @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-10 pad-top-10">
+                        @{
+                            var list = Model.Recipients;
+                        }
+                        @Html.ListBox("recipients", list, new { size = recipientLines, @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $("#toButton").click(function () {
+            var str = $("#toList").val();
+
+            $("select option:selected").each(function () {
+                if (str == '') {
+                    str += $(this).val();
+                } else {
+                    str += "; " + $(this).val();
+                }
+            });
+
+            $("#toList").val(str);
+
+            $("option:selected").removeAttr("selected");
+        })
+
+        $("#ccButton").click(function () {
+            var str = $("#ccList").val();
+
+            $("select option:selected").each(function () {
+                if (str == '') {
+                    str += $(this).val();
+                } else {
+                    str += "; " + $(this).val();
+                }
+            });
+
+            $("#ccList").val(str);
+
+            $("option:selected").removeAttr("selected");
+        })
+
+        $("#okButton").click(function () {
+            var to = $("#toList").val();
+            if (to == '') {
+                to = $("#toList1").val()
+            } else {
+                to += "; " + $("#toList1").val()
+            }
+            $("#toList").val(to);
+
+            var cc = $("#ccList").val();
+            if (cc == '') {
+                cc = $("#ccList1").val();
+            } else {
+                cc += "; " + $("#ccList1").val();
+            }
+            $("#ccList").val(cc);
+
+            $("#toList1").val("");
+            $("#ccList1").val("");
+        })
+
+    </script>
+
+</body>
+
+</html>

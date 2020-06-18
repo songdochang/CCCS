@@ -1,0 +1,208 @@
+﻿@using PagedList.Mvc
+@using CCCS.Web.Models.ClearanceRequests
+@model PagedList.IPagedList<ClearanceRequestModel>
+@{
+    ViewBag.Title = "Clearance Request";
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-toggle="popover"]').popover();
+
+        $('.date').datetimepicker({
+            format: "L"
+        });
+    })
+</script>
+<style>
+    span.lp {
+        background-color: RGB(204, 192, 218);
+    }
+
+    span.purple {
+        background-color: RGB(177, 160, 199);
+    }
+
+    span.dp {
+        background-color: RGB(96, 73, 122);
+    }
+</style>
+
+<h3>@ViewBag.Title</h3>
+@{
+    Html.RenderPartial("_ClearanceRequestTabs");
+}
+<p>
+    @using (Html.BeginForm("Index2", "ClearanceRequest", FormMethod.Post))
+    {
+        <table style="width: 100%;">
+            <tr>
+                <td><strong class="mar-right-10">List Count: @ViewBag.ListTotal</strong></td>
+                <td class="text-right"><label>From:</label></td>
+                <td class="col-md-2">
+                    <div class='input-group date'>
+                        <input id="fromDate" name="fromDate" type="text" class="form-control" value="@ViewBag.FromDate" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar "></span>
+                        </span>
+                    </div>
+                </td>
+                <td class="text-right"><label>To:</label></td>
+                <td class="col-md-2">
+                    <div class='input-group date'>
+                        <input id="toDate" name="toDate" type="text" class="form-control" value="@ViewBag.ToDate" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar "></span>
+                        </span>
+                    </div>
+                </td>
+                <td><input type="submit" name="button" value="Refresh List" class="btn btn-primary" /></td>
+                <td><input type="submit" name="button" value="Reset" class="btn btn-default" /></td>
+                <td>
+                <td class="col-md-2 text-right">
+                    @if (string.IsNullOrEmpty(ViewBag.SearchString))
+                    {
+                        string selectedValue = ViewBag.CO;
+                        @Html.DcoDropDownList("DCO", false, selectedValue, new { @class = "form-control", onchange = "this.form.submit();" })
+                    }
+                </td>
+            </tr>
+        </table>
+    }
+</p>
+
+<table class="table table-condensed">
+    <thead>
+        <tr class="title-row">
+            <th>
+                CO
+            </th>
+            <th>
+                @Html.ActionLink("Project ID", "Index2", new { sortOrder = ViewBag.ProjectIdSortParm, dco = ViewBag.CO, from = ViewBag.FromDate, to = ViewBag.ToDate })
+                @if (ViewBag.SortOrder == "ProjectId")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectId_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                @Html.ActionLink("Project Name", "Index2", new { sortOrder = ViewBag.ProjectNameSortParm, dco = ViewBag.CO, from = ViewBag.FromDate, to = ViewBag.ToDate })
+                @if (ViewBag.SortOrder == "ProjectName")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "ProjectName_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th>
+                Prime Contractor
+            </th>
+            <th>Hours</th>
+            <th class="col-md-1">
+                @Html.ActionLink("Req'd", "Index2", new { sortOrder = ViewBag.DateRequestedSortParm, dco = ViewBag.CO, from = ViewBag.FromDate, to = ViewBag.ToDate })
+                @if (ViewBag.SortOrder == "DateRequested")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateRequested_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th class="col-md-1">
+                @Html.ActionLink("Closed", "Index2", new { sortOrder = ViewBag.DateClosedSortParm, dco = ViewBag.CO, from = ViewBag.FromDate, to = ViewBag.ToDate })
+                @if (ViewBag.SortOrder == "DateClosed")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet"></span>
+                }
+                else if (ViewBag.SortOrder == "DateClosed_desc")
+                {
+                    <span class="mar-left-5 glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                }
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        decimal total = ((decimal)item.TotalCharged);
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DCO)
+            </td>
+            <td><a class="trigger" href="~/Project/Details5/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a></td>
+            <td>
+                @Html.ShortString(item.ProjectName, 55)
+            </td>
+            <td>
+                <a href="~/Contractor/Details1/@item.PrimeContractorID">@item.PrimeContractorName</a>
+            </td>
+            <td>
+                @if (item.TotalCharged > 0)
+                {
+                    <a href="~/Project/Details7/@item.ProjectID">
+                        <span class="badge badge-green" data-toggle="tooltip" title="Click to go to worksheet details" data-placement="left">@total.ToString("#,##0.0")</span>
+                    </a>
+                }
+                else
+                {
+                    <span class="badge">@total.ToString("#,##0.0")</span>
+                }
+            </td>
+            <td>
+                @item.DateRequested.ToString("MM-dd-yyyy")
+            </td>
+            <td>
+                @if (item.DateClosed.HasValue)
+                {
+                    var dt = (DateTime)item.DateClosed.Value;
+                    @dt.ToString("MM-dd-yyyy")
+                }
+            </td>
+            <td class="text-right">
+                @{
+                    string url = VirtualPathUtility.ToAbsolute("~/ClearanceRequest/ViewDocument/") + @item.ProjectID + "?returnUrl=" + HttpUtility.HtmlEncode(Request.Url.PathAndQuery);
+                }
+                <a target="_blank" href="@url" data-toggle="tooltip" data-placement="left" title="View Clearance Request Form"><span class="glyphicon glyphicon-file" style="font-size: 1.2em;"></span></a>
+            </td>
+        </tr>
+                    }
+</table>
+<br />
+<div class="col-md-5 pull-right">
+    <div class="thumbnail">
+        <div class="caption">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-md-5 text-center">Total Hours</th>
+                        <th class="col-md-3 text-center">Average</th>
+                        <th class="col-md-4 text-center">Count Charged</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">@ViewBag.Total</td>
+                        <td class="text-center">@ViewBag.Average</td>
+                        <td class="text-center">@ViewBag.Count</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@if (string.IsNullOrEmpty(ViewBag.SearchString))
+{
+    @:Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index2",
+    new { sortOrder = ViewBag.SortOrder, dco = ViewBag.CO, projectType = ViewBag.ProjectType, listStyle = ViewBag.ListStyle, page, from = ViewBag.FromDate, to = ViewBag.ToDate }))
+}
+@{
+    Html.RenderPartial("_ProjectDetails");
+}

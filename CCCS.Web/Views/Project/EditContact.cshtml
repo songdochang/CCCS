@@ -1,0 +1,236 @@
+﻿@model CCCS.Core.Domain.Projects.ProjectContact
+
+@{
+    ViewBag.Title = "Edit Project Contact";
+    Layout = "~/Views/Shared/_LayoutProject.cshtml";
+}
+@section Navbar {
+    <ol class="breadcrumb">
+        <li><a href="~/">CCCS Home</a></li>
+        <li>
+            <a href="~/Project/Index2">Projects</a>
+        </li>
+        <li>
+            @Html.ActionLink("Project Details", "Details1", new { id = Model.ProjectId })
+        </li>
+        <li class="active">@ViewBag.Title</li>
+    </ol>
+}
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#DeptContact").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("GetProjectContacts", "Project")",
+                    dataType: "json",
+                    data: {
+                        q: request.term,
+                        type: "Dept"
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.Name, email: item.Email, phone: item.PhoneNumber, ext: item.Extension };
+                        }))
+                    }
+                });
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                $("#DeptContact").val(ui.item.label);
+                $("#DeptContactEmail").val(ui.item.email);
+                $("#DeptContactPhoneNumber").val(ui.item.phone);
+                $("#DeptContactExtension").val(ui.item.ext);
+            },
+            minLength: 1
+        });
+
+        $("#Analyst").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("GetProjectContacts", "Project")",
+                    dataType: "json",
+                    data: {
+                        q: request.term,
+                        type: "Analyst"
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.Name, email: item.Email, phone: item.PhoneNumber, ext: item.Extension };
+                        }))
+                    }
+                });
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                $("#Analyst").val(ui.item.label);
+                $("#AnalystEmail").val(ui.item.email);
+                $("#AnalystPhoneNumber").val(ui.item.phone);
+                $("#AnalystExtension").val(ui.item.ext);
+            },
+            minLength: 1
+        });
+
+        $("#ProjectManager").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "@Url.Action("GetProjectContacts", "Project")",
+                    dataType: "json",
+                    data: {
+                        q: request.term,
+                        type: "PM"
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.Name, email: item.Email, phone: item.PhoneNumber, ext: item.Extension };
+                        }))
+                    }
+                });
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                $("#ProjectManager").val(ui.item.label);
+                $("#ProjectManagerEmail").val(ui.item.email);
+                $("#ProjectManagerPhoneNumber").val(ui.item.phone);
+                $("#ProjectManagerExtension").val(ui.item.ext);
+            },
+            minLength: 1
+        });
+    });
+</script>
+
+<h3>@ViewBag.Title</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ProjectId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DeptContact, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                <div class="input-group">
+                    @Html.EditorFor(model => model.DeptContact, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon" data-toggle="tooltip" data-placement="right" title="Auto-complete"><span class="glyphicon glyphicon-list"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DeptContactEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.DeptContactEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DeptContactEmail, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DeptContactPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.DeptContactPhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DeptContactPhoneNumber, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.DeptContactExtension, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.DeptContactExtension, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DeptContactExtension, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.Analyst, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                <div class="input-group">
+                    @Html.EditorFor(model => model.Analyst, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon" data-toggle="tooltip" data-placement="right" title="Auto-complete"><span class="glyphicon glyphicon-list"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AnalystEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.AnalystEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AnalystEmail, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.AnalystPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.AnalystPhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AnalystPhoneNumber, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.AnalystExtension, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.AnalystExtension, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AnalystExtension, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectManager, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                <div class="input-group">
+                    @Html.EditorFor(model => model.ProjectManager, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon" data-toggle="tooltip" data-placement="right" title="Auto-complete"><span class="glyphicon glyphicon-list"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectManagerEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.ProjectManagerEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProjectManagerEmail, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.ProjectManagerPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.ProjectManagerPhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProjectManagerPhoneNumber, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.ProjectManagerExtension, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.ProjectManagerExtension, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProjectManagerExtension, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.Contractor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                <div class="input-group">
+                    @Html.EditorFor(model => model.Contractor, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="input-group-addon" data-toggle="tooltip" data-placement="right" title="Auto-complete"><span class="glyphicon glyphicon-list"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ContractorEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.ContractorEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ContractorEmail, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.ContractorPhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.ContractorPhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ContractorPhoneNumber, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.ContractorExtension, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
+                @Html.EditorFor(model => model.ContractorExtension, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ContractorExtension, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group mar-top-50">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <span class="mar-left-20">@Html.ActionLink("Cancel", "Details1", new { id = Model.ProjectId })</span>
+            </div>
+        </div>
+    </div>
+}
+

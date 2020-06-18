@@ -1,0 +1,105 @@
+﻿@model List<CCCS.Web.Models.Worksheets.TimesheetModel>
+
+<table class="table table-condensed table-hover" border="1">
+    <thead>
+        <tr>
+            <th>
+                Event
+            </th>
+            <th>
+                Phase
+            </th>
+            <th>
+                Unit
+            </th>
+            <th>
+                Activity
+            </th>
+            <th>
+                Project ID
+            </th>
+            @for (int i = 0; i < Model[0].Hours.Count(); i++)
+            {
+                if (Model[0].Hours[i].DayOfWeek == "Sat" || Model[0].Hours[i].DayOfWeek == "Sun")
+                {
+                    <th class="narrow" style="background-color: RGB(252, 228, 214);">
+                        @Model[0].Hours[i].DayOfWeek
+                        <br />
+                        @Model[0].Hours[i].Day
+                    </th>
+                }
+                else
+                {
+                    <th class="narrow">
+                        @Model[0].Hours[i].DayOfWeek
+                        <br />
+                        @Model[0].Hours[i].Day
+                    </th>
+                }
+            }
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+            {
+                if (item.Event != "Total")
+                {
+            <tr>
+                <td>
+                    @item.Event
+                </td>
+                <td>@item.Phase</td>
+                <td>@item.Unit</td>
+                <td>@item.Activity</td>
+                <td>
+                    <a href="~/Project/Details1/@item.ProjectID" data-bind="@item.ProjectID">@item.JOC</a>
+                </td>
+                @for (int i = 0; i < Model[0].Hours.Count(); i++)
+                {
+                    string id = Model[0].Hours[i].Day + "_" + item.ProjectID + "_" + item.Unit + "_" + item.Activity;
+                    string style = "";
+                    if (Model[0].Hours[i].DayOfWeek == "Sat" || Model[0].Hours[i].DayOfWeek == "Sun")
+                    {
+                        style = "background-color: RGB(252, 228, 214)";
+                    }
+                    string h = "";
+                    if (item.Hours[i].Hours > 0)
+                    {
+                        h = item.Hours[i].Hours.ToString("##.00");
+                    }
+                    <td id="@id" class="narrow" style="@style" data-content="@h">
+                        @h
+                    </td>
+                }
+            </tr>
+        }
+    }
+    <tfoot>
+        <tr style="border-top: double;">
+            <td colspan="5" class="text-right"><strong>Total</strong></td>
+            @{  var totalRow = Model[Model.Count - 1]; }
+            @for (int i = 0; i < totalRow.Hours.Count(); i++)
+            {
+                if (totalRow.Hours[i].DayOfWeek == "Sat" || totalRow.Hours[i].DayOfWeek == "Sun")
+                {
+                    <td style="background-color: RGB(252, 228, 214);">
+                        @if (totalRow.Hours[i].Hours > 0)
+                        {
+                            @totalRow.Hours[i].Hours.ToString("##.00")
+                        }
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @if (totalRow.Hours[i].Hours > 0)
+                        {
+                            @totalRow.Hours[i].Hours.ToString("##.00")
+                        }
+                    </td>
+                }
+            }
+        </tr>
+    </tfoot>
+</table>
+
+

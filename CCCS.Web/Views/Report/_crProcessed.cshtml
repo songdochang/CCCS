@@ -1,0 +1,70 @@
+﻿@model System.Data.DataTable
+@using System.Data
+<script type="text/javascript">
+    $(function () {
+        $("td.cell").click(function () {
+            var id = $(this).attr("id");
+            var dco = id.split('_')[0];
+            var month = id.split('_')[1];
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetCrActivitiesDetail", "Report")",
+                data: { dco: dco, month: month, year: @ViewBag.Year },
+                success: function (result) {
+                    $('#details').html(result);
+                },
+                error: function (req, status, error) {
+                    // do something with error
+                }
+            });
+        });
+
+        $("td.cell").hover(function () {
+            if ($(this).attr("data-content") != "") {
+                $(this).html("<span class='glyphicon glyphicon-search'></span>");
+            }
+        }, function () {
+            if ($(this).attr("data-content") != "") {
+                $(this).html($(this).attr("data-content"));
+            } else {
+                $(this).html("");
+            }
+        });
+    });
+</script>
+
+<div class="form-inline">
+    <table id="crTable" class="table table-condensed" border="1">
+        <thead>
+            <tr style="border-bottom: double;">
+                @foreach (DataColumn col in Model.Columns)
+                {
+                    <th>@col.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        @for (int j = 0; j < Model.Rows.Count - 1; j++)
+        {
+            DataRow row = Model.Rows[j];
+            <tr class="@row[0]">
+                <td>@row[0]</td>
+                @for (int i = 1; i < Model.Columns.Count; i++)
+                {
+                    <td id="@row[0]_@i" class="cell text-center" data-content="@row[i]">@row[i]</td>
+                }
+            </tr>
+        }
+        <tfoot>
+            <tr style="border-top: double;">
+                <td class="text-left"></td>
+                @for (int i = 1; i < Model.Columns.Count; i++)
+                {
+                    <td>@Model.Rows[Model.Rows.Count - 1][i]</td>
+                }
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="clearfix"></div>
+<div id="details" class="mar-top-20"></div>

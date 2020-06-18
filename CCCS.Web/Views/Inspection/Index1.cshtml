@@ -1,0 +1,159 @@
+﻿@model IEnumerable<CCCS.Web.Models.Inspection.SiteVisitListModel>
+@{
+    ViewBag.Title = "Site Visits";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+        th.nc {
+            width: 50px;
+        }
+
+    .glyphicon-plus, .glyphicon-minus {
+        cursor: pointer;
+    }
+
+    tr.bg {
+        border-top: double;
+        background-color: RGB(216, 228, 188);
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(function () {
+
+        $('.glyphicon').click(function () {
+            var cls = $(this).attr('class');
+            var id = $(this).attr('id');
+
+            if (cls.indexOf("glyphicon-minus") >= 0) {
+                $("tr[id^='" + id + "']").hide();
+                $(this).removeClass('glyphicon-minus');
+                $(this).addClass('glyphicon-plus');
+            } else {
+                $("tr[id^='" + id + "']").show();
+                $(this).removeClass('glyphicon-plus');
+                $(this).addClass('glyphicon-minus');
+                $("tr[id^='" + id + "']").each(function () {
+                    var cls1 = $(this).children(":first").find('span').attr('class');
+                    var id1 = $(this).attr('id');
+                    if (cls1.indexOf("glyphicon-plus") >= 0) {
+                        $("tr[id^='" + id1 + "_']").hide();
+                    }
+                });
+            }
+        });
+    })
+</script>
+<div>
+    <h3>@ViewBag.Title</h3>
+    @{
+        Html.RenderPartial("_InspectionTabs");
+    }
+</div>
+<div class="clearfix"></div>
+<table class="table table-condensed" border="1">
+    <thead>
+        @{ int dcos = ViewBag.COs.Count; }
+        <tr>
+            <th rowspan="2" class="col-md-3"></th>
+            <th colspan="@dcos">Count of Date of Site Visit</th>
+            <th colspan="@dcos">Sum of # of Interviews</th>
+            <th rowspan="2">Total Site Visit</th>
+            <th rowspan="2">Total Interviews</th>
+        </tr>
+        <tr>
+            @foreach (var d in ViewBag.COs)
+            {
+                <th class="nc">@d.Value</th>
+            }
+            @foreach (var d in ViewBag.COs)
+            {
+                <th class="nc">@d.Value</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            string sId = m.Id + "_";
+            int cnt = 0;
+            string cls = (m.Level == 9) ? "bg" : "";
+            <tr id="@m.Id" class="@cls">
+                @if (m.Level == 2)
+                {
+                    <td><span class="pad-left-50">@m.Text</span></td>
+                }
+                else if (m.Level == 1)
+                {
+                    <td><span id="@sId" class="glyphicon glyphicon-minus pad-left-20 mar-right-5"></span>@m.Text</td>
+                }
+                else if (m.Level == 0)
+                {
+                    <td><span id="@sId" class="glyphicon glyphicon-minus mar-right-5"></span>@m.Text</td>
+                }
+                else
+                {
+                    <td class="title-cell">Grand Total</td>
+                }
+                @foreach (var d in ViewBag.COs)
+                {
+                    foreach (var v in m.Visits)
+                    {
+                        if (v.Key == d.Value)
+                        {
+                            cnt = v.Value;
+                            break;
+                        }
+                    }
+                    if (cnt == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td class="text-center">@cnt</td>
+                    }
+                }
+                @foreach (var d in ViewBag.COs)
+                {
+                    foreach (var v in m.Interviews)
+                    {
+                        if (v.Key == d.Value)
+                        {
+                            cnt = v.Value;
+                            break;
+                        }
+                    }
+                    if (cnt == 0)
+                    {
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td class="text-center">@cnt</td>
+                    }
+                }
+                @if (m.TotalVisits == 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td class="text-center">@m.TotalVisits</td>
+                }
+                @if (m.TotalInterviews == 0)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td class="text-center">@m.TotalInterviews</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

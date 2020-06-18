@@ -1,0 +1,16 @@
+﻿@{
+    string action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    string[] cls = { "", "", "", "", "" };
+    int idx = int.Parse(action.Replace("index", "")) - 1;
+    cls[idx] = "active";
+}
+<ul class="nav nav-tabs" role="tablist" style="margin: 15px 0;">
+    <li class="@cls[0]"><a href="~/project/index1">Ending Soon</a></li>
+    <li class="@cls[1]"><a href="~/project/index2">Open Projects</a></li>
+    <li class="@cls[2]"><a href="~/project/index3">Closed Projects</a></li>
+    @if (!User.IsInRole("DCO"))
+    {
+        <li class="@cls[3]"><a href="~/project/index4">Service Requests</a></li>
+    }
+    <li class="@cls[4]"><a href="~/project/index5">Input List</a></li>
+</ul>
